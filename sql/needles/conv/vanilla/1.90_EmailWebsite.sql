@@ -1,4 +1,4 @@
--- USE [TestNeedles]
+use JoelBieberSA
 -- GO
 /*
 alter table [sma_MST_EmailWebsite] disable trigger all

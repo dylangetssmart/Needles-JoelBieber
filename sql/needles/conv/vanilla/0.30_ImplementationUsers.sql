@@ -1,4 +1,4 @@
--- USE TestNeedles
+use JoelBieberSA
 
 if exists (select * from sys.objects where name='implementation_users' and type='U')
 begin

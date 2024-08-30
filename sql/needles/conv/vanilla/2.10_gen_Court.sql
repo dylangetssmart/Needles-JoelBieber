@@ -1,4 +1,4 @@
--- use TestNeedles
+use JoelBieberSA
 GO
 /*
 alter table [sma_trn_caseJudgeorClerk] disable trigger all

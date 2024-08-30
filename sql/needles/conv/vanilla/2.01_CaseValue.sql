@@ -1,4 +1,4 @@
--- USE TestNeedles
+use JoelBieberSA
 GO
 
 ALTER TABLE sma_trn_Casevalue DISABLE TRIGGER ALL

@@ -1,4 +1,4 @@
--- use [TestNeedles]
+use JoelBieberSA
 go
 /*
 update sma_MST_IndvContacts set cinsComments = NULL

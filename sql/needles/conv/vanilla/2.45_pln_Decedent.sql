@@ -1,4 +1,4 @@
--- USE TestNeedles
+use JoelBieberSA
 GO
 /*
 delete from [sma_TRN_PlaintiffDeath] 

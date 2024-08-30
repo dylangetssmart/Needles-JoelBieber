@@ -1,4 +1,4 @@
--- use [TestNeedles]
+use JoelBieberSA
 --go
 /*
 alter table [sma_TRN_Cases] disable trigger all
