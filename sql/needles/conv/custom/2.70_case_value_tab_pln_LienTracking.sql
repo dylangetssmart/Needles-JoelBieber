@@ -90,7 +90,7 @@ GO
 
 
 ---(0)---
-insert into [JoelBieberNeedles].[dbo].[sma_MST_LienType]
+insert into [dbo].[sma_MST_LienType]
 (
     [lntsCode]
     ,[lntsDscrptn]
@@ -103,7 +103,7 @@ insert into [JoelBieberNeedles].[dbo].[sma_MST_LienType]
     where isnull(V.code,'') in (SELECT code FROM #LienValueCodes)
 )
 except
-select [lntsCode],[lntsDscrptn] from [JoelBieberNeedles].[dbo].[sma_MST_LienType] 
+select [lntsCode],[lntsDscrptn] from [dbo].[sma_MST_LienType] 
 GO
 
 
@@ -279,7 +279,7 @@ insert into [dbo].[sma_TRN_Lienors]
 
   select 
     MAP.casnCaseID			  as [lnrnCaseID],
-    ( select top 1 lntnLienTypeID FROM [JoelBieberNeedles].[dbo].[sma_MST_LienType] where lntsDscrptn=
+    ( select top 1 lntnLienTypeID FROM [dbo].[sma_MST_LienType] where lntsDscrptn=
 	   (select [description] FROM [JoelBieberNeedles].[dbo].[value_code] where [code]=V.code)) 
 						  as [lnrnLienorTypeID],				   
     MAP.ProviderCTG			  as [lnrnLienorContactCtgID],

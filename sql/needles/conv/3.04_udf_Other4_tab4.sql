@@ -14,7 +14,7 @@ IF OBJECT_ID('tempdb..#ExcludedColumns') IS NOT NULL
 CREATE TABLE #ExcludedColumns (
     column_name VARCHAR(128)
 );
-
+GO
 
 -- Insert columns to exclude
 INSERT INTO #ExcludedColumns (column_name)
@@ -25,7 +25,7 @@ VALUES
 ('show_on_status_tab'),
 ('case_status_attn'),
 ('case_status_client');
-
+GO
 
 -- Dynamically get all columns from JoelBieberNeedles..user_tab4_data for unpivoting
 DECLARE @sql NVARCHAR(MAX) = N'';
@@ -60,8 +60,7 @@ FROM (
 UNPIVOT (FieldVal FOR FieldTitle IN (' + @unpivot_list + N')) AS unpvt;';
 
 EXEC sp_executesql @sql;
-select * from other4udf
-select * from JoelBieberNeedles..user_tab4_data
+GO
 
 ----------------------------
 --UDF DEFINITION
@@ -104,7 +103,7 @@ FROM [sma_MST_CaseType] CST
 				FROM Other4UDF
 			) vd
 		ON vd.FieldTitle = M.field_title
-	JOIN [JoelBieberNeedles].[dbo].[NeedlesUserFields] ucf
+	JOIN [dbo].[NeedlesUserFields] ucf
 		ON ucf.field_num = M.ref_num
 	LEFT JOIN	(
 					SELECT DISTINCT table_Name, column_name

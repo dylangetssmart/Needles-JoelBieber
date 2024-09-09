@@ -1,23 +1,39 @@
--- use [JoelBieberNeedles]
---go
+-- Author: Dylan Smith
+-- Date: 2024-09-09
+-- Description: Brief description of the script's purpose
+
 /*
-alter table [sma_TRN_Cases] disable trigger all
-delete from [sma_TRN_Cases] 
-DBCC CHECKIDENT ('[sma_TRN_Cases]', RESEED, 0); 
-alter table [sma_TRN_Cases] enable trigger all
+This script performs the following tasks:
+  - [Task 1]
+  - [Task 2]
+  - ...
+
+Notes:
+	- Because batch separators (GO) are required due to schema changes (adding columns),
+	we use a temporary table instead of variables, which are locally scoped
+	see: https://learn.microsoft.com/en-us/sql/t-sql/language-elements/variables-transact-sql?view=sql-server-ver16#variable-scope
+	see also: https://stackoverflow.com/a/56370223
+	- After making schema changes (e.g. adding a new column to an existing table) statements using the new schema must be compiled separately in a different batch.
+	- For example, you cannot ALTER a table to add a column, then select that column in the same batch - because while compiling the execution plan, that column does not exist for selecting.
 */
 
--- Declare variables for office details
-DECLARE @OfficeName NVARCHAR(255) = 'Joel Bieber LLC';
-DECLARE @State NVARCHAR(100) = 'Virginia';
-DECLARE @PhoneNumber NVARCHAR(50) = '8048008000';
-DECLARE @CaseGroup NVARCHAR(100) = 'Needles';
-DECLARE @VenderCaseType NVARCHAR(25) = 'JoelBieberCaseType'
--- DECLARE @UserCreated NVARCHAR(50) = 'dsmith';
--- DECLARE @Letterhead NVARCHAR(255) = 'LetterheadUt.docx';
--- DECLARE @IncidentType NVARCHAR(255) = 'General Negligence';
--- DECLARE @StatusDescription NVARCHAR(255) = 'Presign - Not Scheduled For Sign Up';
--- DECLARE @StatusType NVARCHAR(50) = 'Status';
+-- use [JoelBieberNeedles]
+-- GO
+
+-- Create a temporary table to store variable values
+DROP TABLE IF EXISTS #TempVariables;
+
+CREATE TABLE #TempVariables (
+    OfficeName NVARCHAR(255),
+    StateName NVARCHAR(100),
+    PhoneNumber NVARCHAR(50),
+    CaseGroup NVARCHAR(100),
+    VenderCaseType NVARCHAR(25)
+);
+
+-- Insert values into the temporary table
+INSERT INTO #TempVariables (OfficeName, StateName, PhoneNumber, CaseGroup, VenderCaseType)
+VALUES ('Joel Bieber LLC', 'Virginia', '8048008000', 'Needles', 'JoelBieberCaseType');
 
 
 -- (0.1) sma_MST_CaseGroup -----------------------------------------------------
@@ -26,7 +42,7 @@ IF NOT EXISTS
 ( 
 	select *
 	from [sma_MST_CaseGroup]
-	where [cgpsDscrptn] = @CaseGroup
+	where [cgpsDscrptn] = (SELECT CaseGroup FROM #TempVariables)
 )
 BEGIN
 	INSERT INTO [sma_MST_CaseGroup]
@@ -43,7 +59,10 @@ BEGIN
 	)
 	SELECT 
 		'FORCONVERSION'			as [cgpsCode]
-		,@CaseGroup				as [cgpsDscrptn]
+		,(
+			SELECT CaseGroup
+			FROM #TempVariables
+		)						as [cgpsDscrptn]
 		,368					as [cgpnRecUserId]
 		,getdate()				as [cgpdDtCreated]
 		,null					as [cgpnModifyUserID]
@@ -56,7 +75,7 @@ BEGIN
 		)						as [IncidentTypeID]
 		,null					as [LimitGroupStatuses]
 END
---GO
+GO
 
 
 -- (0.2) sma_MST_Offices -----------------------------------------------------
@@ -65,7 +84,7 @@ IF NOT EXISTS
 (
 	select *
 	from [sma_mst_offices]
-	where office_name = @OfficeName
+	where office_name = (SELECT OfficeName FROM #TempVariables)
 )
 BEGIN
 	INSERT INTO [sma_mst_offices]
@@ -84,11 +103,17 @@ BEGIN
 	)
 	SELECT 
 		1			    			as [office_status]
-		,@OfficeName		 		as [office_name]
+		,(
+			SELECT OfficeName
+			FROM #TempVariables
+		)					 		as [office_name]
 		,(
 			select sttnStateID
 			from sma_MST_States
-			where sttsDescription = @State
+			where sttsDescription = (
+									SELECT StateName
+									FROM #TempVariables
+									)
 		)							as [state_id]
 		,1			    			as [is_default]
 		,getdate()	    			as [date_created]
@@ -97,9 +122,12 @@ BEGIN
 		,'dbo'		    			as [user_modified]
 		,'LetterheadUt.docx' 		as [Letterhead]
 		,NULL						as [UniqueContactId]
-		,@PhoneNumber	    		as [PhoneNumber]
+		,(
+			SELECT PhoneNumber
+			FROM #TempVariables
+		)				    		as [PhoneNumber]
 END
---GO
+GO
 
 
 -- (1) sma_MST_CaseType -----------------------------------------------------
@@ -116,7 +144,7 @@ BEGIN
 	ALTER TABLE sma_MST_CaseType
 	ADD VenderCaseType varchar(100)
 END
---GO
+GO
 
 -- (1.2) - Create case types from CaseTypeMixtures
 INSERT INTO [sma_MST_CaseType]
@@ -157,7 +185,10 @@ SELECT
     ,(
 		select cgpnCaseGroupID
 		from sma_MST_caseGroup
-		where cgpsDscrptn = @CaseGroup
+		where cgpsDscrptn = (
+							SELECT CaseGroup
+							FROM #TempVariables
+							)
 	)								as cstnGroupID
     ,null							as cstnGovtMunType
     ,null							as cstnIsMassTort
@@ -174,21 +205,24 @@ SELECT
 	,1								as cstbActive
 	,1								as cstbUseIncident1
 	,'Incident 1'					as cstsIncidentLabel1
-	,@VenderCaseType				as VenderCaseType
+	,(
+		SELECT VenderCaseType
+		FROM #TempVariables
+	)								as VenderCaseType
 FROM [CaseTypeMixture] MIX 
 LEFT JOIN [sma_MST_CaseType] ct
 	on ct.cststype = mix.[SmartAdvocate Case Type]
 WHERE ct.cstncasetypeid IS NULL
---GO
+GO
 
 -- (1.3) - Add conversion flag to case types created above
 UPDATE [sma_MST_CaseType] 
-SET	VenderCaseType = @VenderCaseType
+SET	VenderCaseType = (SELECT VenderCaseType FROM #TempVariables)
 FROM [CaseTypeMixture] MIX 
 JOIN [sma_MST_CaseType] ct
 	on ct.cststype = mix.[SmartAdvocate Case Type]
 WHERE isnull(VenderCaseType,'') = ''
---GO
+GO
 	
 -- (2) sma_MST_CaseSubType -----------------------------------------------------
 -- (2.1) - sma_MST_CaseSubTypeCode
@@ -205,7 +239,7 @@ EXCEPT
 SELECT
 	stcsDscrptn
 	from [dbo].[sma_MST_CaseSubTypeCode]
---GO
+GO
 
 -- (2.2) - sma_MST_CaseSubType
 -- Construct CaseSubType using CaseTypes
@@ -318,7 +352,7 @@ LEFT JOIN sma_mst_subrole S
 	on CST.cstnCaseTypeID = S.sbrnCaseTypeID or S.sbrnCaseTypeID = 1
 JOIN [CaseTypeMixture] MIX
 	on MIX.matcode = CST.cstsCode  
-WHERE VenderCaseType = @VenderCaseType
+WHERE VenderCaseType = (SELECT VenderCaseType FROM #TempVariables)
 and isnull(MIX.[SmartAdvocate Case Type],'') = ''
 
 -- (3.1) sma_MST_SubRole : use the sma_MST_SubRole.sbrsDscrptn value to set the sma_MST_SubRole.sbrnTypeCode field ---
@@ -337,7 +371,7 @@ FROM
 	FROM sma_MST_SubRole S
 	JOIN sma_MST_CaseType CST
 		on CST.cstnCaseTypeID = S.sbrnCaseTypeID
-		and CST.VenderCaseType = @VenderCaseType
+		and CST.VenderCaseType = (SELECT VenderCaseType FROM #TempVariables)
 ) A
 WHERE A.SubRoleId = sbrnSubRoleId
 
@@ -375,12 +409,22 @@ FROM [sma_MST_SubRoleCode]
 
 
 -- (4.1) Not already in sma_MST_SubRole-----
-INSERT INTO sma_MST_SubRole ( sbrnRoleID,sbrsDscrptn,sbrnCaseTypeID,sbrnTypeCode)
-
-SELECT T.sbrnRoleID,T.sbrsDscrptn,T.sbrnCaseTypeID,T.sbrnTypeCode
+INSERT INTO sma_MST_SubRole
+(
+	sbrnRoleID
+	,sbrsDscrptn
+	,sbrnCaseTypeID
+	,sbrnTypeCode
+)
+SELECT
+	T.sbrnRoleID
+	,T.sbrsDscrptn
+	,T.sbrnCaseTypeID
+	,T.sbrnTypeCode
 FROM 
-(	SELECT 
-		R.PorD			    as sbrnRoleID,
+(
+	SELECT 
+		R.PorD			   		as sbrnRoleID,
 		R.[role]			    as sbrsDscrptn,
 		CST.cstnCaseTypeID	    as sbrnCaseTypeID,
 		(select srcnCodeId from sma_MST_SubRoleCode where srcsDscrptn = R.role and srcnRoleID = R.PorD) as sbrnTypeCode
@@ -395,7 +439,7 @@ CROSS JOIN
 		UNION ALL
 	SELECT [SA Roles]  as role, 5 as PorD from [PartyRoles] where [SA Party]='Defendant'
 ) R
-WHERE CST.VenderCaseType = @VenderCaseType
+WHERE CST.VenderCaseType = (SELECT VenderCaseType FROM #TempVariables)
 ) T
 EXCEPT SELECT sbrnRoleID,sbrsDscrptn,sbrnCaseTypeID,sbrnTypeCode FROM sma_MST_SubRole
 
@@ -414,7 +458,7 @@ ORDER BY CST.cstnCaseTypeID
 
 -------- (5) sma_TRN_cases ----------------------
 ALTER TABLE [sma_TRN_Cases] DISABLE TRIGGER ALL
---GO
+GO
 
 INSERT INTO [sma_TRN_Cases]
 ( 
@@ -490,7 +534,10 @@ SELECT
     ,(
 		select [sttnStateID]
 		from [sma_MST_States]
-		where [sttsDescription] = @State
+		where [sttsDescription] = (
+									SELECT StateName
+									FROM #TempVariables
+								)
 	)								as casnState
     ,GETDATE()						as casdStatusFromDt
     ,(
@@ -538,7 +585,10 @@ SELECT
     ,(
 		select [sttnStateID]
 		from [sma_MST_States]
-		where [sttsDescription] = @State
+		where [sttsDescription] = (
+									SELECT StateName
+									FROM #TempVariables
+								)
 	)								as [casnStateID]
     ,null 							as [casnLastModifiedBy]
 	,null 							as [casdLastModifiedDate]
@@ -565,7 +615,10 @@ SELECT
     ,(
 		select office_id
 		from sma_MST_Offices
-		where office_name = @OfficeName
+		where office_name = (
+								SELECT OfficeName
+								FROM #TempVariables
+							)
 	)								as office_id
     ,''								as [saga]
 	,null 							as [LIP]
@@ -584,7 +637,7 @@ JOIN caseTypeMixture mix
 	on mix.matcode = c.matcode
 LEFT JOIN sma_MST_CaseType CST
 	on CST.cststype = mix.[smartadvocate Case Type]
-	and VenderCaseType = @VenderCaseType
+	and VenderCaseType = (SELECT VenderCaseType FROM #TempVariables)
 ORDER BY C.casenum
 GO
 

@@ -1,4 +1,4 @@
-use [SA]
+use [JoelBieberSA]
 GO
 --truncate table [sma_TRN_CaseUserTime]
 

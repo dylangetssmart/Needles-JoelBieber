@@ -102,7 +102,7 @@ JOIN [sma_TRN_cases] CAS
 JOIN IndvOrgContacts_Indexed IOC
     on IOC.SAGA = V.provider
     and isnull(V.provider,0) <> 0
-WHERE code in (SELECT code FROM #SpDmgValueCodes)
+WHERE code in (SELECT code FROM #MedChargeCodes)
 GO
 
 ---(0)---
