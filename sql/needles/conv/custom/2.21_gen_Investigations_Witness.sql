@@ -1,8 +1,8 @@
-use TestNeedles
-alter table [TestNeedles].[dbo].[sma_TRN_CaseWitness] disable trigger all
+use JoelBieberNeedles
+alter table [JoelBieberNeedles].[dbo].[sma_TRN_CaseWitness] disable trigger all
 ---
 ----(1)----
-insert into [TestNeedles].[dbo].[sma_TRN_CaseWitness]
+insert into [JoelBieberNeedles].[dbo].[sma_TRN_CaseWitness]
 (
 	   [witnCaseID]
       ,[witnWitnesContactID]
@@ -39,17 +39,17 @@ select distinct
 	,null				as [witnModifyUserID]
 	,null				as [witdDtModified]
 	,null				as [witnLevelNo]
-from TestNeedles..user_party_data upd
-	join TestNeedles..IndvOrgContacts_Indexed ioc
+from JoelBieberNeedles..user_party_data upd
+	join JoelBieberNeedles..IndvOrgContacts_Indexed ioc
 		on ioc.saga = upd.case_id
-	inner join TestNeedles..sma_MST_IndvContacts ic
+	inner join JoelBieberNeedles..sma_MST_IndvContacts ic
 		on ic.cinnContactID = ioc.CID
 		and ic.saga_ref = 'witness'
-	join TestNeedles..sma_TRN_Cases c
+	join JoelBieberNeedles..sma_TRN_Cases c
 		ON c.cassCaseNumber = CONVERT(VARCHAR, upd.case_id)
 where isnull(upd.Witness_1,'') <> '' or isnull(upd.Witness_2,'') <> '' or isnull(upd.Witness_3,'') <> ''
 GO
 
 ---
-alter table [TestNeedles].[dbo].[sma_TRN_CaseWitness] enable trigger all
+alter table [JoelBieberNeedles].[dbo].[sma_TRN_CaseWitness] enable trigger all
 ---

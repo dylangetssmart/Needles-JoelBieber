@@ -29,7 +29,8 @@ backups/*
 # Directories to ignore
 trans/*
 !trans/.gitkeep
-
+logs/*
+!logs/.gitkeep
 # Python cache files
 **__pycache__/
 lib/__pycache__/

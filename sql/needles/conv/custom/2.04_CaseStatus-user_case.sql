@@ -1,4 +1,4 @@
--- use TestNeedles
+-- use JoelBieberNeedles
 -- GO
 
 /*
@@ -78,7 +78,7 @@ select distinct
 	,null 				as [SGsStatusType]
 	,null 				as [cssbShowInOverDueDashboard]
 	,null 				as [LimitStatusGroups]
-from TestNeedles..user_case_data d
+from JoelBieberNeedles..user_case_data d
 where isnull(d.Grade,'') <> ''
 
 alter table [sma_MST_CaseStatusType] enable trigger all
@@ -125,7 +125,7 @@ SELECT
 	,null												as cssdDtModified
 	,null												as cssnLevelNo
 	,null												as cssnDelFlag
-from TestNeedles..user_case_data d
+from JoelBieberNeedles..user_case_data d
 join [sma_trn_cases] CAS
 	on cas.cassCaseNumber = convert(varchar,d.casenum)
 where isnull(d.Grade,'') <> ''

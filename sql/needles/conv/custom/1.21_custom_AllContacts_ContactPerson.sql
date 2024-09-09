@@ -1,4 +1,4 @@
--- USE TestNeedles
+-- USE JoelBieberNeedles
 GO
 
 --
@@ -114,7 +114,7 @@ SELECT
     ,''                               as [saga]
     ,''                               as [cinsSpouse]
     ,-1                               as [cinsGrade]
-FROM [TestNeedles].[dbo].[user_party_data] up
+FROM [JoelBieberNeedles].[dbo].[user_party_data] up
 WHERE ISNULL(Contact_Person, '') <> ''
 GO
 

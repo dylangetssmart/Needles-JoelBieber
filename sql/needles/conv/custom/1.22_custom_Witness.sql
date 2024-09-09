@@ -1,4 +1,4 @@
--- USE TestNeedles
+-- USE JoelBieberNeedles
 -- GO
 
 -- Create individual contacts for Witness_1, Witness_2, and Witness_3 from user_party_data
@@ -121,7 +121,7 @@ SELECT DISTINCT
     ,''                     as [cinsSpouse]
     ,-1                     as [cinsGrade]
     ,'witness'              as [saga_ref]
-FROM [TestNeedles].[dbo].[user_party_data] upd    
+FROM [JoelBieberNeedles].[dbo].[user_party_data] upd    
 WHERE isnull(upd.Witness_1,'') <> ''
 GO
 
@@ -230,7 +230,7 @@ SELECT DISTINCT
     ,''                     as [cinsSpouse]
     ,-1                     as [cinsGrade]
     ,'witness'              as [saga_ref]
-FROM [TestNeedles].[dbo].[user_party_data] upd
+FROM [JoelBieberNeedles].[dbo].[user_party_data] upd
 WHERE isnull(upd.Witness_2,'') <> ''
 GO
 
@@ -339,7 +339,7 @@ SELECT DISTINCT
     ,''                     as [cinsSpouse]
     ,-1                     as [cinsGrade]
     ,'witness'              as [saga_ref]
-FROM [TestNeedles].[dbo].[user_party_data] upd
+FROM [JoelBieberNeedles].[dbo].[user_party_data] upd
 WHERE isnull(upd.Witness_3,'') <> ''
 GO
 

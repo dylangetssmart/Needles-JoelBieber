@@ -124,7 +124,7 @@ SELECT DISTINCT
     ,''                                 as [cinsSpouse]
     ,null                        	    as [cinsGrade]
 	,'plaintiff-spouse'					as [saga_ref]
-FROM [TestNeedles].[dbo].[user_party_data] p
+FROM [JoelBieberNeedles].[dbo].[user_party_data] p
 WHERE ISNULL(p.Spouse, '') <> '' --or isnull(p.Spouses_DOB,'') <> '' or isnull(p.Spouses_SS_Number,'') <> ''
 GO
 

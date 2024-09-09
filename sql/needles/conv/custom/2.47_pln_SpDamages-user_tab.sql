@@ -59,7 +59,7 @@ Create temporary table to hold disbursement value codes
 --     ,vc.[description]
 --     ,getdate()
 --     ,368
--- from TestNeedles..value_code vc
+-- from JoelBieberNeedles..value_code vc
 -- where code in (SELECT code FROM #SpDmgValueCodes)
 
 
@@ -114,7 +114,7 @@ Create temporary table to hold disbursement value codes
 --     IOC.AID		    as ProviderAID,
 --     CAS.casnCaseID	as casnCaseID,
 --     null			as PlaintiffID  
--- from [TestNeedles].[dbo].[value_Indexed] V
+-- from [JoelBieberNeedles].[dbo].[value_Indexed] V
 -- JOIN [sma_TRN_cases] CAS on CAS.cassCaseNumber = V.case_id
 -- JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA = V.provider and isnull(V.provider,0)<>0
 -- where code in (SELECT code FROM #SpDmgValueCodes)
@@ -135,7 +135,7 @@ Create temporary table to hold disbursement value codes
 --     V.value_id		    as vid,
 --     T.plnnPlaintiffID
 --     into value_tab_Multi_Party_Helper_Temp   
--- from [TestNeedles].[dbo].[value_Indexed] V
+-- from [JoelBieberNeedles].[dbo].[value_Indexed] V
 -- JOIN [sma_TRN_cases] CAS
 --     on CAS.cassCaseNumber = V.case_id
 -- JOIN [IndvOrgContacts_Indexed] IOC
@@ -168,7 +168,7 @@ Create temporary table to hold disbursement value codes
 --         and plnbIsPrimary = 1
 --     )                   as plnnPlaintiffID 
 --     into value_tab_Multi_Party_Helper_Temp   
--- from [TestNeedles].[dbo].[value_Indexed] V
+-- from [JoelBieberNeedles].[dbo].[value_Indexed] V
 -- JOIN [sma_TRN_cases] CAS
 --     on CAS.cassCaseNumber = V.case_id
 -- JOIN [IndvOrgContacts_Indexed] IOC
@@ -244,8 +244,8 @@ Create temporary table to hold disbursement value codes
 --         + SDH.[ProviderName]
 --         + char(13)
 --         + v.memo       	as spdsComments
--- FROM [TestNeedles].[dbo].[value_Indexed] V
--- JOIN [TestNeedles].[dbo].[value_Code] VC
+-- FROM [JoelBieberNeedles].[dbo].[value_Indexed] V
+-- JOIN [JoelBieberNeedles].[dbo].[value_Code] VC
 --     on v.code = vc.code
 -- JOIN [value_tab_spDamages_Helper] SDH
 --     on v.value_id = sdh.value_id
@@ -291,7 +291,7 @@ select distinct
     ,null                 as spddDateFrom
     ,null                 as spddDateTo
     ,null                   as spdsComments
-FROM [TestNeedles].[dbo].[user_tab_data] u
+FROM [JoelBieberNeedles].[dbo].[user_tab_data] u
 join [sma_trn_cases] cas
     on cas.cassCaseNumber = convert(varchar,u.case_id)
 JOIN sma_trn_plaintiff p
