@@ -193,7 +193,7 @@ INSERT INTO [sma_MST_IndvContacts]
 		1		  AS [cinbPrimary]
 	   ,10		  AS [cinnContactTypeID]
 	   ,NULL
-	   ,''
+	   ,e.prefix AS [cinsPrefix]
 	   ,e.first_name AS [cinsFirstName]
 	   ,e.middle_name		  AS [cinsMiddleName]
 	   ,e.last_name_or_company_name  AS [cinsLastName]
