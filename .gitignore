@@ -38,3 +38,5 @@ lib/__pycache__/
 
 # Ignore python virtual environment
 venv/
+
+postgres_data/
