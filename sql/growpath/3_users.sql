@@ -66,9 +66,11 @@ GO
 
 
 /*
+Add saga columns to reference source data
+
 1. saga		> link to source record
 2. saga_db	> "GP" or "ND"
-3. saga_ref	> indicate data source
+3. saga_ref	> indicate data source where applicable
 
 */
 IF NOT EXISTS (
@@ -253,6 +255,7 @@ INSERT INTO [sma_MST_IndvContacts]
 	--LEFT JOIN [sma_MST_IndvContacts] ind
 	--	ON ind.saga = u.id
 	--WHERE ind.cinnContactID IS NULL
+GO
 
 
 
@@ -582,7 +585,9 @@ GO
 ALTER TABLE sma_MST_Users DISABLE TRIGGER ALL
 GO
 
+----------------------------------------------------
 -- Create aadmin user using Unassigned Staff contact
+----------------------------------------------------
 IF (
 		SELECT
 			COUNT(*)
@@ -666,7 +671,7 @@ END
 GO
 
 ----------------------------------------------------
--- INSERT CONVERSION USER IF DOES NOT ALREADY EXIST
+-- Create converison user using Unassigned Staff contact
 ----------------------------------------------------
 IF (
 	select count(*)
