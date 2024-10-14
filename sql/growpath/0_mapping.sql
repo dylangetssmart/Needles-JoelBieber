@@ -5,13 +5,22 @@ SELECT
 FROM case_type ct
 LEFT JOIN matter m ON ct.id = m.case_type_id
 group BY ct.name
-order BY count desc
-
+order BY ct.name ASC
 
 -- Party Roles
 SELECT
-    it.name as InvolvementType,
-    COUNT(*) AS count
+    it.name as InvolvementType
+	,it.meaning AS Meaning
+	,it.valid_involvee_kind AS ValidInvolveeKind
+	,CASE it.active
+		when 'f' then 'False'
+		when 't' then 'True'
+	end AS Active
+	,CASE mi.adversarial
+		when 'f' then 'False'
+		when 't' then 'True'
+	end AS Adversarial
+    ,COUNT(*) AS count
 FROM matter_involvement mi
 JOIN matter_involvement_involvement_type mit
     ON mit.matter_involvement_id = mi.id
@@ -19,8 +28,8 @@ JOIN involvement_type it
     ON it.id = mit.involvement_type_id
 JOIN entity e
     ON e.id = mi.involvee_id
-GROUP BY it.name
-ORDER BY count DESC;
+GROUP BY it.name, it.meaning, mi.adversarial, it.valid_involvee_kind, it.active
+ORDER BY InvolvementType;
 
 
 -- Insurance Types
