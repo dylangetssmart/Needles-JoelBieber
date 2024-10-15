@@ -1,5 +1,5 @@
 -- use [JoelBieberNeedles]
-GO
+-- GO
 
 /*
 alter table [sma_TRN_Notes] disable trigger all
@@ -7,6 +7,9 @@ delete from [sma_TRN_Notes]
 DBCC CHECKIDENT ('[sma_TRN_Notes]', RESEED, 0);
 alter table [sma_TRN_Notes] enable trigger all
 */
+
+USE JoelBieberSA
+
 if not exists (Select * From sys.tables t join sys.columns c on t.object_id = c.object_id where t.name = 'Sma_trn_notes' and c.name = 'saga')
 begin
 	alter table sma_trn_notes
@@ -86,6 +89,8 @@ FROM JoelBieberNeedles.[dbo].[case_notes_Indexed] N
 	LEFT JOIN [sma_TRN_Notes] ns
 		on ns.saga = note_key
 WHERE ns.notnNoteID IS NULL
+--where n.case_num = 226937
+--AND ns.notnNoteID IS NULL
 GO
 
 
