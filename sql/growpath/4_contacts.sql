@@ -71,7 +71,7 @@ GO
 
 
 ---------------------------------------
--- Construct [sma_MST_IndvContacts]
+-- Construct [sma_MST_IndvContacts] from dbo.entity
 ---------------------------------------
 INSERT INTO [sma_MST_IndvContacts]
 (
@@ -191,7 +191,7 @@ SELECT
 	JOIN JoelBieber_GrowPath..marital_status ms
 	on ms.id = e.marital_status_id
 	WHERE e.type = 'Person'
-
+GO
 --FROM [TestNeedles].[dbo].[names] N
 --LEFT JOIN [TestNeedles].[dbo].[Race] r on r.race_ID = n.race
 --WHERE N.[person]='Y'
@@ -237,3 +237,4 @@ SELECT
     N.[names_id]								as [saga]			-- remember the [names].[names_id] number
 FROM [TestNeedles].[dbo].[names] N
 WHERE N.[person] <> 'Y'
+GO

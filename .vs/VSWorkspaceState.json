@@ -4,8 +4,9 @@
     "\\sql",
     "\\sql\\growpath",
     "\\sql\\needles",
-    "\\sql\\needles\\conv"
+    "\\sql\\needles\\conv",
+    "\\sql\\needles\\init"
   ],
-  "SelectedNode": "\\sql\\growpath\\0_mapping.sql",
+  "SelectedNode": "\\sql\\needles\\init\\02_memo_case_notes.SQL",
   "PreviewInSolutionExplorer": false
 }

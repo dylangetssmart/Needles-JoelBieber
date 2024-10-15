@@ -1,5 +1,12 @@
--- USE JoelBieberNeedles
+----------------------------
+
+select * FROM JoelBieberNeedles..insurance i WHERE i.case_num = 226937
+----------------------------
+
+
+USE JoelBieberSA
 GO
+
 
 ALTER TABLE sma_trn_Casevalue DISABLE TRIGGER ALL
 GO
