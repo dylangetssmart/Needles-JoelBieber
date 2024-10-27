@@ -1,5 +1,5 @@
--- USE [JoelBieberNeedles]
--- GO
+USE JoelBieberSA
+GO
 /*
 alter table [sma_MST_Address] disable trigger all
 delete from [sma_MST_Address] 

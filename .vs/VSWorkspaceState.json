@@ -2,11 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\sql",
-    "\\sql\\growpath",
     "\\sql\\needles",
-    "\\sql\\needles\\conv",
-    "\\sql\\needles\\init"
+    "\\sql\\needles\\conv"
   ],
-  "SelectedNode": "\\sql\\needles\\init\\02_memo_case_notes.SQL",
+  "SelectedNode": "\\sql\\needles\\conv\\2.19_gen_Calendar.sql",
   "PreviewInSolutionExplorer": false
 }

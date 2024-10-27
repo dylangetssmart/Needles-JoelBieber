@@ -1,5 +1,5 @@
--- USE JoelBieberNeedles
--- GO
+USE JoelBieberSA
+GO
 
 --
 ALTER TABLE [sma_MST_IndvContacts] DISABLE TRIGGER ALL

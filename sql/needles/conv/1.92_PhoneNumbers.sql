@@ -1,5 +1,7 @@
--- USE [JoelBieberNeedles]
--- GO
+USE JoelBiebersa
+GO
+
+
 /*
 alter table [sma_MST_ContactNumbers] disable trigger all
 delete from [sma_MST_ContactNumbers] 
@@ -7,6 +9,7 @@ DBCC CHECKIDENT ('[sma_MST_ContactNumbers]', RESEED, 0);
 alter table [sma_MST_ContactNumbers] enable trigger all
 */
 
+use JoelBieberSA
 
 ---(0)---
 INSERT INTO sma_MST_ContactNoType

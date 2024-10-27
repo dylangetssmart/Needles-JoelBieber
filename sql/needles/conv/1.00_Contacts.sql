@@ -1,6 +1,36 @@
 USE JoelBieberSA
 GO
 
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE [Name] = N'saga' AND Object_ID = Object_ID(N'sma_MST_Users'))
+BEGIN
+    ALTER TABLE [sma_MST_Users] ADD [saga] [varchar](100) NULL; 
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE [Name] = N'saga_ref' AND Object_ID = Object_ID(N'sma_MST_IndvContacts'))
+BEGIN
+    ALTER TABLE [sma_MST_IndvContacts] ADD [saga_ref] [varchar](100) NULL; 
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga_db' AND Object_ID = Object_ID(N'sma_mst_indvcontacts'))
+BEGIN
+    ALTER TABLE [sma_mst_indvcontacts] ADD [saga_db] varchar(5); 
+END
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE [Name] = N'saga_ref' AND Object_ID = Object_ID(N'sma_MST_OrgContacts'))
+BEGIN
+    ALTER TABLE [sma_MST_OrgContacts] ADD [saga_ref] [varchar](100) NULL; 
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga_db' AND Object_ID = Object_ID(N'sma_mst_orgcontacts'))
+BEGIN
+    ALTER TABLE [sma_mst_orgcontacts] ADD [saga_db] varchar(5); 
+END
+
+
+
+
 --(0) saga field for needles names_id ---
 ALTER TABLE [sma_MST_IndvContacts]
  ALTER COLUMN saga int
@@ -284,6 +314,7 @@ SELECT DISTINCT
     ,''                     as [saga]
     ,''                     as [cinsSpouse]
     ,null                   as [cinsGrade]
+GO
 
 
 ---------------------------------------
@@ -316,6 +347,8 @@ INSERT INTO [sma_MST_IndvContacts]
     ,[cinsOtherLanguage]
 	,[cinnRace]
 	,[saga]					
+	,[saga_db]					
+	,[saga_ref]					
 )
 SELECT										 
 	left(N.[prefix],20)							as [cinsPrefix],
@@ -400,7 +433,9 @@ SELECT
             )
         ELSE NULL
     END AS [cinnrace],
-	N.[names_id]								as saga  
+	N.[names_id]								as saga,
+	'ND' AS [saga_db],
+	'names' AS [saga_ref]					
 FROM [JoelBieberNeedles].[dbo].[names] N
 LEFT JOIN [JoelBieberNeedles].[dbo].[Race] r ON 
     CASE 
@@ -408,7 +443,7 @@ LEFT JOIN [JoelBieberNeedles].[dbo].[Race] r ON
         ELSE NULL 
     END = r.race_ID
 WHERE N.[person]='Y'
-
+Go
 
 ---------------------------------------
 -- Construct [sma_MST_OrgContacts]
@@ -422,7 +457,9 @@ INSERT INTO [sma_MST_OrgContacts] (
 		[connRecUserID],		
 		[condDtCreated],
 		[conbStatus],			
-		[saga]					
+		[saga]			,
+		[saga_db],
+		[saga_ref]
 	)
 SELECT 
     N.[last_long_name]							as [consName],
@@ -447,9 +484,12 @@ SELECT
     368											as [connRecUserID],
     getdate()									as [condDtCreated],
     1											as [conbStatus],	-- Hardcode Status as ACTIVE
-    N.[names_id]								as [saga]			-- remember the [names].[names_id] number
+    N.[names_id]								as [saga],			-- remember the [names].[names_id] number
+		'ND' AS [saga_db],
+	'names' AS [saga_ref]	
 FROM [JoelBieberNeedles].[dbo].[names] N
 WHERE N.[person] <> 'Y'
+GO
 
 ---------------------------------------
 -- INDIVIDUAL CONTACT CARD FOR STAFF
@@ -476,7 +516,9 @@ INSERT INTO [sma_MST_IndvContacts] (
 		[cinbPreventMailing],
 		[cinsNickName],
 		[saga],
-		[cinsGrade]				-- remember the [staff_code]
+		[cinsGrade],				-- remember the [staff_code]
+		[saga_db],
+		[saga_ref]
 )
 SELECT 
 		iu.Prefix							as [cinsPrefix],
@@ -510,13 +552,16 @@ SELECT
 		0,
 		convert(varchar(15),s.full_name)	as [cinsNickName],
 		NULL								as [saga],
-		staff_code							as [cinsGrade] -- Remember it to go to sma_MST_Users
+		staff_code							as [cinsGrade], -- Remember it to go to sma_MST_Users
+			'ND' AS [saga_db],
+	'implementation_users' AS [saga_ref]	
 --Select *
 FROM [implementation_users] iu
 LEFT JOIN [sma_MST_IndvContacts] ind on iu.StaffCode = ind.cinsgrade
 LEFT JOIN JoelBieberNeedles..[staff] s on s.staff_code = iu.staffcode
 WHERE cinncontactid IS NULL
 and SALoginID <> 'aadmin'
+GO
 
 ---------------------------------------
 -- EMAILS FOR STAFF
@@ -539,6 +584,7 @@ FROM implementation_users iu
 JOIN JoelBieberNeedles..staff s on s.staff_code = iu.staffcode
 JOIN [sma_MST_IndvContacts] C on C.cinsgrade = iu.staffcode
 WHERE isnull(email,'') <> ''
+GO
 
 ----------------------------------------------------
 -- INSERT AADMIN USER IF DOES NOT ALREADY EXIST
