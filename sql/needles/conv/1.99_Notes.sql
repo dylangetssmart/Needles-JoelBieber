@@ -1,5 +1,5 @@
 use JoelBieberSA
-go
+GO
 
 /*
 alter table [sma_TRN_Notes] disable trigger all
