@@ -1,4 +1,4 @@
-use [JoelBieberSA]
+use [JoelBieberSA_Needles]
 GO
 --truncate table [sma_TRN_CaseUserTime]
 

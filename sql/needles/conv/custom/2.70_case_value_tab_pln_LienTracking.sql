@@ -64,7 +64,7 @@ create table value_tab_Liencheckbox_Helper (
     value_id		    int,
 CONSTRAINT IOC_Clustered_Index_value_tab_Liencheckbox_Helper PRIMARY KEY CLUSTERED ( TableIndex )
 ) ON [PRIMARY] 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Liencheckbox_Helper_value_id ON [JoelBieberSA].[dbo].[value_tab_Liencheckbox_Helper] (value_id);   
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Liencheckbox_Helper_value_id ON [JoelBieberSA_Needles].[dbo].[value_tab_Liencheckbox_Helper] (value_id);   
 GO
 
 ---(0)---
@@ -150,9 +150,9 @@ select
     null			    as PlaintiffID,
     null			    as Paid
 from [JoelBieberNeedles].[dbo].[value_Indexed] V
-inner join [JoelBieberSA].[dbo].[sma_TRN_cases] CAS
+inner join [JoelBieberSA_Needles].[dbo].[sma_TRN_cases] CAS
     on CAS.cassCaseNumber = V.case_id
-inner join [JoelBieberSA].[dbo].[IndvOrgContacts_Indexed] IOC
+inner join [JoelBieberSA_Needles].[dbo].[IndvOrgContacts_Indexed] IOC
     on IOC.SAGA = V.provider
     and isnull(V.provider,0) <> 0
 where code in (SELECT code FROM #LienValueCodes)
@@ -186,11 +186,11 @@ select
     ,T.plnnPlaintiffID
     into value_tab_Multi_Party_Helper_Temp   
 from [JoelBieberNeedles].[dbo].[value_Indexed] V
-inner join [JoelBieberSA].[dbo].[sma_TRN_cases] CAS
+inner join [JoelBieberSA_Needles].[dbo].[sma_TRN_cases] CAS
     on CAS.cassCaseNumber = V.case_id
-inner join [JoelBieberSA].[dbo].[IndvOrgContacts_Indexed] IOC
+inner join [JoelBieberSA_Needles].[dbo].[IndvOrgContacts_Indexed] IOC
     on IOC.SAGA = V.party_id
-inner join [JoelBieberSA].[dbo].[sma_TRN_Plaintiff] T
+inner join [JoelBieberSA_Needles].[dbo].[sma_TRN_Plaintiff] T
     on T.plnnContactID = IOC.CID
     and T.plnnContactCtg = IOC.CTG
     and T.plnnCaseID = CAS.casnCaseID
@@ -226,17 +226,17 @@ select
     )                   as Paid
     ,(
         select plnnPlaintiffID
-        from [JoelBieberSA].[dbo].[sma_TRN_Plaintiff]
+        from [JoelBieberSA_Needles].[dbo].[sma_TRN_Plaintiff]
         where plnnCaseID = CAS.casnCaseID
         and plnbIsPrimary = 1
     )                   as plnnPlaintiffID 
     into value_tab_Multi_Party_Helper_Temp   
 from [JoelBieberNeedles].[dbo].[value_Indexed] V
-inner join [JoelBieberSA].[dbo].[sma_TRN_cases] CAS
+inner join [JoelBieberSA_Needles].[dbo].[sma_TRN_cases] CAS
      on CAS.cassCaseNumber = V.case_id
-inner join [JoelBieberSA].[dbo].[IndvOrgContacts_Indexed] IOC
+inner join [JoelBieberSA_Needles].[dbo].[IndvOrgContacts_Indexed] IOC
      on IOC.SAGA = V.party_id
-inner join [JoelBieberSA].[dbo].[sma_TRN_Defendants] D
+inner join [JoelBieberSA_Needles].[dbo].[sma_TRN_Defendants] D
      on D.defnContactID = IOC.CID
      and D.defnContactCtgID = IOC.CTG
      and D.defnCaseID = CAS.casnCaseID
@@ -254,8 +254,8 @@ GO
 
 
 ---------------------------------------------------------------------------------------
-alter table [JoelBieberSA].[dbo].[sma_TRN_Lienors] disable trigger all
-alter table [JoelBieberSA].[dbo].[sma_TRN_LienDetails] disable trigger all
+alter table [JoelBieberSA_Needles].[dbo].[sma_TRN_Lienors] disable trigger all
+alter table [JoelBieberSA_Needles].[dbo].[sma_TRN_LienDetails] disable trigger all
 
 GO
 ---(1)---
@@ -301,7 +301,7 @@ insert into [dbo].[sma_TRN_Lienors]
     0					  as [lnrnFinal],
     V.value_id				  as [saga]
 from [JoelBieberNeedles].[dbo].[value_Indexed] V
-inner join [JoelBieberSA].[dbo].[value_tab_Lien_Helper] MAP on MAP.case_id=V.case_id and MAP.value_id=V.value_id
+inner join [JoelBieberSA_Needles].[dbo].[value_tab_Lien_Helper] MAP on MAP.case_id=V.case_id and MAP.value_id=V.value_id
 
 ---(2)---
 insert into [dbo].[sma_TRN_LienDetails]
@@ -320,12 +320,12 @@ select
 	'sma_TRN_Lienors'		as lndsRefTable,
 	368					as lndnRecUserID,
 	getdate()				as lnddDtCreated
-from [JoelBieberSA].[dbo].[sma_TRN_Lienors]
+from [JoelBieberSA_Needles].[dbo].[sma_TRN_Lienors]
 
 
 ----
-alter table [JoelBieberSA].[dbo].[sma_TRN_Lienors] enable trigger all
-alter table [JoelBieberSA].[dbo].[sma_TRN_LienDetails] enable trigger all
+alter table [JoelBieberSA_Needles].[dbo].[sma_TRN_Lienors] enable trigger all
+alter table [JoelBieberSA_Needles].[dbo].[sma_TRN_LienDetails] enable trigger all
 
 GO
 

@@ -17,7 +17,7 @@ Notes:
 	- For example, you cannot ALTER a table to add a column, then select that column in the same batch - because while compiling the execution plan, that column does not exist for selecting.
 */
 
-USE JoelBieberSA
+USE JoelBieberSA_Needles
 GO
 
 IF NOT EXISTS (

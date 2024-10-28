@@ -105,7 +105,7 @@ SELECT
 		end					  as [ToDate]
 	,(
 		select ID
-		FROM [JoelBieberSA].[dbo].[sma_MST_CalendarAppointmentType]
+		FROM [JoelBieberSA_Needles].[dbo].[sma_MST_CalendarAppointmentType]
 		where AppointmentType = 'Non-Case related Office'
 	)							as [AppointmentTypeID]
 	,case -- ActivityTypeID

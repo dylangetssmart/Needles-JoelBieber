@@ -1,171 +1,116 @@
 /*
-- the first part of this script is used during initial conversion.
-- it seeds implementation_users from needles..staff
+This script manages the population of the `implementation_users` table for the JoelBieberSA_Needles project.
+It consists of two main phases, controlled by the `@Phase` variable:
 
+    - Phase 1: Initial Conversion
+      - Seeds the `implementation_users` table from the `JoelBieberNeedles..staff` table.
+      - Used in the initial data conversion phase when only `staff` data is available.
 
-- when the project phase is reached where we want to use the implementation database as our starting point,
-the second part of the script is used instead
-- it seeds implementation_users with records from the implementation database's sma_mst_user table,
-and adds staff_code from needles..staff
+    - Phase 2: Implementation Database Seeding
+      - Drops and repopulates `implementation_users` based on the implementation database.
+      - Joins `sma_mst_users` and `sma_MST_IndvContacts` from the implementation database.
+      - Adds `staff_code` from `JoelBieberNeedles..staff` if available.
+      - Used in later project phases when the implementation database is the primary source.
 
+Usage:
+- Set the `@Phase` variable to `1` for Phase 1 or `2` for Phase 2, then run the script.
 
-*/
-
-
-
-
-USE JoelBieberSA
-GO
-
-if exists (select * from sys.objects where name='implementation_users' and type='U')
-begin
-    drop table implementation_users
-end
-GO
-
-CREATE TABLE implementation_users
-(
-    StaffCode varchar(50)
-    ,SAloginID varchar(20)
-    ,Prefix varchar(10)
-    ,SAFirst varchar(50)
-    ,SAMiddle varchar(5)
-    ,SALast varchar(50)
-    ,suffix varchar(15)
-    ,Active varchar(1)
-    ,visible varchar(1)
-)
-GO
-
--- INSERT INTO implementation_users (StaffCode, SAloginID, Prefix, SAFirst, SAMiddle, SALast, suffix, Active, Visible)
-
--- ds 2024-05-31 // Modified to insert data into the implementation_users table from the dbo.staff table
-INSERT INTO implementation_users
-(
-    StaffCode
-    ,SAloginID
-    ,Prefix
-    ,SAFirst
-    ,SAMiddle
-    ,SALast
-    ,suffix
-)
-SELECT 
-    staff_code                          as StaffCode
-    ,staff_code                         as SAloginID
-	,prefix                             as Prefix
-	,dbo.get_firstword(s.full_name)     as SAFirst
-    ,''                                 as SAMiddle
-    ,dbo.get_lastword(s.full_name)      as SALast
-    ,suffix                             as suffix
-FROM [JoelBieberNeedles].[dbo].[staff] s
-GO
-
--------------------------------------
-
---  2024-10-27 - create users from implementation database
-
-
---INSERT INTO implementation_users (
---	StaffCode
---	,SAloginID
---	,Prefix
---	,SAFirst
---	,SAMiddle
---	,SALast
---	,suffix
---	,Active
---	,Visible
---)
---SELECT '@PORTAL', '@PORTAL', '', 'Mary', '', 'McCabe', '', 'N', 'Y' UNION
---SELECT 'ABRIL', 'ABRIL', 'Ms.', 'Abril', '', 'Garcia', '', 'N', '' UNION
-
-/* ################################################################################
-Phase 2
-
-1. drop table
-2. seed with users from imp db
+Requirements:
+- Phase 1 assumes `staff` records exist in `JoelBieberNeedles..staff`.
+- Phase 2 assumes that both `sma_mst_users` and `sma_MST_IndvContacts` are populated in the implementation database.
 
 */
 
---select * From implementation_users
+USE JoelBieberSA_Needles;
 
---update implementation_users
---set Active = case when Active = 'N' then 0
---					when Active = 'Y' then 1
---					else 0 end,
---	visible = Case when active = 'Y' then 1
---					else 0 END
+-- Declare a variable to control the execution phase
+DECLARE @Phase INT = 1;  -- Set to 1 for Phase 1, 2 for Phase 2
 
-
--- Drop the table if it exists
 IF OBJECT_ID('implementation_users', 'U') IS NOT NULL
+BEGIN
     DROP TABLE implementation_users;
+END;
 
+IF @Phase = 1
+BEGIN
+    -- Phase 1: Initial Conversion - Seed from JoelBieberNeedles..staff
 
--- Create the implementation_users table
-CREATE TABLE implementation_users (
-    StaffCode NVARCHAR(50),
-    full_name NVARCHAR(100),
-    SALoginID NVARCHAR(50),
-    Prefix NVARCHAR(10),
-    SAFirst NVARCHAR(50),
-    SALast NVARCHAR(50),
-    Suffix NVARCHAR(10),
-    Active BIT,
-    Visible BIT
-);
+    CREATE TABLE implementation_users
+    (
+        StaffCode VARCHAR(50),
+        SAloginID VARCHAR(20),
+        Prefix VARCHAR(10),
+        SAFirst VARCHAR(50),
+        SAMiddle VARCHAR(5),
+        SALast VARCHAR(50),
+        Suffix VARCHAR(15),
+        Active VARCHAR(1),
+        Visible VARCHAR(1)
+    );
 
--- Insert data into implementation_users
---INSERT INTO implementation_users (
---    StaffCode,
---    full_name,
---    SALoginID,
---    Prefix,
---    SAFirst,
---    SALast,
---    Suffix,
---    Active,
---    Visible
---)
---SELECT
---    COALESCE(s.staff_code, '') AS StaffCode,
---    COALESCE(s.full_name, smic.cinsFirstName + ' ' + smic.cinsLastName) AS full_name,
---    COALESCE(u.usrsLoginID, s.staff_code) AS SALoginID, -- Use staff_code if usrsLoginID is NULL
---    smic.cinsPrefix AS Prefix,
---    smic.cinsFirstName AS SAFirst,
---    smic.cinsLastName AS SALast,
---    smic.cinsSuffix AS Suffix,
---    u.usrbActiveState AS Active,
---    u.usrbIsShowInSystem AS Visible
---FROM 
---    [JoelBieber_Imp_2024-10-28]..sma_mst_users u
---FULL OUTER JOIN 
---    [JoelBieber_Imp_2024-10-28]..sma_MST_IndvContacts smic 
---    ON smic.cinnContactID = u.usrnContactID
---FULL OUTER JOIN 
---    JoelBieberNeedles..staff s 
---    ON s.full_name = smic.cinsFirstName + ' ' + smic.cinsLastName;
+    INSERT INTO implementation_users
+    (
+        StaffCode,
+        SAloginID,
+        Prefix,
+        SAFirst,
+        SAMiddle,
+        SALast,
+        Suffix
+    )
+    SELECT 
+        staff_code AS StaffCode,
+        staff_code AS SAloginID,
+        prefix AS Prefix,
+        dbo.get_firstword(s.full_name) AS SAFirst,
+        '' AS SAMiddle,
+        dbo.get_lastword(s.full_name) AS SALast,
+        suffix AS Suffix
+    FROM [JoelBieberNeedles].[dbo].[staff] s;
+END
+ELSE IF @Phase = 2
+BEGIN
+    -- Phase 2: Use implementation database as starting point and add staff_code from JoelBieberNeedles..staff
 
-SELECT
-	COALESCE(s.staff_code, '') AS StaffCode
-	,s.full_name
-	,u.usrsLoginID AS SALoginID
-	,smic.cinsPrefix as Prefix
-   ,smic.cinsFirstName AS SAFirst
-   ,smic.cinsLastName AS SALast
-   ,smic.cinsSuffix as Suffix
-   ,u.usrbActiveState AS Active
-   ,u.usrbIsShowInSystem as Visible
-   --select * 
-FROM [JoelBieber_Imp_2024-10-28]..sma_mst_users u
-JOIN [JoelBieber_Imp_2024-10-28]..sma_MST_IndvContacts smic
-	ON smic.cinnContactID = u.usrnContactID
-LEFT JOIN
-	JoelBieberNeedles..staff s ON s.full_name = smic.cinsFirstName + ' ' + smic.cinsLastName
+    CREATE TABLE implementation_users (
+        StaffCode NVARCHAR(50),
+        full_name NVARCHAR(100),
+        SALoginID NVARCHAR(50),
+        Prefix NVARCHAR(10),
+        SAFirst NVARCHAR(50),
+        SALast NVARCHAR(50),
+        Suffix NVARCHAR(10),
+        Active BIT,
+        Visible BIT
+    );
 
-
-
-SELECT * FROM JoelBieberNeedles..staff s WHERE s.full_name like '%ashley%'
-
-
+    INSERT INTO implementation_users (
+        StaffCode,
+        full_name,
+        SALoginID,
+        Prefix,
+        SAFirst,
+        SALast,
+        Suffix,
+        Active,
+        Visible
+    )
+    SELECT
+        COALESCE(s.staff_code, '') AS StaffCode,
+        s.full_name,
+        u.usrsLoginID AS SALoginID, -- Use staff_code if usrsLoginID is NULL
+        smic.cinsPrefix AS Prefix,
+        smic.cinsFirstName AS SAFirst,
+        smic.cinsLastName AS SALast,
+        smic.cinsSuffix AS Suffix,
+        u.usrbActiveState AS Active,
+        u.usrbIsShowInSystem AS Visible
+    FROM 
+        [JoelBieber_Imp_2024-10-28]..sma_mst_users u
+    FULL OUTER JOIN 
+        [JoelBieber_Imp_2024-10-28]..sma_MST_IndvContacts smic 
+        ON smic.cinnContactID = u.usrnContactID
+    LEFT JOIN 
+        JoelBieberNeedles..staff s 
+        ON s.full_name = smic.cinsFirstName + ' ' + smic.cinsLastName;
+END;

@@ -8,7 +8,7 @@ DBCC CHECKIDENT ('[sma_TRN_Notes]', RESEED, 0);
 alter table [sma_TRN_Notes] enable trigger all
 */
 
-USE JoelBieberSA
+USE JoelBieberSA_Needles
 
 if not exists (Select * From sys.tables t join sys.columns c on t.object_id = c.object_id where t.name = 'Sma_trn_notes' and c.name = 'saga')
 begin

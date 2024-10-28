@@ -1,4 +1,4 @@
-Use JoelBieberSA
+Use JoelBieberSA_Needles
 GO
 
 IF EXISTS (Select * From sys.tables where name = 'NeedlesUserFields' and type = 'U')

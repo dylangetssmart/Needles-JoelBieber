@@ -92,7 +92,7 @@ LEFT JOIN JoelBieberNeedles.[dbo].[insurance_Indexed] INS
 	on INS.insurance_id=NEG.insurance_id
 JOIN [sma_TRN_cases] CAS
 	on CAS.cassCaseNumber = NEG.case_id
-LEFT JOIN [JoelBieberSA].[dbo].[Insurance_Contacts_Helper] MAP
+LEFT JOIN [JoelBieberSA_Needles].[dbo].[Insurance_Contacts_Helper] MAP
 	on INS.insurance_id=MAP.insurance_id 
 
 -----------------

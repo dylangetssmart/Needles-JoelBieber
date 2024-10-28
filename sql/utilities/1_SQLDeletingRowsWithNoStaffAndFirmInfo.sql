@@ -1,3 +1,5 @@
+use JoelBieberSA_Needles_ImpStart
+
 truncate table  CP_UserNotesStatus
 Go
 truncate table  sma_trn_tasknew
@@ -27,8 +29,8 @@ truncate table  sma_trn_ChangeStaffByStatus
 Go
 --delete from sma_TRN_AutomatedActions
 --go
-delete from sma_TRN_EmploymentStatuses
-go
+--delete from sma_TRN_EmploymentStatuses
+--go
 delete from sma_trn_MedProviderERequestDependencies
 go
 delete from sma_trn_MedicalProviderERequest
@@ -51,21 +53,21 @@ GO
 TRUNCATE TABLE  sma_TRN_ExpertsFromContacts
 GO
 
-alter table [dbo].[acc_trn_transactions] disable trigger all
-delete from [dbo].[acc_trn_transactions]
-DBCC CHECKIDENT ('[dbo].[acc_trn_transactions]', RESEED, 0);
-alter table [dbo].[acc_trn_transactions] enable trigger all
-GO
-alter table [dbo].[acc_trn_DepositLines] disable trigger all
-delete from [dbo].[acc_trn_DepositLines]
-DBCC CHECKIDENT ('[dbo].[acc_trn_DepositLines]', RESEED, 0);
-alter table [dbo].[acc_trn_DepositLines] enable trigger all
-GO
-alter table [dbo].[acc_trn_expenseLines] disable trigger all
-delete from [dbo].[acc_trn_expenseLines]
-DBCC CHECKIDENT ('[dbo].[acc_trn_expenseLines]', RESEED, 0);
-alter table [dbo].[acc_trn_expenseLines] enable trigger all
-GO
+--alter table [dbo].[acc_trn_transactions] disable trigger all
+--delete from [dbo].[acc_trn_transactions]
+--DBCC CHECKIDENT ('[dbo].[acc_trn_transactions]', RESEED, 0);
+--alter table [dbo].[acc_trn_transactions] enable trigger all
+--GO
+--alter table [dbo].[acc_trn_DepositLines] disable trigger all
+--delete from [dbo].[acc_trn_DepositLines]
+--DBCC CHECKIDENT ('[dbo].[acc_trn_DepositLines]', RESEED, 0);
+--alter table [dbo].[acc_trn_DepositLines] enable trigger all
+--GO
+--alter table [dbo].[acc_trn_expenseLines] disable trigger all
+--delete from [dbo].[acc_trn_expenseLines]
+--DBCC CHECKIDENT ('[dbo].[acc_trn_expenseLines]', RESEED, 0);
+--alter table [dbo].[acc_trn_expenseLines] enable trigger all
+--GO
 
 alter table [dbo].[sma_trn_disbursement] disable trigger all
 delete from [dbo].[sma_trn_disbursement]
@@ -80,14 +82,14 @@ alter table sma_trn_settlements enable trigger all
 go
 
 --delete from  ACC_Account
-delete from ACC_Contractor
-go
-delete from ACC_Obligation
-go
-delete from ACC_Payment
-go
-delete from ACC_Transaction
-go
+--delete from ACC_Contractor
+--go
+--delete from ACC_Obligation
+--go
+--delete from ACC_Payment
+--go
+--delete from ACC_Transaction
+--go
 delete from ACC_Account
 GO
 ALTER TABLE [dbo].[sma_TRN_ExpertsFromContacts] DROP CONSTRAINT [FK_ExpertContact]
