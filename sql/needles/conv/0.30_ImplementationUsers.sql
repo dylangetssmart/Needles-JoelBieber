@@ -23,94 +23,98 @@ Requirements:
 
 USE JoelBieberSA_Needles;
 
--- Declare a variable to control the execution phase
-DECLARE @Phase INT = 1;  -- Set to 1 for Phase 1, 2 for Phase 2
-
 IF OBJECT_ID('implementation_users', 'U') IS NOT NULL
 BEGIN
-    DROP TABLE implementation_users;
+	DROP TABLE implementation_users;
 END;
+
+-- Create the implementation_users table
+CREATE TABLE implementation_users (
+	SAContactID NVARCHAR(25)
+   ,SAUserID NVARCHAR(25)
+   ,StaffCode NVARCHAR(50)
+   ,full_name NVARCHAR(100)
+   ,SALoginID NVARCHAR(50)
+   ,Prefix NVARCHAR(10)
+   ,SAFirst NVARCHAR(50)
+   ,SAMiddle VARCHAR(5)
+   ,SALast NVARCHAR(50)
+   ,Suffix NVARCHAR(10)
+   ,Active BIT
+   ,Visible BIT
+);
+GO
+
+-- Declare a variable to control the execution phase
+DECLARE @Phase INT = 2;  -- Set to 1 for Phase 1, 2 for Phase 2
 
 IF @Phase = 1
 BEGIN
-    -- Phase 1: Initial Conversion - Seed from JoelBieberNeedles..staff
+	-- Phase 1: Initial Conversion - Seed from JoelBieberNeedles..staff
 
-    CREATE TABLE implementation_users
-    (
-        StaffCode VARCHAR(50),
-        SAloginID VARCHAR(20),
-        Prefix VARCHAR(10),
-        SAFirst VARCHAR(50),
-        SAMiddle VARCHAR(5),
-        SALast VARCHAR(50),
-        Suffix VARCHAR(15),
-        Active VARCHAR(1),
-        Visible VARCHAR(1)
-    );
-
-    INSERT INTO implementation_users
-    (
-        StaffCode,
-        SAloginID,
-        Prefix,
-        SAFirst,
-        SAMiddle,
-        SALast,
-        Suffix
-    )
-    SELECT 
-        staff_code AS StaffCode,
-        staff_code AS SAloginID,
-        prefix AS Prefix,
-        dbo.get_firstword(s.full_name) AS SAFirst,
-        '' AS SAMiddle,
-        dbo.get_lastword(s.full_name) AS SALast,
-        suffix AS Suffix
-    FROM [JoelBieberNeedles].[dbo].[staff] s;
+	INSERT INTO implementation_users
+		(
+		SAContactID
+	   ,SAUserID
+	   ,StaffCode
+	   ,full_name
+	   ,SALoginID
+	   ,Prefix
+	   ,SAFirst
+	   ,SAMiddle
+	   ,SALast
+	   ,Suffix
+		)
+		SELECT
+			NULL						   AS SAContactID
+		   ,NULL						   AS SAUserID
+		   ,staff_code					   AS StaffCode
+		   ,s.full_name					   AS full_name
+		   ,staff_code					   AS SAloginID
+		   ,prefix						   AS Prefix
+		   ,dbo.get_firstword(s.full_name) AS SAFirst
+		   ,''							   AS SAMiddle
+		   ,dbo.get_lastword(s.full_name)  AS SALast
+		   ,suffix						   AS Suffix
+		FROM [JoelBieberNeedles].[dbo].[staff] s;
 END
-ELSE IF @Phase = 2
+ELSE
+IF @Phase = 2
 BEGIN
-    -- Phase 2: Use implementation database as starting point and add staff_code from JoelBieberNeedles..staff
+	-- Phase 2: Use implementation database as starting point and add staff_code from JoelBieberNeedles..staff
 
-    CREATE TABLE implementation_users (
-        StaffCode NVARCHAR(50),
-        full_name NVARCHAR(100),
-        SALoginID NVARCHAR(50),
-        Prefix NVARCHAR(10),
-        SAFirst NVARCHAR(50),
-        SALast NVARCHAR(50),
-        Suffix NVARCHAR(10),
-        Active BIT,
-        Visible BIT
-    );
-
-    INSERT INTO implementation_users (
-        StaffCode,
-        full_name,
-        SALoginID,
-        Prefix,
-        SAFirst,
-        SALast,
-        Suffix,
-        Active,
-        Visible
-    )
-    SELECT
-        COALESCE(s.staff_code, '') AS StaffCode,
-        s.full_name,
-        u.usrsLoginID AS SALoginID, -- Use staff_code if usrsLoginID is NULL
-        smic.cinsPrefix AS Prefix,
-        smic.cinsFirstName AS SAFirst,
-        smic.cinsLastName AS SALast,
-        smic.cinsSuffix AS Suffix,
-        u.usrbActiveState AS Active,
-        u.usrbIsShowInSystem AS Visible
-    FROM 
-        [JoelBieber_Imp_2024-10-28]..sma_mst_users u
-    FULL OUTER JOIN 
-        [JoelBieber_Imp_2024-10-28]..sma_MST_IndvContacts smic 
-        ON smic.cinnContactID = u.usrnContactID
-    LEFT JOIN 
-        JoelBieberNeedles..staff s 
-        ON s.full_name = smic.cinsFirstName + ' ' + smic.cinsLastName;
+	INSERT INTO implementation_users
+		(
+		SAContactID
+	   ,SAUserID
+	   ,StaffCode
+	   ,full_name
+	   ,SALoginID
+	   ,Prefix
+	   ,SAFirst
+	   ,SAMiddle
+	   ,SALast
+	   ,Suffix
+	   ,Active
+	   ,Visible
+		)
+		SELECT
+			smic.cinnContactID
+		   ,u.usrnUserID
+		   ,COALESCE(s.staff_code, '') AS StaffCode
+		   ,s.full_name
+		   ,u.usrsLoginID			   AS SALoginID
+		   ,smic.cinsPrefix			   AS Prefix
+		   ,smic.cinsFirstName		   AS SAFirst
+		   ,smic.cinsMiddleName		   AS SAMddle
+		   ,smic.cinsLastName		   AS SALast
+		   ,smic.cinsSuffix			   AS Suffix
+		   ,u.usrbActiveState		   AS Active
+		   ,u.usrbIsShowInSystem	   AS Visible
+		--select * 
+		FROM [JoelBieber_Imp_2024-10-28]..sma_mst_users u
+		JOIN [JoelBieber_Imp_2024-10-28]..sma_MST_IndvContacts smic
+			ON smic.cinnContactID = u.usrnContactID
+		LEFT JOIN JoelBieberNeedles..staff s
+			ON s.full_name = smic.cinsFirstName + ' ' + smic.cinsLastName
 END;

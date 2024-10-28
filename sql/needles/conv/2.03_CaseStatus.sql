@@ -1,4 +1,4 @@
--- use JoelBieberNeedles
+use JoelBieberSA_Needles
 GO
 
 /*
@@ -78,29 +78,29 @@ SELECT
 		from sma_MST_CaseStatusType
 		where stpsStatusType='Status'
 	)																	as [cssnStatusTypeID]
-    ,case 
-		when C.close_date between '1900-01-01' and '2079-06-06'	then
-			( 
-				select cssnStatusID
-				from sma_MST_CaseStatus
-				where csssDescription='Closed Case'
-			)
-		when exists (
-						select *
-						from sma_MST_CaseStatus
-						where csssDescription=CL.[description]
-					)
-					then (
-							select cssnStatusID
-							from sma_MST_CaseStatus
-							where csssDescription=CL.[description]
-						)
-		else (
-				select cssnStatusID
-				from sma_MST_CaseStatus
-				where csssDescription='Conversion Case No Status'
-				)
-		end																as [cssnStatusID]
+  --  ,case 
+		--when C.close_date between '1900-01-01' and '2079-06-06'	then
+		--	( 
+		--		select cssnStatusID
+		--		from sma_MST_CaseStatus
+		--		where csssDescription='Closed Case'
+		--	)
+		--when exists (
+		--				select *
+		--				from sma_MST_CaseStatus
+		--				where csssDescription=CL.[description]
+		--			)
+		--			then (
+		--					select cssnStatusID
+		--					from sma_MST_CaseStatus
+		--					where csssDescription=CL.[description]
+		--				)
+		--else (
+		--		select cssnStatusID
+		--		from sma_MST_CaseStatus
+		--		where csssDescription='Conversion Case No Status'
+		--		)
+		--end																as [cssnStatusID]
     ,''																	as [cssnExpDays]
 	,case 
 		when c.close_date between '1900-01-01' and '2079-06-06' then c.close_Date

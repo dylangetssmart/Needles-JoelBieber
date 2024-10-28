@@ -1,4 +1,4 @@
--- use [JoelBieberNeedles]
+use [JoelBieberSA_Needles]
 GO
 
 SET QUOTED_IDENTIFIER ON;

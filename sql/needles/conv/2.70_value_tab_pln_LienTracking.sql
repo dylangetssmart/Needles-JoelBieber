@@ -12,9 +12,7 @@ INSERT INTO #LienValueCodes
 	(
 	code
 	)
-VALUES (
-'WC'
-);
+VALUES ('WC'), ('LIE');
 
 
 

@@ -286,7 +286,8 @@ SELECT
 	'implementation_users' AS [saga_ref]	
 --Select *
 FROM [implementation_users] iu
-LEFT JOIN [sma_MST_IndvContacts] ind on iu.StaffCode = ind.cinsgrade
+--LEFT JOIN [sma_MST_IndvContacts] ind on iu.StaffCode = ind.cinsgrade
+LEFT JOIN [sma_MST_IndvContacts] ind on iu.SAContactID = ind.cinnContactID
 LEFT JOIN JoelBieberNeedles..[staff] s on s.staff_code = iu.staffcode
 WHERE cinncontactid IS NULL
 and SALoginID <> 'aadmin'
@@ -489,7 +490,7 @@ GO
 -- INSERT USERS
 ---------------------
 
--- Insert data into sma_MST_Users table from implementation_users table
+ -- Insert data into sma_MST_Users table from implementation_users table
 INSERT INTO [sma_MST_Users] (
     [usrnContactID],         -- Contact ID
     [usrsLoginID],           -- Login ID

@@ -1,3 +1,5 @@
+USE JoelBieberSA_Needles
+
 drop table [sma_MST_AllContactInfo]
 GO
 

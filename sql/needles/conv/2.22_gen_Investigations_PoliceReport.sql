@@ -1,4 +1,4 @@
--- use [JoelBieberNeedles]
+use [JoelBieberSA_Needles]
 go
 /*
 alter table [sma_TRN_PoliceReports] disable trigger all

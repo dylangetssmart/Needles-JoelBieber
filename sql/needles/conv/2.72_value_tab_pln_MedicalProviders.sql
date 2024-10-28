@@ -1,6 +1,5 @@
-
--- use [SA]
--- GO
+use JoelBieberSA_Needles
+GO
 /*
 alter table [sma_TRN_Hospitals] disable trigger all
 delete [sma_TRN_Hospitals]

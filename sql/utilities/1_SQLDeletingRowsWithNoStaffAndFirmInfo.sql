@@ -1,4 +1,4 @@
-use JoelBieberSA_Needles_ImpStart
+use JoelBieberSA_Needles
 
 truncate table  CP_UserNotesStatus
 Go

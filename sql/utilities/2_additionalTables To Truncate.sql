@@ -1,5 +1,4 @@
-use JoelBieberSA_Needles_ImpStart
-
+use JoelBieberSA_Needles
 truncate table sma_trn_incidents
 truncate table sma_trn_settlements
 truncate table sma_TRN_Hospitals
