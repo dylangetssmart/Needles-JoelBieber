@@ -1,6 +1,6 @@
 ----------------------------
 
-select * FROM JoelBieberNeedles..insurance i WHERE i.case_num = 226937
+--select * FROM JoelBieberNeedles..insurance i WHERE i.case_num = 226937
 ----------------------------
 
 

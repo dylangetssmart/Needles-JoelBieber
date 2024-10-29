@@ -1,4 +1,4 @@
--- use JoelBieberNeedles
+use JoelBieberSA_Needles
 GO
 /*
 alter table [sma_TRN_SOLs] disable trigger all

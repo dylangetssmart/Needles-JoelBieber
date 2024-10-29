@@ -1,4 +1,4 @@
--- USE [JoelBieberNeedles]
+USE [JoelBieberSA_Needles]
 GO
 /*
 alter table [sma_TRN_ReferredOut] disable trigger all
