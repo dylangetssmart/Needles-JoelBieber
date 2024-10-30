@@ -156,7 +156,7 @@ INSERT INTO [sma_MST_UDFDefinition]
 ALTER TABLE sma_trn_udfvalues DISABLE TRIGGER ALL
 GO
 
--- Other9UDF will not exist if it's empty or only contains ExlucedColumns
+-- Table will not exist if it's empty or only contains ExlucedColumns
 IF EXISTS (
 		SELECT
 			*

@@ -124,6 +124,15 @@ ORDER BY M.field_title
 ALTER TABLE sma_trn_udfvalues DISABLE TRIGGER ALL
 GO
 
+-- Table will not exist if it's empty or only contains ExlucedColumns
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.tables
+		WHERE name = 'Other5UDF'
+			AND type = 'U'
+	)
+BEGIN
 INSERT INTO [sma_TRN_UDFValues]
 (
    [udvnUDFID]
@@ -155,6 +164,7 @@ FROM Other5UDF udf
 	ON def.udfnRelatedPK = udf.casnOrgCaseTypeID
 	AND def.udfsUDFName = FieldTitle
 	AND def.udfsScreenName = 'Other5'
+END
 
 ALTER TABLE sma_trn_udfvalues ENABLE TRIGGER ALL
 GO
