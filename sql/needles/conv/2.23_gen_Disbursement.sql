@@ -13,7 +13,8 @@ CREATE TABLE #DisbursementValueCodes (
 
 INSERT INTO #DisbursementValueCodes (code)
 VALUES
-('CEX'), ('CL'), ('DTF'), ('INV'), ('MSC'), ('REI'), ('REN');
+('DTF'), ('MSC'); -- ds 2024-11-07 updated value codes
+-- ('CEX'), ('CL'), ('DTF'), ('INV'), ('MSC'), ('REI'), ('REN');
 
 
 
