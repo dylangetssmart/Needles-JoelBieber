@@ -12,7 +12,10 @@ INSERT INTO #LienValueCodes
 	(
 	code
 	)
-VALUES ('WC'), ('LIE');
+VALUES ('LIE');
+
+-- ds 2024-11-07 updated value codes
+--('WC'), ('LIE');
 
 
 
