@@ -12,7 +12,9 @@ INSERT INTO #LienValueCodes
 	(
 	code
 	)
-VALUES ('LIE');
+VALUES (
+'LIE'
+);
 
 -- ds 2024-11-07 updated value codes
 --('WC'), ('LIE');
@@ -50,9 +52,9 @@ select * from [JoelBieberNeedles].[dbo].[value_payment] where value_id=65990
 IF NOT EXISTS (
 		SELECT
 			*
-		FROM sys.columns
+		FROM sys.COLUMNS
 		WHERE Name = N'saga'
-			AND Object_ID = OBJECT_ID(N'sma_TRN_Lienors')
+			AND object_id = OBJECT_ID(N'sma_TRN_Lienors')
 	)
 BEGIN
 	ALTER TABLE [sma_TRN_Lienors] ADD [saga] INT NULL;
@@ -247,7 +249,7 @@ INNER JOIN [JoelBieberSA_Needles].[dbo].[sma_TRN_cases] CAS
 INNER JOIN [JoelBieberSA_Needles].[dbo].[IndvOrgContacts_Indexed] IOC
 	ON IOC.SAGA = V.party_id
 INNER JOIN [JoelBieberSA_Needles].[dbo].[sma_TRN_Plaintiff] T
-	ON T.plnnContactID = IOC.CID
+	ON T.plnnContactID = IOC.cid
 		AND T.plnnContactCtg = IOC.CTG
 		AND T.plnnCaseID = CAS.casnCaseID
 GO
@@ -298,7 +300,7 @@ INNER JOIN [JoelBieberSA_Needles].[dbo].[sma_TRN_cases] CAS
 INNER JOIN [JoelBieberSA_Needles].[dbo].[IndvOrgContacts_Indexed] IOC
 	ON IOC.SAGA = V.party_id
 INNER JOIN [JoelBieberSA_Needles].[dbo].[sma_TRN_Defendants] D
-	ON D.defnContactID = IOC.CID
+	ON D.defnContactID = IOC.cid
 		AND D.defnContactCtgID = IOC.CTG
 		AND D.defnCaseID = CAS.casnCaseID
 GO
@@ -344,7 +346,7 @@ INSERT INTO [dbo].[sma_TRN_Lienors]
 				lntnLienTypeID
 			FROM [JoelBieberSA_Needles].[dbo].[sma_MST_LienType]
 			WHERE lntsDscrptn = (
-					SELECT
+					SELECT TOP 1
 						[description]
 					FROM [JoelBieberNeedles].[dbo].[value_code]
 					WHERE [code] = V.code
