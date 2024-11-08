@@ -29,7 +29,13 @@ BEGIN
 END
 
 
+--ALTER TABLE sma_MST_IndvContacts
+--ALTER COLUMN saga VARCHAR(100);
+--GO
 
+--ALTER TABLE [sma_MST_OrgContacts]
+--ALTER COLUMN saga VARCHAR(100);
+--GO
 
 --(0) saga field for needles names_id ---
 ALTER TABLE [sma_MST_IndvContacts]

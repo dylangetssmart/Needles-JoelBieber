@@ -14,6 +14,10 @@ Description: Create placeholder individual contacts used as fallback when contac
 USE ShinerSA
 GO
 
+--ALTER TABLE sma_MST_IndvContacts
+--ALTER COLUMN saga VARCHAR(100);
+--GO
+
 ALTER TABLE sma_MST_IndvContacts DISABLE TRIGGER ALL
 GO
 

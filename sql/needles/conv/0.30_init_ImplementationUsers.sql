@@ -82,7 +82,7 @@ ELSE
 IF @Phase = 2
 BEGIN
 	-- Phase 2: Use implementation database as starting point and add staff_code from JoelBieberNeedles..staff
-
+	-- at this point, the user table contains legit users entered by the client
 	INSERT INTO implementation_users
 		(
 		SAContactID
@@ -112,8 +112,10 @@ BEGIN
 		   ,u.usrbActiveState		   AS Active
 		   ,u.usrbIsShowInSystem	   AS Visible
 		--select * 
-		FROM [JoelBieber_Imp_2024-10-28]..sma_mst_users u
-		JOIN [JoelBieber_Imp_2024-10-28]..sma_MST_IndvContacts smic
+		--FROM [JoelBieber_Imp_2024-10-28]..sma_mst_users u
+		--JOIN [JoelBieber_Imp_2024-10-28]..sma_MST_IndvContacts smic
+		FROM [JoelBieberSA_Needles]..sma_mst_users u
+		JOIN [JoelBieberSA_Needles]..sma_MST_IndvContacts smic
 			ON smic.cinnContactID = u.usrnContactID
 		LEFT JOIN JoelBieberNeedles..staff s
 			ON s.full_name = smic.cinsFirstName + ' ' + smic.cinsLastName
