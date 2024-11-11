@@ -187,8 +187,36 @@ GO
 
 
 /* ####################################
-Insert Lost Wages
+Lost Wages
 */
+
+-- Create wage type "Lost Wage"
+IF NOT EXISTS (
+    SELECT 1 
+    FROM [dbo].[sma_MST_WagesTypes] 
+    WHERE wgtsCode = 'LOST'
+)
+BEGIN
+    INSERT INTO [dbo].[sma_MST_WagesTypes]
+           ([wgtsCode]
+           ,[wgtsDscrptn]
+           ,[wgtnRecUserID]
+           ,[wgtdDtCreated]
+           ,[wgtnModifyUserID]
+           ,[wgtdDtModified]
+           ,[wgtnLevelNo])
+    VALUES
+           ('LOST'                 -- wgtsCode
+           ,'Lost Wage'           -- wgtsDscrptn
+           ,368                    -- wgtnRecUserID
+           ,GETDATE()              -- wgtdDtCreated
+           ,NULL                   -- wgtnModifyUserID
+           ,NULL                   -- wgtdDtModified
+           ,NULL);                 -- wgtnLevelNo
+END;
+GO
+
+-- Insert Lost Wages
 INSERT INTO [sma_TRN_LostWages]
 (
 	   [ltwnEmploymentID]
@@ -214,7 +242,7 @@ SELECT DISTINCT
 		,(
 			select wgtnWagesTypeID
 			from [sma_MST_WagesTypes]
-			where wgtsDscrptn='Salary'
+			where wgtsDscrptn='Lost Wage'
 		)						as [ltwsType]   			--[sma_MST_WagesTypes].wgtnWagesTypeID
 		 ,case
 		 	when v.start_date between '1/1/1900' and '6/6/2079'
