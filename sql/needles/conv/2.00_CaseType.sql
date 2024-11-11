@@ -25,7 +25,7 @@ IF NOT EXISTS (
 			*
 		FROM sys.columns
 		WHERE Name = N'saga_db'
-			AND Object_ID = OBJECT_ID(N'sma_trn_Cases')
+			AND object_id = OBJECT_ID(N'sma_trn_Cases')
 	)
 BEGIN
 	ALTER TABLE sma_trn_Cases ADD [saga_db] VARCHAR(5);
@@ -178,7 +178,7 @@ IF NOT EXISTS (
 			*
 		FROM sys.columns
 		WHERE Name = N'VenderCaseType'
-			AND Object_ID = OBJECT_ID(N'sma_MST_CaseType')
+			AND object_id = OBJECT_ID(N'sma_MST_CaseType')
 	)
 BEGIN
 	ALTER TABLE sma_MST_CaseType
@@ -443,106 +443,207 @@ WHERE A.SubRoleId = sbrnSubRoleId
 
 
 -- (4) specific plaintiff and defendant party roles ----------------------------------------------------
-INSERT INTO [sma_MST_SubRoleCode]
-	(
-	srcsDscrptn
-   ,srcnRoleID
-	)
-	(
-	SELECT
-		'(P)-Default Role'
-	   ,4
+-- roleId 4 -> plaintiff
+-- roleId 5 -> defendant
+--INSERT INTO [sma_MST_SubRoleCode]
+--	(
+--	srcsDscrptn
+--   ,srcnRoleID
+--	)
+--	(
+--	SELECT
+--		'(P)-Default Role'
+--	   ,4
 
-	UNION ALL
+--	UNION ALL
 
-	SELECT
-		'(D)-Default Role'
-	   ,5
+--	SELECT
+--		'(D)-Default Role'
+--	   ,5
 
-	UNION ALL
+--	UNION ALL
 
-	SELECT
-		[SA Roles]
-	   ,4
-	FROM [PartyRoles]
-	WHERE [SA Party] = 'Plaintiff'
+--	SELECT
+--		[SA Roles]
+--	   ,4
+--	FROM [PartyRoles]
+--	WHERE [SA Party] = 'Plaintiff'
 
-	UNION ALL
+--	UNION ALL
 
-	SELECT
-		[SA Roles]
-	   ,5
-	FROM [PartyRoles]
-	WHERE [SA Party] = 'Defendant'
-	)
-	EXCEPT
-	SELECT
-		srcsDscrptn
-	   ,srcnRoleID
-	FROM [sma_MST_SubRoleCode]
+--	SELECT
+--		[SA Roles]
+--	   ,5
+--	FROM [PartyRoles]
+--	WHERE [SA Party] = 'Defendant'
+
+--	-- co-counsel
+--	UNION ALL
+--	SELECT
+--		'(P)-CO-COUNSEL'
+--	   ,4
+--	UNION ALL
+--	SELECT
+--		'(D)-CO-COUNSEL'
+
+
+--	   ,5
+--	-- driver
+--	UNION ALL
+--	SELECT
+--		'(P)-Driver'
+--	   ,4
+--	UNION ALL
+--	SELECT
+--		'(D)-Driver'
+--	   ,5
+--	-- Ins Adjuster
+--	UNION ALL
+--	SELECT
+--		'(P)-Adjuster'
+--	   ,4
+--	UNION ALL
+--	SELECT
+--		'(D)-Adjuster'
+--	   ,5
+--	-- Owner
+--	UNION ALL
+--	SELECT
+--		'(P)-Owner'
+--	   ,4
+--	UNION ALL
+--	SELECT
+--		'(D)-Owner'
+--	   ,5
+--	-- PROPERTY OWNER
+--	UNION ALL
+--	SELECT
+--		'(P)-PROPERTY OWNER'
+--	   ,4
+--	UNION ALL
+--	SELECT
+--		'(D)-PROPERTY OWNER'
+--	   ,5
+
+
+
+
+--	)
+--	EXCEPT
+--	SELECT
+--		srcsDscrptn
+--	   ,srcnRoleID
+--	FROM [sma_MST_SubRoleCode]
+INSERT INTO [sma_MST_SubRoleCode] (srcsDscrptn, srcnRoleID)
+(
+    -- Default Roles
+    SELECT '(P)-Default Role', 4
+    UNION ALL
+    SELECT '(D)-Default Role', 5
+
+    -- Roles from PartyRoles table
+    UNION ALL
+    SELECT [SA Roles], 4 FROM [PartyRoles] WHERE [SA Party] = 'Plaintiff'
+    UNION ALL
+    SELECT [SA Roles], 5 FROM [PartyRoles] WHERE [SA Party] = 'Defendant'
+
+    -- party.role = "CO-COUNSEL"
+    UNION ALL
+    SELECT '(P)-CO-COUNSEL', 4
+    UNION ALL
+    SELECT '(D)-CO-COUNSEL', 5
+
+    -- party.role = "DRIVER"
+    UNION ALL
+    SELECT '(P)-DRIVER', 4
+    UNION ALL
+    SELECT '(D)-DRIVER', 5
+
+    -- party.role = "INS ADJUSTER"
+    UNION ALL
+    SELECT '(P)-ADJUSTER', 4
+    UNION ALL
+    SELECT '(D)-ADJUSTER', 5
+
+    -- party.role = "OWNER"
+    UNION ALL
+    SELECT '(P)-OWNER', 4
+    UNION ALL
+    SELECT '(D)-OWNER', 5
+
+    -- party.role = "PROPERTY OWNER"
+    UNION ALL
+    SELECT '(P)-PROPERTY OWNER', 4
+    UNION ALL
+    SELECT '(D)-PROPERTY OWNER', 5
+)
+EXCEPT
+SELECT srcsDscrptn, srcnRoleID
+FROM [sma_MST_SubRoleCode];
 
 
 -- (4.1) Not already in sma_MST_SubRole-----
 INSERT INTO sma_MST_SubRole
-	(
-	sbrnRoleID
-   ,sbrsDscrptn
-   ,sbrnCaseTypeID
-   ,sbrnTypeCode
-	)
-	SELECT
-		T.sbrnRoleID
-	   ,T.sbrsDscrptn
-	   ,T.sbrnCaseTypeID
-	   ,T.sbrnTypeCode
-	FROM (
-		SELECT
-			R.PorD AS sbrnRoleID
-		   ,R.[role] AS sbrsDscrptn
-		   ,CST.cstnCaseTypeID AS sbrnCaseTypeID
-		   ,(
-				SELECT
-					srcnCodeId
-				FROM sma_MST_SubRoleCode
-				WHERE srcsDscrptn = R.role
-					AND srcnRoleID = R.PorD
-			)
-			AS sbrnTypeCode
-		FROM sma_MST_CaseType CST
-		CROSS JOIN (
-			SELECT
-				'(P)-Default Role' AS role
-			   ,4 AS PorD
-			UNION ALL
-			SELECT
-				'(D)-Default Role' AS role
-			   ,5 AS PorD
-			UNION ALL
-			SELECT
-				[SA Roles] AS role
-			   ,4 AS PorD
-			FROM [PartyRoles]
-			WHERE [SA Party] = 'Plaintiff'
-			UNION ALL
-			SELECT
-				[SA Roles] AS role
-			   ,5 AS PorD
-			FROM [PartyRoles]
-			WHERE [SA Party] = 'Defendant'
-		) R
-		WHERE CST.VenderCaseType = (
-				SELECT
-					VenderCaseType
-				FROM #TempVariables
-			)
-	) T
-	EXCEPT
-	SELECT
-		sbrnRoleID
-	   ,sbrsDscrptn
-	   ,sbrnCaseTypeID
-	   ,sbrnTypeCode
-	FROM sma_MST_SubRole
+    (sbrnRoleID, sbrsDscrptn, sbrnCaseTypeID, sbrnTypeCode)
+SELECT
+    NewRoles.sbrnRoleID,
+    NewRoles.sbrsDscrptn,
+    NewRoles.sbrnCaseTypeID,
+    SubRoleCodes.srcnCodeId AS sbrnTypeCode
+FROM (
+    SELECT
+        R.PorD AS sbrnRoleID,
+        R.[role] AS sbrsDscrptn,
+        CST.cstnCaseTypeID AS sbrnCaseTypeID
+    FROM sma_MST_CaseType CST
+    CROSS JOIN (
+        -- Default Roles
+        SELECT '(P)-Default Role' AS role, 4 AS PorD
+        UNION ALL
+        SELECT '(D)-Default Role' AS role, 5 AS PorD
+        
+        -- Roles from PartyRoles table
+        UNION ALL
+        SELECT [SA Roles] AS role, 4 AS PorD FROM [PartyRoles] WHERE [SA Party] = 'Plaintiff'
+        UNION ALL
+        SELECT [SA Roles] AS role, 5 AS PorD FROM [PartyRoles] WHERE [SA Party] = 'Defendant'
+        
+        -- Specific Roles
+        UNION ALL
+        SELECT '(P)-CO-COUNSEL', 4
+        UNION ALL
+        SELECT '(D)-CO-COUNSEL', 5
+        UNION ALL
+        SELECT '(P)-DRIVER', 4
+        UNION ALL
+        SELECT '(D)-DRIVER', 5
+        UNION ALL
+        SELECT '(P)-ADJUSTER', 4
+        UNION ALL
+        SELECT '(D)-ADJUSTER', 5
+        UNION ALL
+        SELECT '(P)-OWNER', 4
+        UNION ALL
+        SELECT '(D)-OWNER', 5
+        UNION ALL
+        SELECT '(P)-PROPERTY OWNER', 4
+        UNION ALL
+        SELECT '(D)-PROPERTY OWNER', 5
+    ) R
+    WHERE CST.VenderCaseType = (
+        SELECT VenderCaseType FROM #TempVariables
+    )
+) AS NewRoles
+JOIN sma_MST_SubRoleCode SubRoleCodes
+    ON SubRoleCodes.srcsDscrptn = NewRoles.sbrsDscrptn
+    AND SubRoleCodes.srcnRoleID = NewRoles.sbrnRoleID
+EXCEPT
+SELECT
+    sbrnRoleID,
+    sbrsDscrptn,
+    sbrnCaseTypeID,
+    sbrnTypeCode
+FROM sma_MST_SubRole;
 
 
 
