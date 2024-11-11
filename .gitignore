@@ -46,3 +46,4 @@ vsworkspacestate.json
 slnx.sqlite
 
 .vs/*
+/.vs/VSWorkspaceState.json
