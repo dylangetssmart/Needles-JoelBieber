@@ -1,3 +1,34 @@
+/*
+
+
+
+select * FROM JoelBieberNeedles..party_Indexed pi where role = 'property owner'
+
+
+1. create plaintiffs from partyroles
+1. create plaintiffs from party_indexed using our_client
+- co-counsel
+- driver
+- ins adjuster
+- owner
+- property owner
+
+1. create defendants from partyroles
+- co-counsel
+- driver
+- ins adjuster
+- owner
+- property owner
+1. create defendants from party_indexed using our_client
+
+create default plaintiff
+create default defendant
+
+*/
+
+
+
+
 USE JoelBieberSA_Needles
 GO
 /*
@@ -35,8 +66,7 @@ ALTER TABLE [sma_TRN_Defendants] DISABLE TRIGGER ALL
 GO
 
 -------------------------------------------------------------------------------
--- Construct sma_TRN_Plaintiff ################################################
--- 
+-- Create Plaintiffs from PartyRoles
 -------------------------------------------------------------------------------
 
 INSERT INTO [sma_TRN_Plaintiff] (
@@ -158,17 +188,9 @@ GO
 */
 
 
-
-/*
 -------------------------------------------------------------------------------
--- Construct sma_TRN_Defendants ###############################################
-from party_indexed
-with cases that exist in trn_cases
-IndvOrgContacts_Indexed
-[Needles Roles]
-[sma_MST_SubRole]
+-- Create Defendants from PartyRoles
 -------------------------------------------------------------------------------
-*/
 
 insert into [sma_TRN_Defendants] (
 	[defnCaseID]
@@ -463,3 +485,4 @@ ALTER TABLE [sma_TRN_Defendants] ENABLE TRIGGER ALL
 GO
 ALTER TABLE [sma_TRN_Plaintiff] ENABLE TRIGGER ALL
 GO
+
