@@ -40,3 +40,7 @@ lib/__pycache__/
 venv/
 
 postgres_data/
+
+vsworkspacestate.json
+.ssms_suo
+slnx.sqlite
