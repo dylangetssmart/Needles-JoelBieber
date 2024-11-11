@@ -44,3 +44,5 @@ postgres_data/
 vsworkspacestate.json
 .ssms_suo
 slnx.sqlite
+
+.vs/*
