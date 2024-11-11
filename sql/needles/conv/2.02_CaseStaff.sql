@@ -12,6 +12,7 @@ Overseeing Attorney/Paralegal
 
 --select * from JoelBieberNeedles..cases_Indexed ci WHERE ci.casenum = 229330
 --PERESICH	JHULA	JHULA	JHULA
+select * from sma_TRN_CaseStaff stcs WHERE stcs.cssnCaseID = 37853
 --select * FROM JoelBieberSA_Needles..sma_MST_Users smu
 
 ##########################################################################################################################
@@ -60,7 +61,7 @@ INSERT INTO [sma_MST_SubRoleCode]
 	   ,10
 	UNION ALL
 	SELECT
-		'Neogiator'
+		'Negotiator'
 	   ,10
 	UNION ALL
 	SELECT
