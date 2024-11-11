@@ -201,7 +201,8 @@ INSERT INTO [sma_TRN_Plaintiff]
 				OR (P.role = 'PROPERTY OWNER'
 					AND S.sbrsDscrptn = '(P)-PROPERTY OWNER'
 					AND S.sbrnRoleID = 4)
-			);
+			)
+	WHERE p.our_client = 'Y'
 GO
 
 /*
@@ -312,8 +313,8 @@ INSERT INTO [sma_TRN_Defendants]
 		ON CAS.cassCaseNumber = P.case_id
 	JOIN IndvOrgContacts_Indexed ACIO
 		ON ACIO.SAGA = P.party_id
-	JOIN [PartyRoles] PR
-		ON PR.[Needles Roles] = P.[role]
+	--JOIN [PartyRoles] PR
+	--	ON PR.[Needles Roles] = P.[role]
 	JOIN [sma_MST_SubRole] S
 		ON CAS.casnOrgCaseTypeID = S.sbrnCaseTypeID
 			AND (
@@ -332,7 +333,9 @@ INSERT INTO [sma_TRN_Defendants]
 				OR (P.role = 'PROPERTY OWNER'
 					AND S.sbrsDscrptn = '(D)-PROPERTY OWNER'
 					AND S.sbrnRoleID = 5)
-			);
+			)
+	WHERE p.our_client = 'N'
+		--AND p.case_id = 204162
 GO
 
 
@@ -395,8 +398,7 @@ INSERT INTO [sma_TRN_Plaintiff]
 				AND cinsLastName = 'Unidentified'
 		)		   
 		AS [plnnContactID]
-	   ,-- Unidentified Plaintiff
-		NULL	   AS [plnnAddressID]
+	   ,NULL	   AS [plnnAddressID]
 	   ,(
 			SELECT
 				sbrnSubRoleId
