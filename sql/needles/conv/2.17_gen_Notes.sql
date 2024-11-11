@@ -10,7 +10,7 @@ USE JoelBieberSA_Needles
 if not exists (Select * From sys.tables t join sys.columns c on t.object_id = c.object_id where t.name = 'Sma_trn_notes' and c.name = 'saga')
 begin
 	alter table sma_trn_notes
-	add SAGA int
+	add SAGA varchar(100)
 end
 GO
 

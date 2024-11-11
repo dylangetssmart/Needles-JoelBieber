@@ -2,6 +2,9 @@
 This script populates UDF Other10 with all columns from user_tab10_data
 */
 
+USE JoelBieberSA_Needles
+GO
+
 IF EXISTS (
 		SELECT
 			*
@@ -98,60 +101,68 @@ GO
 ALTER TABLE [sma_MST_UDFDefinition] DISABLE TRIGGER ALL
 GO
 
-INSERT INTO [sma_MST_UDFDefinition]
-	(
-	[udfsUDFCtg]
-   ,[udfnRelatedPK]
-   ,[udfsUDFName]
-   ,[udfsScreenName]
-   ,[udfsType]
-   ,[udfsLength]
-   ,[udfbIsActive]
-   ,[udfshortName]
-   ,[udfsNewValues]
-   ,[udfnSortOrder]
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.tables
+		WHERE name = 'Other10UDF'
+			AND type = 'U'
 	)
-	SELECT DISTINCT
-		'C'										   AS [udfsUDFCtg]
-	   ,CST.cstnCaseTypeID						   AS [udfnRelatedPK]
-	   ,M.field_title							   AS [udfsUDFName]
-	   ,'Other10'								   AS [udfsScreenName]
-	   ,ucf.UDFType								   AS [udfsType]
-	   ,ucf.field_len							   AS [udfsLength]
-	   ,1										   AS [udfbIsActive]
-	   ,'user_tab10_data' + ucf.column_name		   AS [udfshortName]
-	   ,ucf.dropdownValues						   AS [udfsNewValues]
-	   ,DENSE_RANK() OVER (ORDER BY M.field_title) AS udfnSortOrder
-	FROM [sma_MST_CaseType] CST
-	JOIN CaseTypeMixture mix
-		ON mix.[SmartAdvocate Case Type] = cst.cstsType
-	JOIN [JoelBieberNeedles].[dbo].[user_tab10_matter] M
-		ON M.mattercode = mix.matcode
-			AND M.field_type <> 'label'
-	JOIN (
+BEGIN
+	INSERT INTO [sma_MST_UDFDefinition]
+		(
+		[udfsUDFCtg]
+	   ,[udfnRelatedPK]
+	   ,[udfsUDFName]
+	   ,[udfsScreenName]
+	   ,[udfsType]
+	   ,[udfsLength]
+	   ,[udfbIsActive]
+	   ,[udfshortName]
+	   ,[udfsNewValues]
+	   ,[udfnSortOrder]
+		)
 		SELECT DISTINCT
-			fieldTitle
-		FROM Other10UDF
-	) vd
-		ON vd.FieldTitle = M.field_title
-	JOIN [dbo].[NeedlesUserFields] ucf
-		ON ucf.field_num = M.ref_num
-	LEFT JOIN (
-		SELECT DISTINCT
-			table_Name
-		   ,column_name
-		FROM [JoelBieberNeedles].[dbo].[document_merge_params]
-		WHERE table_Name = 'user_tab10_data'
-	) dmp
-		ON dmp.column_name = ucf.field_Title
-	LEFT JOIN [sma_MST_UDFDefinition] def
-		ON def.[udfnRelatedPK] = cst.cstnCaseTypeID
-			AND def.[udfsUDFName] = M.field_title
-			AND def.[udfsScreenName] = 'Other10'
-			AND def.[udfsType] = ucf.UDFType
-			AND def.udfnUDFID IS NULL
-	ORDER BY M.field_title
-
+			'C'										   AS [udfsUDFCtg]
+		   ,CST.cstnCaseTypeID						   AS [udfnRelatedPK]
+		   ,M.field_title							   AS [udfsUDFName]
+		   ,'Other10'								   AS [udfsScreenName]
+		   ,ucf.UDFType								   AS [udfsType]
+		   ,ucf.field_len							   AS [udfsLength]
+		   ,1										   AS [udfbIsActive]
+		   ,'user_tab10_data' + ucf.column_name		   AS [udfshortName]
+		   ,ucf.dropdownValues						   AS [udfsNewValues]
+		   ,DENSE_RANK() OVER (ORDER BY M.field_title) AS udfnSortOrder
+		FROM [sma_MST_CaseType] CST
+		JOIN CaseTypeMixture mix
+			ON mix.[SmartAdvocate Case Type] = cst.cstsType
+		JOIN [JoelBieberNeedles].[dbo].[user_tab10_matter] M
+			ON M.mattercode = mix.matcode
+				AND M.field_type <> 'label'
+		JOIN (
+			SELECT DISTINCT
+				fieldTitle
+			FROM Other10UDF
+		) vd
+			ON vd.FieldTitle = M.field_title
+		JOIN [dbo].[NeedlesUserFields] ucf
+			ON ucf.field_num = M.ref_num
+		LEFT JOIN (
+			SELECT DISTINCT
+				table_Name
+			   ,column_name
+			FROM [JoelBieberNeedles].[dbo].[document_merge_params]
+			WHERE table_Name = 'user_tab10_data'
+		) dmp
+			ON dmp.column_name = ucf.field_Title
+		LEFT JOIN [sma_MST_UDFDefinition] def
+			ON def.[udfnRelatedPK] = CST.cstnCaseTypeID
+				AND def.[udfsUDFName] = M.field_title
+				AND def.[udfsScreenName] = 'Other10'
+				AND def.[udfsType] = ucf.UDFType
+				AND def.udfnUDFID IS NULL
+		ORDER BY M.field_title
+END
 
 
 ALTER TABLE sma_trn_udfvalues DISABLE TRIGGER ALL

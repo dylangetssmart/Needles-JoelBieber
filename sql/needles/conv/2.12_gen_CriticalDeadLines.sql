@@ -1,3 +1,26 @@
+/* ###################################################################################
+Author: Dylan Smith | dylans@smartadvocate.com
+Date: 2024-11-07
+Description: Create critical deadlines from case_date
+
+SELECT
+	c.casenum
+	,m.case_date_1
+	,c.case_date_1
+	,m.case_date_2
+	,c.case_date_2
+	,m.case_date_3
+	,c.case_date_3
+from JoelBieberNeedles..cases c
+JOIN JoelBieberNeedles..matter m
+ON m.matcode = c.matcode
+WHERE c.casenum = 229330
+
+select * from JoelBieberSA_Needles..sma_TRN_CriticalDeadlines WHERE crdnCaseID = 37853
+
+##########################################################################################################################
+*/
+
 use [JoelBieberSA_Needles]
 go
 /*

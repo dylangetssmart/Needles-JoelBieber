@@ -23,7 +23,7 @@ CREATE TABLE #NegSetValueCodes (
 INSERT INTO #NegSetValueCodes (code)
 VALUES
 ('MPP'),
-('SET'),
+('SET');
 
 -- ds 2024-11-07 update value codes
 --('ATT'),
@@ -49,7 +49,7 @@ FROM sys.columns
 WHERE Name = N'saga'
 	AND Object_ID = OBJECT_ID(N'sma_TRN_Settlements'))
 BEGIN
-	ALTER TABLE [sma_TRN_Settlements] ADD [saga] INT NULL;
+	ALTER TABLE [sma_TRN_Settlements] ADD [saga] varchar(100) NULL;
 END
 GO
 
