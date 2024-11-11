@@ -2,7 +2,10 @@ USE JoelBieberSA_Needles
 GO
 
 
---select * From JoelBieberNeedles..case_intake order by intake_taken
+--SELECT
+--	*
+--FROM JoelBieberNeedles..case_intake
+--WHERE ISNULL(date_opened, '') <> ''--order by intake_taken
 --sp_help sma_trn_Cases
 
 ALTER TABLE sma_trn_Cases
@@ -12,11 +15,7 @@ GO
 
 INSERT INTO [dbo].[CaseTypeMixture]
 	(
-	[matcode]
-   ,[header]
-   ,[description]
-   ,[SmartAdvocate Case Type]
-   ,[SmartAdvocate Case Sub Type]
+	[matcode], [header], [description], [SmartAdvocate Case Type], [SmartAdvocate Case Sub Type]
 	)
 	SELECT
 		''
@@ -39,17 +38,7 @@ INSERT INTO [dbo].[CaseTypeMixture]
 ----------------------------
 INSERT INTO [sma_MST_CaseSubType]
 	(
-	[cstsCode]
-   ,[cstnGroupID]
-   ,[cstsDscrptn]
-   ,[cstnRecUserId]
-   ,[cstdDtCreated]
-   ,[cstnModifyUserID]
-   ,[cstdDtModified]
-   ,[cstnLevelNo]
-   ,[cstbDefualt]
-   ,[saga]
-   ,[cstnTypeCode]
+	[cstsCode], [cstnGroupID], [cstsDscrptn], [cstnRecUserId], [cstdDtCreated], [cstnModifyUserID], [cstdDtModified], [cstnLevelNo], [cstbDefualt], [saga], [cstnTypeCode]
 	)
 	SELECT
 		NULL							  AS [cstsCode]
@@ -63,7 +52,7 @@ INSERT INTO [sma_MST_CaseSubType]
 	   ,1								  AS [cstbDefualt]
 	   ,NULL							  AS [saga]
 	   ,(
-			SELECT top 1
+			SELECT TOP 1
 				stcnCodeId
 			FROM [sma_MST_CaseSubTypeCode]
 			WHERE stcsDscrptn = MIX.[SmartAdvocate Case Sub Type]
@@ -91,64 +80,7 @@ SET @StateAbbrv = 'Ohio'
 
 INSERT INTO [sma_TRN_Cases]
 	(
-	[cassCaseNumber]
-   ,[casbAppName]
-   ,[cassCaseName]
-   ,[casnCaseTypeID]
-   ,[casnState]
-   ,[casdStatusFromDt]
-   ,[casnStatusValueID]
-   ,[casdsubstatusfromdt]
-   ,[casnSubStatusValueID]
-   ,[casdOpeningDate]
-   ,[casdClosingDate]
-   ,[casnCaseValueID]
-   ,[casnCaseValueFrom]
-   ,[casnCaseValueTo]
-   ,[casnCurrentCourt]
-   ,[casnCurrentJudge]
-   ,[casnCurrentMagistrate]
-   ,[casnCaptionID]
-   ,[cassCaptionText]
-   ,[casbMainCase]
-   ,[casbCaseOut]
-   ,[casbSubOut]
-   ,[casbWCOut]
-   ,[casbPartialOut]
-   ,[casbPartialSubOut]
-   ,[casbPartiallySettled]
-   ,[casbInHouse]
-   ,[casbAutoTimer]
-   ,[casdExpResolutionDate]
-   ,[casdIncidentDate]
-   ,[casnTotalLiability]
-   ,[cassSharingCodeID]
-   ,[casnStateID]
-   ,[casnLastModifiedBy]
-   ,[casdLastModifiedDate]
-   ,[casnRecUserID]
-   ,[casdDtCreated]
-   ,[casnModifyUserID]
-   ,[casdDtModified]
-   ,[casnLevelNo]
-   ,[cassCaseValueComments]
-   ,[casbRefIn]
-   ,[casbDelete]
-   ,[casbIntaken]
-   ,[casnOrgCaseTypeID]
-   ,[CassCaption]
-   ,[cassMdl]
-   ,[office_id]
-   ,[saga]
-   ,[LIP]
-   ,[casnSeriousInj]
-   ,[casnCorpDefn]
-   ,[casnWebImporter]
-   ,[casnRecoveryClient]
-   ,[cas]
-   ,[ngage]
-   ,[casnClientRecoveredDt]
-   ,[CloseReason]
+	[cassCaseNumber], [casbAppName], [cassCaseName], [casnCaseTypeID], [casnState], [casdStatusFromDt], [casnStatusValueID], [casdsubstatusfromdt], [casnSubStatusValueID], [casdOpeningDate], [casdClosingDate], [casnCaseValueID], [casnCaseValueFrom], [casnCaseValueTo], [casnCurrentCourt], [casnCurrentJudge], [casnCurrentMagistrate], [casnCaptionID], [cassCaptionText], [casbMainCase], [casbCaseOut], [casbSubOut], [casbWCOut], [casbPartialOut], [casbPartialSubOut], [casbPartiallySettled], [casbInHouse], [casbAutoTimer], [casdExpResolutionDate], [casdIncidentDate], [casnTotalLiability], [cassSharingCodeID], [casnStateID], [casnLastModifiedBy], [casdLastModifiedDate], [casnRecUserID], [casdDtCreated], [casnModifyUserID], [casdDtModified], [casnLevelNo], [cassCaseValueComments], [casbRefIn], [casbDelete], [casbIntaken], [casnOrgCaseTypeID], [CassCaption], [cassMdl], [office_id], [saga], [LIP], [casnSeriousInj], [casnCorpDefn], [casnWebImporter], [casnRecoveryClient], [cas], [ngage], [casnClientRecoveredDt], [CloseReason]
 	)
 	SELECT DISTINCT
 		'Intake ' + RIGHT('00000' + CONVERT(VARCHAR, row_ID), 5) AS [cassCaseNumber]
@@ -257,7 +189,7 @@ INSERT INTO [sma_TRN_Cases]
 		ON MIX.matcode = REPLACE(C.matcode, ' ', '')
 	LEFT JOIN sma_MST_CaseType CST
 		ON ISNULL(CST.cstsType, '') = ISNULL(MIX.[SmartAdvocate Case Type], '')
-	WHERE ISNULL(name_ID, '') <> ''
+	WHERE ISNULL(name_ID, '') <> '' AND isnull(C.date_opened,'') <> ''
 
 
 --select * FROM JoelBieberNeedles.[dbo].[Case_intake] C
@@ -267,19 +199,7 @@ INSERT INTO [sma_TRN_Cases]
 ------------------------------------------
 INSERT INTO [sma_TRN_CaseStatus]
 	(
-	[cssnCaseID]
-   ,[cssnStatusTypeID]
-   ,[cssnStatusID]
-   ,[cssnExpDays]
-   ,[cssdFromDate]
-   ,[cssdToDt]
-   ,[csssComments]
-   ,[cssnRecUserID]
-   ,[cssdDtCreated]
-   ,[cssnModifyUserID]
-   ,[cssdDtModified]
-   ,[cssnLevelNo]
-   ,[cssnDelFlag]
+	[cssnCaseID], [cssnStatusTypeID], [cssnStatusID], [cssnExpDays], [cssdFromDate], [cssdToDt], [csssComments], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo], [cssnDelFlag]
 	)
 	SELECT
 		CAS.casnCaseID
