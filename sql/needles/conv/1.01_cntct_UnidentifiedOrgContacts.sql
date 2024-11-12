@@ -8,6 +8,7 @@ Description: Create placeholder organization contacts used as fallback when cont
 1.2 - Unidentified Court
 1.3 - Unidentified Lienor
 1.4 - Unidentified School
+1.5 - Unidentified Employer
 
 #########################################################################################################################
 */
@@ -189,6 +190,43 @@ BEGIN
 		)
 		SELECT
 			'Unidentified School' AS [consName]
+		   ,2					 AS [connContactCtg]
+		   ,(
+				SELECT
+					octnOrigContactTypeID
+			FROM [sma_MST_OriginalContactTypes]
+				WHERE octnContactCtgID = 2
+					AND octsDscrptn = 'General'
+			)					 
+			AS [connContactTypeID]
+		   ,368					 AS [connRecUserID]
+		   ,GETDATE()			 AS [condDtCreated]
+		   --,'unidentifiedSchool'	 AS [saga]
+END
+GO
+
+-- ds 2024-11-12
+---------------------------------------------------
+-- [1.5] - Unidentified Employer
+---------------------------------------------------
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM [sma_MST_OrgContacts]
+		WHERE consName = 'Unidentified Employer'
+	)
+BEGIN
+	INSERT INTO [sma_MST_OrgContacts]
+		(
+		[consName]
+	   ,[connContactCtg]
+	   ,[connContactTypeID]
+	   ,[connRecUserID]
+	   ,[condDtCreated]
+	   --,[saga]
+		)
+		SELECT
+			'Unidentified Employer' AS [consName]
 		   ,2					 AS [connContactCtg]
 		   ,(
 				SELECT
