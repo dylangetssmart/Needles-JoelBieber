@@ -45,6 +45,7 @@ vsworkspacestate.json
 .ssms_suo
 slnx.sqlite
 
-.vs/*
+/.vs
+/.vs/*
 /.vs/VSWorkspaceState.json
-JoelBieber/
+/JoelBieber/
