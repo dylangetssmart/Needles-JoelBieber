@@ -46,11 +46,7 @@ CREATE TABLE #TempVariables (
 -- Insert values into the temporary table
 INSERT INTO #TempVariables
 	(
-	OfficeName
-   ,StateName
-   ,PhoneNumber
-   ,CaseGroup
-   ,VenderCaseType
+	OfficeName, StateName, PhoneNumber, CaseGroup, VenderCaseType
 	)
 VALUES (
 'Joel Bieber LLC', 'Virginia', '8048008000', 'Needles', 'JoelBieberCaseType'
@@ -72,15 +68,7 @@ IF NOT EXISTS (
 BEGIN
 	INSERT INTO [sma_MST_CaseGroup]
 		(
-		[cgpsCode]
-	   ,[cgpsDscrptn]
-	   ,[cgpnRecUserId]
-	   ,[cgpdDtCreated]
-	   ,[cgpnModifyUserID]
-	   ,[cgpdDtModified]
-	   ,[cgpnLevelNo]
-	   ,[IncidentTypeID]
-	   ,[LimitGroupStatuses]
+		[cgpsCode], [cgpsDscrptn], [cgpnRecUserId], [cgpdDtCreated], [cgpnModifyUserID], [cgpdDtModified], [cgpnLevelNo], [IncidentTypeID], [LimitGroupStatuses]
 		)
 		SELECT
 			'FORCONVERSION' AS [cgpsCode]
@@ -122,17 +110,7 @@ IF NOT EXISTS (
 BEGIN
 	INSERT INTO [sma_mst_offices]
 		(
-		[office_status]
-	   ,[office_name]
-	   ,[state_id]
-	   ,[is_default]
-	   ,[date_created]
-	   ,[user_created]
-	   ,[date_modified]
-	   ,[user_modified]
-	   ,[Letterhead]
-	   ,[UniqueContactId]
-	   ,[PhoneNumber]
+		[office_status], [office_name], [state_id], [is_default], [date_created], [user_created], [date_modified], [user_modified], [Letterhead], [UniqueContactId], [PhoneNumber]
 		)
 		SELECT
 			1					AS [office_status]
@@ -186,31 +164,12 @@ BEGIN
 END
 GO
 
--- (1.2) - Create case types from CaseTypeMixtures
+-- (1.2) - Create case types from CaseTypeMixture
 INSERT INTO [sma_MST_CaseType]
 	(
-	[cstsCode]
-   ,[cstsType]
-   ,[cstsSubType]
-   ,[cstnWorkflowTemplateID]
-   ,[cstnExpectedResolutionDays]
-   ,[cstnRecUserID]
-   ,[cstdDtCreated]
-   ,[cstnModifyUserID]
-   ,[cstdDtModified]
-   ,[cstnLevelNo]
-   ,[cstbTimeTracking]
-   ,[cstnGroupID]
-   ,[cstnGovtMunType]
-   ,[cstnIsMassTort]
-   ,[cstnStatusID]
-   ,[cstnStatusTypeID]
-   ,[cstbActive]
-   ,[cstbUseIncident1]
-   ,[cstsIncidentLabel1]
-   ,[VenderCaseType]
+	[cstsCode], [cstsType], [cstsSubType], [cstnWorkflowTemplateID], [cstnExpectedResolutionDays], [cstnRecUserID], [cstdDtCreated], [cstnModifyUserID], [cstdDtModified], [cstnLevelNo], [cstbTimeTracking], [cstnGroupID], [cstnGovtMunType], [cstnIsMassTort], [cstnStatusID], [cstnStatusTypeID], [cstbActive], [cstbUseIncident1], [cstsIncidentLabel1], [VenderCaseType]
 	)
-	SELECT
+	SELECT DISTINCT
 		NULL					  AS cstsCode
 	   ,[SmartAdvocate Case Type] AS cstsType
 	   ,NULL					  AS cstsSubType
@@ -299,17 +258,7 @@ GO
 -- Construct CaseSubType using CaseTypes
 INSERT INTO [sma_MST_CaseSubType]
 	(
-	[cstsCode]
-   ,[cstnGroupID]
-   ,[cstsDscrptn]
-   ,[cstnRecUserId]
-   ,[cstdDtCreated]
-   ,[cstnModifyUserID]
-   ,[cstdDtModified]
-   ,[cstnLevelNo]
-   ,[cstbDefualt]
-   ,[saga]
-   ,[cstnTypeCode]
+	[cstsCode], [cstnGroupID], [cstsDscrptn], [cstnRecUserId], [cstdDtCreated], [cstnModifyUserID], [cstdDtModified], [cstnLevelNo], [cstbDefualt], [saga], [cstnTypeCode]
 	)
 	SELECT
 		NULL						  AS [cstsCode]
@@ -377,18 +326,7 @@ and sub.cstncasesubtypeID is null
 -- (3.0) sma_MST_SubRole -----------------------------------------------------
 INSERT INTO [sma_MST_SubRole]
 	(
-	[sbrsCode]
-   ,[sbrnRoleID]
-   ,[sbrsDscrptn]
-   ,[sbrnCaseTypeID]
-   ,[sbrnPriority]
-   ,[sbrnRecUserID]
-   ,[sbrdDtCreated]
-   ,[sbrnModifyUserID]
-   ,[sbrdDtModified]
-   ,[sbrnLevelNo]
-   ,[sbrbDefualt]
-   ,[saga]
+	[sbrsCode], [sbrnRoleID], [sbrsDscrptn], [sbrnCaseTypeID], [sbrnPriority], [sbrnRecUserID], [sbrdDtCreated], [sbrnModifyUserID], [sbrdDtModified], [sbrnLevelNo], [sbrbDefualt], [saga]
 	)
 	SELECT
 		[sbrsCode]		   AS [sbrsCode]
@@ -534,116 +472,189 @@ WHERE A.SubRoleId = sbrnSubRoleId
 --		srcsDscrptn
 --	   ,srcnRoleID
 --	FROM [sma_MST_SubRoleCode]
-INSERT INTO [sma_MST_SubRoleCode] (srcsDscrptn, srcnRoleID)
-(
-    -- Default Roles
-    SELECT '(P)-Default Role', 4
-    UNION ALL
-    SELECT '(D)-Default Role', 5
+INSERT INTO [sma_MST_SubRoleCode]
+	(
+	srcsDscrptn, srcnRoleID
+	)
+	(
+	-- Default Roles
+	SELECT
+		'(P)-Default Role'
+	   ,4
+	UNION ALL
+	SELECT
+		'(D)-Default Role'
+	   ,5
 
-    -- Roles from PartyRoles table
-    UNION ALL
-    SELECT [SA Roles], 4 FROM [PartyRoles] WHERE [SA Party] = 'Plaintiff'
-    UNION ALL
-    SELECT [SA Roles], 5 FROM [PartyRoles] WHERE [SA Party] = 'Defendant'
+	-- Roles from PartyRoles table
+	UNION ALL
+	SELECT
+		[SA Roles]
+	   ,4
+	FROM [PartyRoles]
+	WHERE [SA Party] = 'Plaintiff'
+	UNION ALL
+	SELECT
+		[SA Roles]
+	   ,5
+	FROM [PartyRoles]
+	WHERE [SA Party] = 'Defendant'
 
-    -- party.role = "CO-COUNSEL"
-    UNION ALL
-    SELECT '(P)-CO-COUNSEL', 4
-    UNION ALL
-    SELECT '(D)-CO-COUNSEL', 5
+	-- party.role = "CO-COUNSEL"
+	UNION ALL
+	SELECT
+		'(P)-CO-COUNSEL'
+	   ,4
+	UNION ALL
+	SELECT
+		'(D)-CO-COUNSEL'
+	   ,5
 
-    -- party.role = "DRIVER"
-    UNION ALL
-    SELECT '(P)-DRIVER', 4
-    UNION ALL
-    SELECT '(D)-DRIVER', 5
+	-- party.role = "DRIVER"
+	UNION ALL
+	SELECT
+		'(P)-DRIVER'
+	   ,4
+	UNION ALL
+	SELECT
+		'(D)-DRIVER'
+	   ,5
 
-    -- party.role = "INS ADJUSTER"
-    UNION ALL
-    SELECT '(P)-ADJUSTER', 4
-    UNION ALL
-    SELECT '(D)-ADJUSTER', 5
+	-- party.role = "INS ADJUSTER"
+	UNION ALL
+	SELECT
+		'(P)-ADJUSTER'
+	   ,4
+	UNION ALL
+	SELECT
+		'(D)-ADJUSTER'
+	   ,5
 
-    -- party.role = "OWNER"
-    UNION ALL
-    SELECT '(P)-OWNER', 4
-    UNION ALL
-    SELECT '(D)-OWNER', 5
+	-- party.role = "OWNER"
+	UNION ALL
+	SELECT
+		'(P)-OWNER'
+	   ,4
+	UNION ALL
+	SELECT
+		'(D)-OWNER'
+	   ,5
 
-    -- party.role = "PROPERTY OWNER"
-    UNION ALL
-    SELECT '(P)-PROPERTY OWNER', 4
-    UNION ALL
-    SELECT '(D)-PROPERTY OWNER', 5
-)
-EXCEPT
-SELECT srcsDscrptn, srcnRoleID
-FROM [sma_MST_SubRoleCode];
+	-- party.role = "PROPERTY OWNER"
+	UNION ALL
+	SELECT
+		'(P)-PROPERTY OWNER'
+	   ,4
+	UNION ALL
+	SELECT
+		'(D)-PROPERTY OWNER'
+	   ,5
+	)
+	EXCEPT
+	SELECT
+		srcsDscrptn
+	   ,srcnRoleID
+	FROM [sma_MST_SubRoleCode];
 
 
 -- (4.1) Not already in sma_MST_SubRole-----
 INSERT INTO sma_MST_SubRole
-    (sbrnRoleID, sbrsDscrptn, sbrnCaseTypeID, sbrnTypeCode)
-SELECT
-    NewRoles.sbrnRoleID,
-    NewRoles.sbrsDscrptn,
-    NewRoles.sbrnCaseTypeID,
-    SubRoleCodes.srcnCodeId AS sbrnTypeCode
-FROM (
-    SELECT
-        R.PorD AS sbrnRoleID,
-        R.[role] AS sbrsDscrptn,
-        CST.cstnCaseTypeID AS sbrnCaseTypeID
-    FROM sma_MST_CaseType CST
-    CROSS JOIN (
-        -- Default Roles
-        SELECT '(P)-Default Role' AS role, 4 AS PorD
-        UNION ALL
-        SELECT '(D)-Default Role' AS role, 5 AS PorD
-        
-        -- Roles from PartyRoles table
-        UNION ALL
-        SELECT [SA Roles] AS role, 4 AS PorD FROM [PartyRoles] WHERE [SA Party] = 'Plaintiff'
-        UNION ALL
-        SELECT [SA Roles] AS role, 5 AS PorD FROM [PartyRoles] WHERE [SA Party] = 'Defendant'
-        
-        -- Specific Roles
-        UNION ALL
-        SELECT '(P)-CO-COUNSEL', 4
-        UNION ALL
-        SELECT '(D)-CO-COUNSEL', 5
-        UNION ALL
-        SELECT '(P)-DRIVER', 4
-        UNION ALL
-        SELECT '(D)-DRIVER', 5
-        UNION ALL
-        SELECT '(P)-ADJUSTER', 4
-        UNION ALL
-        SELECT '(D)-ADJUSTER', 5
-        UNION ALL
-        SELECT '(P)-OWNER', 4
-        UNION ALL
-        SELECT '(D)-OWNER', 5
-        UNION ALL
-        SELECT '(P)-PROPERTY OWNER', 4
-        UNION ALL
-        SELECT '(D)-PROPERTY OWNER', 5
-    ) R
-    WHERE CST.VenderCaseType = (
-        SELECT VenderCaseType FROM #TempVariables
-    )
-) AS NewRoles
-JOIN sma_MST_SubRoleCode SubRoleCodes
-    ON SubRoleCodes.srcsDscrptn = NewRoles.sbrsDscrptn
-    AND SubRoleCodes.srcnRoleID = NewRoles.sbrnRoleID
-EXCEPT
-SELECT
-    sbrnRoleID,
-    sbrsDscrptn,
-    sbrnCaseTypeID,
-    sbrnTypeCode
-FROM sma_MST_SubRole;
+	(
+	sbrnRoleID, sbrsDscrptn, sbrnCaseTypeID, sbrnTypeCode
+	)
+	SELECT
+		NewRoles.sbrnRoleID
+	   ,NewRoles.sbrsDscrptn
+	   ,NewRoles.sbrnCaseTypeID
+	   ,SubRoleCodes.srcnCodeId AS sbrnTypeCode
+	FROM (
+		SELECT
+			R.PorD AS sbrnRoleID
+		   ,R.[role] AS sbrsDscrptn
+		   ,CST.cstnCaseTypeID AS sbrnCaseTypeID
+		FROM sma_MST_CaseType CST
+		CROSS JOIN (
+			-- Default Roles
+			SELECT
+				'(P)-Default Role' AS role
+			   ,4 AS PorD
+			UNION ALL
+			SELECT
+				'(D)-Default Role' AS role
+			   ,5 AS PorD
+
+			-- Roles from PartyRoles table
+			UNION ALL
+			SELECT
+				[SA Roles] AS role
+			   ,4 AS PorD
+			FROM [PartyRoles]
+			WHERE [SA Party] = 'Plaintiff'
+			UNION ALL
+			SELECT
+				[SA Roles] AS role
+			   ,5 AS PorD
+			FROM [PartyRoles]
+			WHERE [SA Party] = 'Defendant'
+
+			-- Specific Roles
+			UNION ALL
+			SELECT
+				'(P)-CO-COUNSEL'
+			   ,4
+			UNION ALL
+			SELECT
+				'(D)-CO-COUNSEL'
+			   ,5
+			UNION ALL
+			SELECT
+				'(P)-DRIVER'
+			   ,4
+			UNION ALL
+			SELECT
+				'(D)-DRIVER'
+			   ,5
+			UNION ALL
+			SELECT
+				'(P)-ADJUSTER'
+			   ,4
+			UNION ALL
+			SELECT
+				'(D)-ADJUSTER'
+			   ,5
+			UNION ALL
+			SELECT
+				'(P)-OWNER'
+			   ,4
+			UNION ALL
+			SELECT
+				'(D)-OWNER'
+			   ,5
+			UNION ALL
+			SELECT
+				'(P)-PROPERTY OWNER'
+			   ,4
+			UNION ALL
+			SELECT
+				'(D)-PROPERTY OWNER'
+			   ,5
+		) R
+		WHERE CST.VenderCaseType = (
+				SELECT
+					VenderCaseType
+				FROM #TempVariables
+			)
+	) AS NewRoles
+	JOIN sma_MST_SubRoleCode SubRoleCodes
+		ON SubRoleCodes.srcsDscrptn = NewRoles.sbrsDscrptn
+			AND SubRoleCodes.srcnRoleID = NewRoles.sbrnRoleID
+	EXCEPT
+	SELECT
+		sbrnRoleID
+	   ,sbrsDscrptn
+	   ,sbrnCaseTypeID
+	   ,sbrnTypeCode
+	FROM sma_MST_SubRole;
 
 
 
@@ -664,65 +675,7 @@ GO
 
 INSERT INTO [sma_TRN_Cases]
 	(
-	[cassCaseNumber]
-   ,[casbAppName]
-   ,[cassCaseName]
-   ,[casnCaseTypeID]
-   ,[casnState]
-   ,[casdStatusFromDt]
-   ,[casnStatusValueID]
-   ,[casdsubstatusfromdt]
-   ,[casnSubStatusValueID]
-   ,[casdOpeningDate]
-   ,[casdClosingDate]
-   ,[casnCaseValueID]
-   ,[casnCaseValueFrom]
-   ,[casnCaseValueTo]
-   ,[casnCurrentCourt]
-   ,[casnCurrentJudge]
-   ,[casnCurrentMagistrate]
-   ,[casnCaptionID]
-   ,[cassCaptionText]
-   ,[casbMainCase]
-   ,[casbCaseOut]
-   ,[casbSubOut]
-   ,[casbWCOut]
-   ,[casbPartialOut]
-   ,[casbPartialSubOut]
-   ,[casbPartiallySettled]
-   ,[casbInHouse]
-   ,[casbAutoTimer]
-   ,[casdExpResolutionDate]
-   ,[casdIncidentDate]
-   ,[casnTotalLiability]
-   ,[cassSharingCodeID]
-   ,[casnStateID]
-   ,[casnLastModifiedBy]
-   ,[casdLastModifiedDate]
-   ,[casnRecUserID]
-   ,[casdDtCreated]
-   ,[casnModifyUserID]
-   ,[casdDtModified]
-   ,[casnLevelNo]
-   ,[cassCaseValueComments]
-   ,[casbRefIn]
-   ,[casbDelete]
-   ,[casbIntaken]
-   ,[casnOrgCaseTypeID]
-   ,[CassCaption]
-   ,[cassMdl]
-   ,[office_id]
-   ,[saga]
-   ,[LIP]
-   ,[casnSeriousInj]
-   ,[casnCorpDefn]
-   ,[casnWebImporter]
-   ,[casnRecoveryClient]
-   ,[cas]
-   ,[ngage]
-   ,[casnClientRecoveredDt]
-   ,[CloseReason]
-   ,[saga_db]
+	[cassCaseNumber], [casbAppName], [cassCaseName], [casnCaseTypeID], [casnState], [casdStatusFromDt], [casnStatusValueID], [casdsubstatusfromdt], [casnSubStatusValueID], [casdOpeningDate], [casdClosingDate], [casnCaseValueID], [casnCaseValueFrom], [casnCaseValueTo], [casnCurrentCourt], [casnCurrentJudge], [casnCurrentMagistrate], [casnCaptionID], [cassCaptionText], [casbMainCase], [casbCaseOut], [casbSubOut], [casbWCOut], [casbPartialOut], [casbPartialSubOut], [casbPartiallySettled], [casbInHouse], [casbAutoTimer], [casdExpResolutionDate], [casdIncidentDate], [casnTotalLiability], [cassSharingCodeID], [casnStateID], [casnLastModifiedBy], [casdLastModifiedDate], [casnRecUserID], [casdDtCreated], [casnModifyUserID], [casdDtModified], [casnLevelNo], [cassCaseValueComments], [casbRefIn], [casbDelete], [casbIntaken], [casnOrgCaseTypeID], [CassCaption], [cassMdl], [office_id], [saga], [LIP], [casnSeriousInj], [casnCorpDefn], [casnWebImporter], [casnRecoveryClient], [cas], [ngage], [casnClientRecoveredDt], [CloseReason], [saga_db]
 	)
 	SELECT
 		C.casenum	   AS cassCaseNumber
