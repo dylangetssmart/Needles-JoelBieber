@@ -31,38 +31,28 @@ JOIN entity e
 GROUP BY it.name, it.meaning, mi.adversarial, it.valid_involvee_kind, it.active
 ORDER BY InvolvementType;
 
-
--- Insurance Types
+-- Users
 SELECT
-	lpic.litify_pm__Insurance_Type__c
-   ,COUNT(*) AS RoleCount
-FROM ShinerLitify..litify_pm__Insurance__c lpic
-GROUP BY lpic.litify_pm__Insurance_Type__c
-ORDER BY RoleCount DESC;
-
-
--- Referral Sources
-SELECT
-	lpsc.litify_tso_Source_Type_Name__c
-   ,COUNT(*) AS RoleCount
-FROM ShinerLitify..litify_pm__Source__c lpsc
-GROUP BY lpsc.litify_tso_Source_Type_Name__c
-ORDER BY RoleCount DESC;
-
-
--- Damage Types
-SELECT
-	lpdc.litify_pm__Type__c
-   ,COUNT(*) AS RoleCount
-FROM ShinerLitify..litify_pm__Damage__c lpdc
-GROUP BY lpdc.litify_pm__Type__c
-ORDER BY RoleCount DESC;
-
-
--- Damage Types
-SELECT
-	lprc.litify_pm__Request_Type__c
-   ,COUNT(*) AS RoleCount
-FROM ShinerLitify..litify_pm__Request__c lprc
-GROUP BY lprc.litify_pm__Request_Type__c
-ORDER BY RoleCount DESC;
+	up.id			   AS [up.id]
+   ,up.username AS [up.username]
+   ,up.display_name as [up.display_name]
+   ,up.email AS [up.email]
+   ,up.active as [up.active]
+   ,up.hidden as [up.hidden]
+   ,up.type as [up.type]
+   ,e.id			   AS [e.id]
+   ,e.prefix			AS [e.prefix]
+   ,e.first_name AS [e.first_name]
+   ,e.middle_name as [e.middle_name]
+   ,e.last_name_or_company_name AS [e.last_name_or_company_name]
+   ,e.suffix AS [e.suffix]
+   ,lb_job.id		   AS [job.id]
+   ,lb_job.name		   AS [job.title]
+   ,lb_job.meaning	   AS [job.meaning]
+   ,lb_job.description AS [job.description]
+FROM JoelBieber_GrowPath..entity e
+JOIN joelBieber_GrowPath..user_profile up
+	ON e.user_profile_id = up.id
+LEFT JOIN lookup_bucket lb_job
+	ON up.job_title_id = lb_job.id
+order BY [up.username]
