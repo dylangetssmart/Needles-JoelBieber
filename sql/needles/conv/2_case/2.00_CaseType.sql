@@ -797,7 +797,7 @@ INSERT INTO [sma_TRN_Cases]
 				)
 		)			   
 		AS office_id
-	   ,''			   AS [saga]
+	   ,c.casenum	   AS [saga]
 	   ,NULL		   AS [LIP]
 	   ,NULL		   AS [casnSeriousInj]
 	   ,NULL		   AS [casnCorpDefn]
