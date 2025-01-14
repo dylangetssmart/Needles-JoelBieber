@@ -29,7 +29,6 @@ slnx.sqlite
 /.vs
 /.vs/*
 /.vs/VSWorkspaceState.json
-/JoelBieber/
 
 # Ignore data directories
 grow-path/data
