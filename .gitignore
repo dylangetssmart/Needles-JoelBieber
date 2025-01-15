@@ -31,5 +31,8 @@ slnx.sqlite
 /.vs/VSWorkspaceState.json
 
 # Ignore data directories
-grow-path/data
-needles/data
+grow-path/data/*
+grow-path/logs/*
+
+needles/data/*
+needles/logs/*
