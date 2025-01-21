@@ -2,7 +2,6 @@
 description: Create general individual contacts
 steps:
 	- insert [sma_MST_IndvContacts] from [needles].[names]
-	- update bridge
 usage_instructions:
 	-
 dependencies:
@@ -27,22 +26,22 @@ alter table [sma_MST_IndvContacts] disable trigger all
 Insert from [names]
 */
 
-with cte_clerks
-as
-(
-	select distinct
-		names_id
-	from JoelBieberNeedles..user_case_data ucd
-	join JoelBieberNeedles..user_case_fields ucf
-		on ucf.field_title = 'Clerk'
-	join JoelBieberNeedles..user_case_name ucn
-		on ucn.ref_num = ucf.field_num
-		and ucd.casenum = ucn.casenum
-	join JoelBieberNeedles..names n
-		on n.names_id = ucn.user_name
-	where ISNULL(ucd.CLERK, '') <> ''
+--with cte_clerks
+--as
+--(
+--	select distinct
+--		names_id
+--	from JoelBieberNeedles..user_case_data ucd
+--	join JoelBieberNeedles..user_case_fields ucf
+--		on ucf.field_title = 'Clerk'
+--	join JoelBieberNeedles..user_case_name ucn
+--		on ucn.ref_num = ucf.field_num
+--		and ucd.casenum = ucn.casenum
+--	join JoelBieberNeedles..names n
+--		on n.names_id = ucn.user_name
+--	where ISNULL(ucd.CLERK, '') <> ''
 
-)
+--)
 
 insert into [sma_MST_IndvContacts]
 	(
@@ -70,7 +69,10 @@ insert into [sma_MST_IndvContacts]
 	[cinsPrimaryLanguage],
 	[cinsOtherLanguage],
 	[cinnRace],
-	[saga]
+	[saga],
+	[source_id_1],
+	[source_id_2],
+	[source_id_3]
 	)
 	select
 		LEFT(n.[prefix], 20)					 as [cinsprefix],
@@ -105,30 +107,30 @@ insert into [sma_MST_IndvContacts]
 			else null
 		end										 as [cinscomments],
 		1										 as [cinncontactctg],
-		case
-			when cte_clerks.names_id is not null
-				then (
-						select
-							octnOrigContactTypeID
-						from.[sma_MST_OriginalContactTypes]
-						where octsDscrptn = 'Law Clerk'
-							and octnContactCtgID = 1
-					)
-			else (
-					select
-						octnOrigContactTypeID
-					from.[sma_MST_OriginalContactTypes]
-					where octsDscrptn = 'General'
-						and octnContactCtgID = 1
-				)
-		end										 as [conncontacttypeid],
-		--(
-		--	select
-		--		octnOrigContactTypeID
-		--	from [sma_MST_OriginalContactTypes]
-		--	where octsDscrptn = 'General'
-		--		and octnContactCtgID = 1
-		--)										 as [cinncontacttypeid],
+		--case
+		--	when cte_clerks.names_id is not null
+		--		then (
+		--				select
+		--					octnOrigContactTypeID
+		--				from.[sma_MST_OriginalContactTypes]
+		--				where octsDscrptn = 'Law Clerk'
+		--					and octnContactCtgID = 1
+		--			)
+		--	else (
+		--			select
+		--				octnOrigContactTypeID
+		--			from.[sma_MST_OriginalContactTypes]
+		--			where octsDscrptn = 'General'
+		--				and octnContactCtgID = 1
+		--		)
+		--end										 as [conncontacttypeid],
+		(
+			select
+				octnOrigContactTypeID
+			from [sma_MST_OriginalContactTypes]
+			where octsDscrptn = 'General'
+				and octnContactCtgID = 1
+		)										 as [cinncontacttypeid],
 		case
 			-- if names.deceased = "Y", then grab the contactSubCategoryID for "Deceased"
 			when n.[deceased] = 'Y'
@@ -191,13 +193,20 @@ insert into [sma_MST_IndvContacts]
 					)
 			else null
 		end										 as cinnrace,
-		n.[names_id]							 as saga
+		n.[names_id]							 as saga,
+		null									 as source_id_1,
+		'needles'								 as source_id_2,
+		'names'									 as source_id_3
 	from [JoelBieberNeedles].[dbo].[names] n
-	left join [JoelBieberNeedles].[dbo].[Race] r
-		on r.race_id = n.race
-	join cte_clerks
-		on n.names_id = cte_clerks.names_id
+	join [JoelBieberNeedles].[dbo].[Race] r
+		on r.race_id = CONVERT(INT, n.race)
+			and ISNUMERIC(n.race) = 1 -- records with non-int values exist in [names].[race]
+	--join cte_clerks
+	--	on n.names_id = cte_clerks.names_id
 	where n.[person] = 'Y'
 go
 
 alter table [sma_MST_IndvContacts] enable trigger all
+
+--select * from JoelBieberNeedles..race r
+--select distinct race from JoelBieberNeedles..names

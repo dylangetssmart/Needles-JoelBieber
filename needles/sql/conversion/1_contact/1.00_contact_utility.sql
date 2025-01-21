@@ -1,13 +1,13 @@
 /* ###################################################################################
 description: Handles common operations related to [sma_MST_IndvContacts]
 steps:
-	- add saga
-	- add saga_char
+	- add source_id columns to sma_MST_IndvContacts
 	- Insert [sma_MST_ContactRace] from [needles].[race]
-	- Unassigned Staff
-	- Unidentified Individual
-	- Unidentified Plaintiff
-	- Unidentified Defendant
+	- Create unidentifed contacts
+		- Unassigned Staff
+		- Unidentified Individual
+		- Unidentified Plaintiff
+		- Unidentified Defendant
 usage_instructions:
 	-
 dependencies:
@@ -20,7 +20,7 @@ use JoelBieberSA_Needles
 go
 
 /* --------------------------------------------------------------------------------------------------------------
-Add saga columns
+Add source_id columns
 */
 
 -- saga (INT)
@@ -57,30 +57,100 @@ go
 
 go
 
--- saga_char (VARCHAR(255)
+-- source_id_1
 if not exists (
 		select
 			*
 		from sys.columns
-		where Name = N'saga_char'
+		where Name = N'source_id_1'
 			and Object_ID = OBJECT_ID(N'sma_MST_IndvContacts')
 	)
 begin
-	alter table [sma_MST_IndvContacts] add [saga_char] VARCHAR(255) null;
+	alter table [sma_MST_IndvContacts] add [source_id_1] VARCHAR(max) null;
+end
+go
+
+-- source_id_2
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id_2'
+			and Object_ID = OBJECT_ID(N'sma_MST_IndvContacts')
+	)
+begin
+	alter table [sma_MST_IndvContacts] add [source_id_2] VARCHAR(max) null;
+end
+go
+
+-- source_id_3
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id_3'
+			and Object_ID = OBJECT_ID(N'sma_MST_IndvContacts')
+	)
+begin
+	alter table [sma_MST_IndvContacts] add [source_id_3] VARCHAR(max) null;
 end
 go
 
 
--- Creating a non-clustered index on the 'saga' column
-create nonclustered index IX_sma_MST_IndvContacts_saga
-on [dbo].[sma_MST_IndvContacts] ([saga])
-include ([cinnContactID]); -- Including cinnContactID to cover queries involving this column
+-----------------------------------------------------------------------------
+
+
+-- source_id_1
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id_1'
+			and Object_ID = OBJECT_ID(N'sma_MST_OrgContacts')
+	)
+begin
+	alter table [sma_MST_OrgContacts] add [source_id_1] VARCHAR(max) null;
+end
 go
 
--- Creating a non-clustered index on the 'saga_char' column
-create nonclustered index IX_sma_MST_IndvContacts_saga_char
-on [dbo].[sma_MST_IndvContacts] ([saga_char])
-include ([cinnContactID]); -- Including cinnContactID to cover queries involving this column
+-- source_id_2
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id_2'
+			and Object_ID = OBJECT_ID(N'sma_MST_OrgContacts')
+	)
+begin
+	alter table [sma_MST_OrgContacts] add [source_id_2] VARCHAR(max) null;
+end
+go
+
+-- source_id_3
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id_3'
+			and Object_ID = OBJECT_ID(N'sma_MST_OrgContacts')
+	)
+begin
+	alter table [sma_MST_OrgContacts] add [source_id_3] VARCHAR(max) null;
+end
+go
+
+
+
+-- Creating a non-clustered index on the 'saga' column
+--create nonclustered index IX_sma_MST_IndvContacts_saga
+--on [dbo].[sma_MST_IndvContacts] ([saga])
+--include ([cinnContactID]); -- Including cinnContactID to cover queries involving this column
+--go
+
+---- Creating a non-clustered index on the 'saga_char' column
+--create nonclustered index IX_sma_MST_IndvContacts_saga_char
+--on [dbo].[sma_MST_IndvContacts] ([saga_char])
+--include ([cinnContactID]); -- Including cinnContactID to cover queries involving this column
 
 go
 
