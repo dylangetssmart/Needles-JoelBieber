@@ -70,9 +70,9 @@ insert into [sma_MST_IndvContacts]
 	[cinsOtherLanguage],
 	[cinnRace],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
 		LEFT(n.[prefix], 20)					 as [cinsprefix],
@@ -194,9 +194,9 @@ insert into [sma_MST_IndvContacts]
 			else null
 		end										 as cinnrace,
 		n.[names_id]							 as saga,
-		null									 as source_id_1,
-		'needles'								 as source_id_2,
-		'names'									 as source_id_3
+		null									 as source_id,
+		'needles'								 as source_db,
+		'names'									 as source_ref
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [JoelBieberNeedles].[dbo].[Race] r
 		on r.race_id = CONVERT(INT, n.race)

@@ -3,11 +3,6 @@
 
 
 
--- Create CTE for all relevant data from [needles].[user_party_data]
--- sa_contact_id: user_party_data > user_party_name > names.names_id
-
-
-
 with cte_user_case_plaintiff_defendant
 as
 (
@@ -83,9 +78,9 @@ insert into [sma_MST_IndvContacts]
 	[cinsSpouse],
 	[cinsGrade],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
 		1									as [cinbprimary],
@@ -149,11 +144,8 @@ insert into [sma_MST_IndvContacts]
 			when cte.plaintiff_or_defendant = 'D'
 				then 'D'
 			else null
-		end									as [source_id_1],
-		'needles'							as [source_id_2],
-		'cte_user_case_plaintiff_defendant' as [source_id_3]
-	--casenum
-	--needles
-	--plaintiff
+		end									as [source_id],
+		'needles'							as [source_db],
+		'cte_user_case_plaintiff_defendant' as [source_ref]	
 	from cte_user_case_plaintiff_defendant cte
 go

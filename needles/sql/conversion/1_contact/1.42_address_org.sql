@@ -1,5 +1,6 @@
-USE JoelBieberSA_Needles
-GO
+use JoelBieberSA_Needles
+go
+
 /*
 alter table [sma_MST_Address] disable trigger all
 delete from [sma_MST_Address] 
@@ -9,163 +10,309 @@ alter table [sma_MST_Address] enable trigger all
 -- select distinct addr_Type from  [JoelBieberNeedles].[dbo].[multi_addresses]
 -- select * from  [JoelBieberNeedles].[dbo].[multi_addresses] where addr_type not in ('Home','business', 'other')
 
-ALTER TABLE [sma_MST_Address] DISABLE TRIGGER ALL
-GO
+alter table [sma_MST_Address] disable trigger all
+go
 
- -------------------------------------------------------
+-------------------------------------------------------
 ----(2)---- CONSTRUCT FROM SMA_MST_ORGCONTACTS
 -------------------------------------------------------
 
 -- Home from OrgContacts
-INSERT INTO [sma_MST_Address] (
-		[addnContactCtgID],[addnContactID],[addnAddressTypeID],[addsAddressType],[addsAddTypeCode],[addsAddress1],[addsAddress2],[addsAddress3],[addsStateCode],[addsCity],[addnZipID],
-		[addsZip],[addsCounty],[addsCountry],[addbIsResidence],[addbPrimary],[adddFromDate],[adddToDate],[addnCompanyID],[addsDepartment],[addsTitle],[addnContactPersonID],[addsComments],
-		[addbIsCurrent],[addbIsMailing],[addnRecUserID],[adddDtCreated],[addnModifyUserID],[adddDtModified],[addnLevelNo],[caseno],[addbDeleted],[addsZipExtn],[saga]
-)  
-SELECT 
-	O.connContactCtg		as addnContactCtgID,
-	O.connContactID			as addnContactID,
-	T.addnAddTypeID			as addnAddressTypeID, 
-	T.addsDscrptn			as addsAddressType,
-	T.addsCode				as addsAddTypeCode,
-	A.[address]				as addsAddress1,
-	A.[address_2]			as addsAddress2,
-	NULL					as addsAddress3,
-	A.[state]				as addsStateCode,
-	A.[city]				as addsCity,
-	NULL					as addnZipID,
-	A.[zipcode]				as addsZip,
-	A.[county]				as addsCounty,
-	A.[country]				as addsCountry,
-	null					as addbIsResidence,
-	case
-		when A.[default_addr]='Y' then 1
-		else 0
-	end						as addbPrimary,
-	null,
-	null,
-	null,
-	null,
-	null,
-	null,
-	case
-	  when isnull(A.company,'')<>'' then (
-		'Company : ' + CHAR(13) + A.company
-		)
-	  else '' 		    
-	end						as [addsComments],
-	null,
-	null,
-	368						as addnRecUserID,
-	getdate()				as adddDtCreated,
-	368						as addnModifyUserID,
-	getdate()				as adddDtModified,
-	null,
-	null,
-	null,
-	null,
-	null
-FROM [JoelBieberNeedles].[dbo].[multi_addresses] A
-JOIN [sma_MST_Orgcontacts] O on O.saga = A.names_id
-JOIN [sma_MST_AddressTypes] T on T.addnContactCategoryID = O.connContactCtg and T.addsCode='HO'
-WHERE (A.[addr_type]='Home' and ( isnull(A.[address],'')<>'' or isnull(A.[address_2],'')<>'' or isnull( A.[city],'')<>'' or isnull(A.[state],'')<>'' or isnull(A.[zipcode],'')<>'' or isnull(A.[county],'')<>'' or isnull(A.[country],'')<>''))   
+insert into [sma_MST_Address]
+	(
+	[addnContactCtgID],
+	[addnContactID],
+	[addnAddressTypeID],
+	[addsAddressType],
+	[addsAddTypeCode],
+	[addsAddress1],
+	[addsAddress2],
+	[addsAddress3],
+	[addsStateCode],
+	[addsCity],
+	[addnZipID],
+	[addsZip],
+	[addsCounty],
+	[addsCountry],
+	[addbIsResidence],
+	[addbPrimary],
+	[adddFromDate],
+	[adddToDate],
+	[addnCompanyID],
+	[addsDepartment],
+	[addsTitle],
+	[addnContactPersonID],
+	[addsComments],
+	[addbIsCurrent],
+	[addbIsMailing],
+	[addnRecUserID],
+	[adddDtCreated],
+	[addnModifyUserID],
+	[adddDtModified],
+	[addnLevelNo],
+	[caseno],
+	[addbDeleted],
+	[addsZipExtn],
+	[saga]
+	)
+	select
+		o.connContactCtg as addncontactctgid,
+		o.connContactID	 as addncontactid,
+		t.addnAddTypeID	 as addnaddresstypeid,
+		t.addsDscrptn	 as addsaddresstype,
+		t.addsCode		 as addsaddtypecode,
+		a.[address]		 as addsaddress1,
+		a.[address_2]	 as addsaddress2,
+		null			 as addsaddress3,
+		a.[state]		 as addsstatecode,
+		a.[city]		 as addscity,
+		null			 as addnzipid,
+		a.[zipcode]		 as addszip,
+		a.[county]		 as addscounty,
+		a.[country]		 as addscountry,
+		null			 as addbisresidence,
+		case
+			when a.[default_addr] = 'Y'
+				then 1
+			else 0
+		end				 as addbprimary,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		case
+			when ISNULL(a.company, '') <> ''
+				then (
+					'Company : ' + CHAR(13) + a.company
+					)
+			else ''
+		end				 as [addscomments],
+		null,
+		null,
+		368				 as addnrecuserid,
+		GETDATE()		 as addddtcreated,
+		368				 as addnmodifyuserid,
+		GETDATE()		 as addddtmodified,
+		null,
+		null,
+		null,
+		null,
+		null
+	from [JoelBieberNeedles].[dbo].[multi_addresses] a
+	join [sma_MST_Orgcontacts] o
+		on o.saga = a.names_id
+	join [sma_MST_AddressTypes] t
+		on t.addnContactCategoryID = o.connContactCtg
+			and t.addsCode = 'HO'
+	where (a.[addr_type] = 'Home'
+		and (ISNULL(a.[address], '') <> ''
+		or ISNULL(a.[address_2], '') <> ''
+		or ISNULL(a.[city], '') <> ''
+		or ISNULL(a.[state], '') <> ''
+		or ISNULL(a.[zipcode], '') <> ''
+		or ISNULL(a.[county], '') <> ''
+		or ISNULL(a.[country], '') <> ''))
 
 -- Business from OrgContacts
-INSERT INTO [sma_MST_Address] (
-		[addnContactCtgID],[addnContactID],[addnAddressTypeID],[addsAddressType],[addsAddTypeCode],[addsAddress1],[addsAddress2],[addsAddress3],[addsStateCode],[addsCity],[addnZipID],
-		[addsZip],[addsCounty],[addsCountry],[addbIsResidence],[addbPrimary],[adddFromDate],[adddToDate],[addnCompanyID],[addsDepartment],[addsTitle],[addnContactPersonID],[addsComments],
-		[addbIsCurrent],[addbIsMailing],[addnRecUserID],[adddDtCreated],[addnModifyUserID],[adddDtModified],[addnLevelNo],[caseno],[addbDeleted],[addsZipExtn],[saga]
-)
-SELECT 
-		O.connContactCtg	as addnContactCtgID,
-		O.connContactID		as addnContactID,
-		T.addnAddTypeID		as addnAddressTypeID, 
-		T.addsDscrptn		as addsAddressType,
-		T.addsCode			as addsAddTypeCode,
-		A.[address]			as addsAddress1,
-		A.[address_2]		as addsAddress2,
-		NULL				as addsAddress3,
-		A.[state]			as addsStateCode,
-		A.[city]			as addsCity,
-		NULL				as addnZipID,
-		A.[zipcode]			as addsZip,
-		A.[county]			as addsCounty,
-		A.[country]			as addsCountry,
-		null				as addbIsResidence,
-		case when A.[default_addr]='Y' then 1 else 0 end as addbPrimary,
-		null,null,null,null,null,null,
+insert into [sma_MST_Address]
+	(
+	[addnContactCtgID],
+	[addnContactID],
+	[addnAddressTypeID],
+	[addsAddressType],
+	[addsAddTypeCode],
+	[addsAddress1],
+	[addsAddress2],
+	[addsAddress3],
+	[addsStateCode],
+	[addsCity],
+	[addnZipID],
+	[addsZip],
+	[addsCounty],
+	[addsCountry],
+	[addbIsResidence],
+	[addbPrimary],
+	[adddFromDate],
+	[adddToDate],
+	[addnCompanyID],
+	[addsDepartment],
+	[addsTitle],
+	[addnContactPersonID],
+	[addsComments],
+	[addbIsCurrent],
+	[addbIsMailing],
+	[addnRecUserID],
+	[adddDtCreated],
+	[addnModifyUserID],
+	[adddDtModified],
+	[addnLevelNo],
+	[caseno],
+	[addbDeleted],
+	[addsZipExtn],
+	[saga]
+	)
+	select
+		o.connContactCtg as addncontactctgid,
+		o.connContactID	 as addncontactid,
+		t.addnAddTypeID	 as addnaddresstypeid,
+		t.addsDscrptn	 as addsaddresstype,
+		t.addsCode		 as addsaddtypecode,
+		a.[address]		 as addsaddress1,
+		a.[address_2]	 as addsaddress2,
+		null			 as addsaddress3,
+		a.[state]		 as addsstatecode,
+		a.[city]		 as addscity,
+		null			 as addnzipid,
+		a.[zipcode]		 as addszip,
+		a.[county]		 as addscounty,
+		a.[country]		 as addscountry,
+		null			 as addbisresidence,
 		case
-		  when isnull(A.company,'')<>'' then 'Company : ' + CHAR(13) + A.company
-		  else '' 		    
-		end					as [addsComments],
-		null,null,
-		368					as addnRecUserID,
-		getdate()			as adddDtCreated,
-		368					as addnModifyUserID,
-		getdate()			as adddDtModified,
-		null,null,null,null,null
-FROM [JoelBieberNeedles].[dbo].[multi_addresses] A
-JOIN [sma_MST_Orgcontacts] O on O.saga = A.names_id
-JOIN [sma_MST_AddressTypes] T on T.addnContactCategoryID = O.connContactCtg and T.addsCode='WRK'
-WHERE (A.[addr_type]='Business' and ( isnull(A.[address],'')<>'' or isnull(A.[address_2],'')<>'' or isnull( A.[city],'')<>'' or isnull(A.[state],'')<>'' or isnull(A.[zipcode],'')<>'' or isnull(A.[county],'')<>'' or isnull(A.[country],'')<>''))   
+			when a.[default_addr] = 'Y'
+				then 1
+			else 0
+		end				 as addbprimary,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		case
+			when ISNULL(a.company, '') <> ''
+				then 'Company : ' + CHAR(13) + a.company
+			else ''
+		end				 as [addscomments],
+		null,
+		null,
+		368				 as addnrecuserid,
+		GETDATE()		 as addddtcreated,
+		368				 as addnmodifyuserid,
+		GETDATE()		 as addddtmodified,
+		null,
+		null,
+		null,
+		null,
+		null
+	from [JoelBieberNeedles].[dbo].[multi_addresses] a
+	join [sma_MST_Orgcontacts] o
+		on o.saga = a.names_id
+	join [sma_MST_AddressTypes] t
+		on t.addnContactCategoryID = o.connContactCtg
+			and t.addsCode = 'WRK'
+	where (a.[addr_type] = 'Business'
+		and (ISNULL(a.[address], '') <> ''
+		or ISNULL(a.[address_2], '') <> ''
+		or ISNULL(a.[city], '') <> ''
+		or ISNULL(a.[state], '') <> ''
+		or ISNULL(a.[zipcode], '') <> ''
+		or ISNULL(a.[county], '') <> ''
+		or ISNULL(a.[country], '') <> ''))
 
 -- Other from OrgContacts
-INSERT INTO [sma_MST_Address] (
-		[addnContactCtgID],[addnContactID],[addnAddressTypeID],[addsAddressType],[addsAddTypeCode],[addsAddress1],[addsAddress2],[addsAddress3],[addsStateCode],[addsCity],[addnZipID],
-		[addsZip],[addsCounty],[addsCountry],[addbIsResidence],[addbPrimary],[adddFromDate],[adddToDate],[addnCompanyID],[addsDepartment],[addsTitle],[addnContactPersonID],[addsComments],
-		[addbIsCurrent],[addbIsMailing],[addnRecUserID],[adddDtCreated],[addnModifyUserID],[adddDtModified],[addnLevelNo],[caseno],[addbDeleted],[addsZipExtn],[saga]
-)
-SELECT 
-	O.connContactCtg		as addnContactCtgID,
-	O.connContactID			as addnContactID,
-	T.addnAddTypeID			as addnAddressTypeID, 
-	T.addsDscrptn			as addsAddressType,
-	T.addsCode				as addsAddTypeCode,
-	A.[address]				as addsAddress1,
-	A.[address_2]			as addsAddress2,
-	NULL					as addsAddress3,
-	A.[state]				as addsStateCode,
-	A.[city]				as addsCity,
-	NULL					as addnZipID,
-	A.[zipcode]				as addsZip,
-	A.[county]				as addsCounty,
-	A.[country]				as addsCountry,
-	null					as addbIsResidence,
-	case when A.[default_addr]='Y' then 1
-		else 0
-	end						as addbPrimary,
-	null,
-	null,
-	null,
-	null,
-	null,
-	null,
-	case
-	  when isnull(A.company,'')<>'' then (
-		'Company : ' + CHAR(13) + A.company
-		)
-	  else '' 		    
-	end						as [addsComments],
-	null,
-	null,
-	368						as addnRecUserID,
-	getdate()				as adddDtCreated,
-	368						as addnModifyUserID,
-	getdate()				as adddDtModified,
-	null,
-	null,
-	null,
-	null,
-	null
-FROM [JoelBieberNeedles].[dbo].[multi_addresses] A
-JOIN [sma_MST_Orgcontacts] O on O.saga = A.names_id
-JOIN [sma_MST_AddressTypes] T on T.addnContactCategoryID = O.connContactCtg and T.addsCode='BR'
-WHERE (A.[addr_type]='Other' and ( isnull(A.[address],'')<>'' or isnull(A.[address_2],'')<>'' or isnull( A.[city],'')<>'' or isnull(A.[state],'')<>'' or isnull(A.[zipcode],'')<>'' or isnull(A.[county],'')<>'' or isnull(A.[country],'')<>''))   
- 
- 
+insert into [sma_MST_Address]
+	(
+	[addnContactCtgID],
+	[addnContactID],
+	[addnAddressTypeID],
+	[addsAddressType],
+	[addsAddTypeCode],
+	[addsAddress1],
+	[addsAddress2],
+	[addsAddress3],
+	[addsStateCode],
+	[addsCity],
+	[addnZipID],
+	[addsZip],
+	[addsCounty],
+	[addsCountry],
+	[addbIsResidence],
+	[addbPrimary],
+	[adddFromDate],
+	[adddToDate],
+	[addnCompanyID],
+	[addsDepartment],
+	[addsTitle],
+	[addnContactPersonID],
+	[addsComments],
+	[addbIsCurrent],
+	[addbIsMailing],
+	[addnRecUserID],
+	[adddDtCreated],
+	[addnModifyUserID],
+	[adddDtModified],
+	[addnLevelNo],
+	[caseno],
+	[addbDeleted],
+	[addsZipExtn],
+	[saga]
+	)
+	select
+		o.connContactCtg as addncontactctgid,
+		o.connContactID	 as addncontactid,
+		t.addnAddTypeID	 as addnaddresstypeid,
+		t.addsDscrptn	 as addsaddresstype,
+		t.addsCode		 as addsaddtypecode,
+		a.[address]		 as addsaddress1,
+		a.[address_2]	 as addsaddress2,
+		null			 as addsaddress3,
+		a.[state]		 as addsstatecode,
+		a.[city]		 as addscity,
+		null			 as addnzipid,
+		a.[zipcode]		 as addszip,
+		a.[county]		 as addscounty,
+		a.[country]		 as addscountry,
+		null			 as addbisresidence,
+		case
+			when a.[default_addr] = 'Y'
+				then 1
+			else 0
+		end				 as addbprimary,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		case
+			when ISNULL(a.company, '') <> ''
+				then (
+					'Company : ' + CHAR(13) + a.company
+					)
+			else ''
+		end				 as [addscomments],
+		null,
+		null,
+		368				 as addnrecuserid,
+		GETDATE()		 as addddtcreated,
+		368				 as addnmodifyuserid,
+		GETDATE()		 as addddtmodified,
+		null,
+		null,
+		null,
+		null,
+		null
+	from [JoelBieberNeedles].[dbo].[multi_addresses] a
+	join [sma_MST_Orgcontacts] o
+		on o.saga = a.names_id
+	join [sma_MST_AddressTypes] t
+		on t.addnContactCategoryID = o.connContactCtg
+			and t.addsCode = 'BR'
+	where (a.[addr_type] = 'Other'
+		and (ISNULL(a.[address], '') <> ''
+		or ISNULL(a.[address_2], '') <> ''
+		or ISNULL(a.[city], '') <> ''
+		or ISNULL(a.[state], '') <> ''
+		or ISNULL(a.[zipcode], '') <> ''
+		or ISNULL(a.[county], '') <> ''
+		or ISNULL(a.[country], '') <> ''))
+
+
 ---
-ALTER TABLE [sma_MST_Address] ENABLE TRIGGER ALL
-GO
+alter table [sma_MST_Address] enable trigger all
+go
 ---
 
 

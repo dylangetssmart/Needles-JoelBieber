@@ -101,11 +101,11 @@ if not exists (
 		select
 			*
 		from sys.columns
-		where Name = N'source_id_1'
+		where Name = N'source_id'
 			and Object_ID = OBJECT_ID(N'sma_MST_Address')
 	)
 begin
-	alter table [sma_MST_Address] add [source_id_1] VARCHAR(MAX) null;
+	alter table [sma_MST_Address] add [source_id] VARCHAR(MAX) null;
 end
 go
 
@@ -114,11 +114,11 @@ if not exists (
 		select
 			*
 		from sys.columns
-		where Name = N'source_id_2'
+		where Name = N'source_db'
 			and Object_ID = OBJECT_ID(N'sma_MST_Address')
 	)
 begin
-	alter table [sma_MST_Address] add [source_id_2] VARCHAR(MAX) null;
+	alter table [sma_MST_Address] add [source_db] VARCHAR(MAX) null;
 end
 go
 
@@ -127,11 +127,11 @@ if not exists (
 		select
 			*
 		from sys.columns
-		where Name = N'source_id_3'
+		where Name = N'source_ref'
 			and Object_ID = OBJECT_ID(N'sma_MST_Address')
 	)
 begin
-	alter table [sma_MST_Address] add [source_id_3] VARCHAR(MAX) null;
+	alter table [sma_MST_Address] add [source_ref] VARCHAR(MAX) null;
 end
 go
 
@@ -200,9 +200,9 @@ insert into [sma_MST_IndvContacts]
 	[cinsSpouse],
 	[cinsGrade],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
 		1									 as [cinbprimary],
@@ -260,9 +260,9 @@ insert into [sma_MST_IndvContacts]
 		''									 as [cinsspouse],
 		null								 as [cinsgrade],
 		ucd.casenum							 as [saga],
-		null								 [source_id_1],
-		'needles'							 [source_id_2],
-		'user_case_data.relative_name'		 [source_id_3]
+		ucd.relative_name					 as [source_id],
+		'needles'							 as [source_db],
+		'user_case_data.relative_name'		 as [source_ref]
 	from [JoelBieberNeedles].[dbo].user_case_data ucd
 	where ISNULL(ucd.Relative_Name, '') <> ''
 go
@@ -313,9 +313,9 @@ user_party_data
 
 
 -- Step 1: Create a temporary table
-if OBJECT_ID('tempdb..#TempUserPartyRelative') is null
+if OBJECT_ID('conversion.user_party_relative') is null
 begin
-	create table #TempUserPartyRelative (
+	create table conversion.user_party_relative (
 		party_id		 INT,
 		case_id			 INT,
 		relative_name	 NVARCHAR(MAX),
@@ -328,7 +328,7 @@ begin
 end
 
 -- Step 2: Insert data into the temporary table
-insert into #TempUserPartyRelative
+insert into conversion.user_party_relative
 	(
 	party_id,
 	case_id,
@@ -427,70 +427,70 @@ insert into [sma_MST_IndvContacts]
 	[cinsSpouse],
 	[cinsGrade],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
-		1									 as [cinbprimary],
+		1										  as [cinbprimary],
 		(
 			select
 				octnOrigContactTypeID
 			from [dbo].[sma_MST_OriginalContactTypes]
 			where octsDscrptn = 'General'
 				and octnContactCtgID = 1
-		)									 as [cinncontacttypeid],
-		null								 as [cinncontactsubctgid],
-		''									 as [cinsprefix],
-		dbo.get_firstword(cte.relative_name) as [cinsfirstname],
-		''									 as [cinsmiddlename],
-		dbo.get_lastword(cte.relative_name)	 as [cinslastname],
-		null								 as [cinssuffix],
-		null								 as [cinsnickname],
-		1									 as [cinbstatus],
-		null								 as [cinsssnno],
-		null								 as [cindbirthdate],
-		null								 as [cinscomments],
-		1									 as [cinncontactctg],
-		''									 as [cinnrefbyctgid],
-		''									 as [cinnreferredby],
-		null								 as [cinddateofdeath],
-		''									 as [cinscvlink],
-		''									 as [cinnmaritalstatusid],
-		1									 as [cinngender],
-		''									 as [cinsbirthplace],
-		1									 as [cinncountyid],
-		1									 as [cinscountyofresidence],
-		null								 as [cinbflagforphoto],
-		null								 as [cinsprimarycontactno],
-		cte.relative_phone					 as [cinshomephone],
-		''									 as [cinsworkphone],
-		null								 as [cinsmobile],
-		0									 as [cinbpreventmailing],
-		368									 as [cinnrecuserid],
-		GETDATE()							 as [cinddtcreated],
-		''									 as [cinnmodifyuserid],
-		null								 as [cinddtmodified],
-		0									 as [cinnlevelno],
-		''									 as [cinsprimarylanguage],
-		''									 as [cinsotherlanguage],
-		''									 as [cinbdeathflag],
-		''									 as [cinscitizenship],
-		null								 as [cinsheight],
-		null								 as [cinnweight],
-		''									 as [cinsreligion],
-		null								 as [cindmarriagedate],
-		null								 as [cinsmarriageloc],
-		null								 as [cinsdeathplace],
-		''									 as [cinsmaidenname],
-		null								 as [cinsoccupation],
-		''									 as [cinsspouse],
-		''									 as [cinsgrade],
-		cte.party_id						 as [saga],
-		CONVERT(VARCHAR(25), cte.case_id)	 as [source_id_1],
-		'needles'							 as [source_id_2],
-		'#TempUserPartyRelative'			 as [source_id_3]
-	from #TempUserPartyRelative cte
+		)										  as [cinncontacttypeid],
+		null									  as [cinncontactsubctgid],
+		''										  as [cinsprefix],
+		dbo.get_firstword(conv_upr.relative_name) as [cinsfirstname],
+		''										  as [cinsmiddlename],
+		dbo.get_lastword(conv_upr.relative_name)  as [cinslastname],
+		null									  as [cinssuffix],
+		null									  as [cinsnickname],
+		1										  as [cinbstatus],
+		null									  as [cinsssnno],
+		null									  as [cindbirthdate],
+		null									  as [cinscomments],
+		1										  as [cinncontactctg],
+		''										  as [cinnrefbyctgid],
+		''										  as [cinnreferredby],
+		null									  as [cinddateofdeath],
+		''										  as [cinscvlink],
+		''										  as [cinnmaritalstatusid],
+		1										  as [cinngender],
+		''										  as [cinsbirthplace],
+		1										  as [cinncountyid],
+		1										  as [cinscountyofresidence],
+		null									  as [cinbflagforphoto],
+		null									  as [cinsprimarycontactno],
+		conv_upr.relative_phone					  as [cinshomephone],
+		''										  as [cinsworkphone],
+		null									  as [cinsmobile],
+		0										  as [cinbpreventmailing],
+		368										  as [cinnrecuserid],
+		GETDATE()								  as [cinddtcreated],
+		''										  as [cinnmodifyuserid],
+		null									  as [cinddtmodified],
+		0										  as [cinnlevelno],
+		''										  as [cinsprimarylanguage],
+		''										  as [cinsotherlanguage],
+		''										  as [cinbdeathflag],
+		''										  as [cinscitizenship],
+		null									  as [cinsheight],
+		null									  as [cinnweight],
+		''										  as [cinsreligion],
+		null									  as [cindmarriagedate],
+		null									  as [cinsmarriageloc],
+		null									  as [cinsdeathplace],
+		''										  as [cinsmaidenname],
+		null									  as [cinsoccupation],
+		''										  as [cinsspouse],
+		''										  as [cinsgrade],
+		conv_upr.party_id						  as [saga],
+		CONVERT(VARCHAR(25), conv_upr.case_id)	  as [source_id],
+		'needles'								  as [source_db],
+		'conversion.user_party_relative.case_id'  as [source_ref]
+	from conversion.user_party_relative conv_upr
 --from cte_user_party_relative cte
 
 
@@ -533,58 +533,58 @@ insert into [sma_MST_Address]
 	[addbDeleted],
 	[addsZipExtn],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
-		i.cinnContactCtg				  as addncontactctgid,
-		i.cinnContactID					  as addncontactid,
-		t.addnAddTypeID					  as addnaddresstypeid,
-		t.addsDscrptn					  as addsaddresstype,
-		t.addsCode						  as addsaddtypecode,
-		LEFT(cte.[relative_address], 75)  as addsaddress1,
-		null							  as addsaddress2,
-		null							  as addsaddress3,
-		LEFT(cte.[relative_state], 20)	  as addsstatecode,
-		LEFT(cte.[relative_city], 50)	  as addscity,
-		null							  as addnzipid,
-		LEFT(cte.[relative_zip], 10)	  as addszip,
-		null							  as addscounty,
-		null							  as addscountry,
-		null							  as addbisresidence,
-		1								  as addbprimary,
+		i.cinnContactCtg						 as addncontactctgid,
+		i.cinnContactID							 as addncontactid,
+		t.addnAddTypeID							 as addnaddresstypeid,
+		t.addsDscrptn							 as addsaddresstype,
+		t.addsCode								 as addsaddtypecode,
+		LEFT(conv_upr.[relative_address], 75)	 as addsaddress1,
+		null									 as addsaddress2,
+		null									 as addsaddress3,
+		LEFT(conv_upr.[relative_state], 20)		 as addsstatecode,
+		LEFT(conv_upr.[relative_city], 50)		 as addscity,
+		null									 as addnzipid,
+		LEFT(conv_upr.[relative_zip], 10)		 as addszip,
+		null									 as addscounty,
+		null									 as addscountry,
+		null									 as addbisresidence,
+		1										 as addbprimary,
 		null,
 		null,
 		null,
 		null,
 		null,
 		null,
-		null							  as [addscomments],
+		null									 as [addscomments],
 		null,
 		null,
-		368								  as addnrecuserid,
-		GETDATE()						  as addddtcreated,
-		368								  as addnmodifyuserid,
-		GETDATE()						  as addddtmodified,
+		368										 as addnrecuserid,
+		GETDATE()								 as addddtcreated,
+		368										 as addnmodifyuserid,
+		GETDATE()								 as addddtmodified,
 		null,
 		null,
 		null,
 		null,
-		cte.party_id					  as [saga],
-		CONVERT(VARCHAR(25), cte.case_id) as [source_id_1],
-		'needles'						  as [source_id_2],
-		'#TempUserPartyRelative'		  as [source_id_3]
-	from #TempUserPartyRelative cte
+		conv_upr.party_id						 as [saga],
+		CONVERT(VARCHAR(25), conv_upr.case_id)	 as [source_id],
+		'needles'								 as [source_db],
+		'conversion.user_party_relative.case_id' as [source_ref]
+	from conversion.user_party_relative conv_upr
 	join [sma_MST_Indvcontacts] i
-		on i.saga = cte.party_id
+		on i.saga = conv_upr.party_id
 	join [sma_MST_AddressTypes] t
 		on t.addnContactCategoryID = i.cinnContactCtg
 			and t.addsCode = 'HM'
-	where ISNULL(cte.relative_address, '') <> ''
-		or ISNULL(cte.relative_city, '') <> ''
-		or ISNULL(cte.relative_state, '') <> ''
-		or ISNULL(cte.relative_Zip, '') <> ''
+	where ISNULL(conv_upr.relative_address, '') <> ''
+		or ISNULL(conv_upr.relative_city, '') <> ''
+		or ISNULL(conv_upr.relative_state, '') <> ''
+		or ISNULL(conv_upr.relative_Zip, '') <> ''
 
 -------------------------------------------------------------------
 -- TRIGGERS

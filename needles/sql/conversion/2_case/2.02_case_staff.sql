@@ -1,38 +1,20 @@
 /* ###################################################################################
-Author: Dylan Smith | dylans@smartadvocate.com
-Date: 2024-11-07
-Description: Create case staff
-
-Staff Roles - Only roles 1 - 4 are used
-Primary Attorney
-Primary Paralegal
-Negotiator
-Overseeing Attorney/Paralegal
-
-
---select * from JoelBieberNeedles..cases_Indexed ci WHERE ci.casenum = 229330
---PERESICH	JHULA	JHULA	JHULA
-select * from sma_TRN_CaseStaff stcs WHERE stcs.cssnCaseID = 37853
---select * FROM JoelBieberSA_Needles..sma_MST_Users smu
-
-##########################################################################################################################
+description: Handles common operations related to [sma_MST_IndvContacts]
+steps:
+	- Insert sub-role codes from case staff mapping > [sma_MST_SubRoleCode]
+	- Insert case staff from staff_1 through staff_4 > [sma_TRN_CaseStaff]	
+usage_instructions:
+	- update values for [conversion].[office]
+dependencies:
+	- 
+notes:
+	-
 */
 
 
 
 USE [JoelBieberSA_Needles]
 GO
-/*
-alter table [sma_TRN_caseStaff] disable trigger all
-delete [sma_TRN_caseStaff]
-DBCC CHECKIDENT ('[sma_TRN_caseStaff]', RESEED, 0);
-alter table [sma_TRN_caseStaff] enable trigger all
-
-select cssnCaseID,count(cssnCaseID) from [sma_TRN_caseStaff] 
-group by cssnCaseID
-having count(cssnCaseID)=9
-
-*/
 
 
 ----(0) staff roles ----
@@ -162,8 +144,8 @@ INSERT INTO sma_TRN_caseStaff
 	)
 	SELECT
 		CAS.casnCaseID  AS [cssnCaseID]
-	   --,U.usrnContactID AS [cssnStaffID]
-	   ,iu.SAContactID AS [cssnStaffID]
+	   ,U.usrnContactID AS [cssnStaffID]
+	   --,iu.SAContactID AS [cssnStaffID]
 	   ,(
 			SELECT
 				sbrnSubRoleId
@@ -183,10 +165,10 @@ INSERT INTO sma_TRN_caseStaff
 	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
 	INNER JOIN [sma_TRN_cases] CAS
 		ON CAS.cassCaseNumber = C.casenum
-	--INNER JOIN [sma_MST_Users] U
-	--	ON (U.saga = C.staff_1)
-	INNER JOIN implementation_users iu
-		ON iu.StaffCode = c.staff_1
+	INNER JOIN [sma_MST_Users] U
+		ON (U.source_id = C.staff_1)
+	--INNER JOIN implementation_users iu
+	--	ON iu.StaffCode = c.staff_1
 
 --------------------
 ----STAFF 2
@@ -207,8 +189,8 @@ INSERT INTO sma_TRN_caseStaff
 	)
 	SELECT
 		CAS.casnCaseID  AS [cssnCaseID]
-	   --,U.usrnContactID AS [cssnStaffID]
-	   ,iu.SAContactID AS [cssnStaffID]
+	   ,U.usrnContactID AS [cssnStaffID]
+	   --,iu.SAContactID AS [cssnStaffID]
 	   ,(
 			SELECT
 				sbrnSubRoleId
@@ -228,10 +210,10 @@ INSERT INTO sma_TRN_caseStaff
 	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.cassCaseNumber = C.casenum
-	--JOIN [sma_MST_Users] U
-	--	ON (U.saga = C.staff_2)
-	INNER JOIN implementation_users iu
-		ON iu.StaffCode = c.staff_2
+	JOIN [sma_MST_Users] U
+		ON (U.source_id = C.staff_2)
+	--INNER JOIN implementation_users iu
+	--	ON iu.StaffCode = c.staff_2
 
 --------------------
 ----STAFF 3
@@ -252,8 +234,8 @@ INSERT INTO sma_TRN_caseStaff
 	)
 	SELECT
 		CAS.casnCaseID  AS [cssnCaseID]
-	   --,U.usrnContactID AS [cssnStaffID]
-	   ,iu.SAContactID AS [cssnStaffID]
+	   ,U.usrnContactID AS [cssnStaffID]
+	   --,iu.SAContactID AS [cssnStaffID]
 	   ,(
 			SELECT
 				sbrnSubRoleId
@@ -273,10 +255,10 @@ INSERT INTO sma_TRN_caseStaff
 	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.cassCaseNumber = C.casenum
-	--JOIN [sma_MST_Users] U
-	--	ON (U.saga = C.staff_3)
-	INNER JOIN implementation_users iu
-		ON iu.StaffCode = c.staff_3
+	JOIN [sma_MST_Users] U
+		ON (U.source_id = C.staff_3)
+	--INNER JOIN implementation_users iu
+	--	ON iu.StaffCode = c.staff_3
 
 
 --------------------
@@ -298,8 +280,8 @@ INSERT INTO sma_TRN_caseStaff
 	)
 	SELECT
 		CAS.casnCaseID  AS [cssnCaseID]
-	   --,U.usrnContactID AS [cssnStaffID]
-	   ,iu.SAContactID AS [cssnStaffID]
+	   ,U.usrnContactID AS [cssnStaffID]
+	   --,iu.SAContactID AS [cssnStaffID]
 	   ,(
 			SELECT
 				sbrnSubRoleId
@@ -319,10 +301,10 @@ INSERT INTO sma_TRN_caseStaff
 	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
 	INNER JOIN [sma_TRN_cases] CAS
 		ON CAS.cassCaseNumber = C.casenum
-	--INNER JOIN [sma_MST_Users] U
-	--	ON (U.saga = C.staff_4)
-	INNER JOIN implementation_users iu
-		ON iu.StaffCode = c.staff_4
+	INNER JOIN [sma_MST_Users] U
+		ON (U.source_id = C.staff_4)
+	--INNER JOIN implementation_users iu
+	--	ON iu.StaffCode = c.staff_4
 
 
 --------------------

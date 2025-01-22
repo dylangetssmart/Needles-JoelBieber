@@ -40,22 +40,22 @@ go
 --from JoelBieberNeedles..names
 --where names_id = 24740
 
-with cte_courts
-as
-(
-	select distinct
-		names_id
-	from JoelBieberNeedles..user_case_data ucd
-	join JoelBieberNeedles..user_case_fields ucf
-		on ucf.field_title = 'Court'
-	join JoelBieberNeedles..user_case_name ucn
-		on ucn.ref_num = ucf.field_num
-		and ucd.casenum = ucn.casenum
-	join JoelBieberNeedles..names n
-		on n.names_id = ucn.user_name
-	where ISNULL(ucd.COURT, '') <> ''
+--with cte_courts
+--as
+--(
+--	select distinct
+--		names_id
+--	from JoelBieberNeedles..user_case_data ucd
+--	join JoelBieberNeedles..user_case_fields ucf
+--		on ucf.field_title = 'Court'
+--	join JoelBieberNeedles..user_case_name ucn
+--		on ucn.ref_num = ucf.field_num
+--		and ucd.casenum = ucn.casenum
+--	join JoelBieberNeedles..names n
+--		on n.names_id = ucn.user_name
+--	where ISNULL(ucd.COURT, '') <> ''
 
-)
+--)
 
 insert into [sma_MST_OrgContacts]
 	(
@@ -68,9 +68,9 @@ insert into [sma_MST_OrgContacts]
 	[condDtCreated],
 	[conbStatus],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
 		n.[last_long_name] as [consname],
@@ -122,9 +122,9 @@ insert into [sma_MST_OrgContacts]
 		GETDATE()		   as [conddtcreated],
 		1				   as [conbstatus],
 		n.[names_id]	   as [saga],
-		null			   as [source_id_1],
-		'needles'		   as [source_id_2],
-		'names'			   as [source_id_3]
+		null			   as [source_id],
+		'needles'		   as [source_db],
+		'names'			   as [source_ref]
 	from JoelBieberNeedles.[dbo].[names] n
 	--join cte_courts
 	--	on n.names_id = cte_courts.names_id

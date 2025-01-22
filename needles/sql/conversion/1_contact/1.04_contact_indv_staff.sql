@@ -45,9 +45,9 @@ insert into [sma_MST_IndvContacts]
 	[cinbPreventMailing],
 	[cinsNickName],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
 		LEFT(s.prefix, 20)											 as [cinsprefix],
@@ -83,12 +83,12 @@ insert into [sma_MST_IndvContacts]
 		0															 as [cinbpreventmailing],
 		CONVERT(VARCHAR(15), s.full_name)							 as [cinsnickname],
 		null														 as [saga],
-		s.staff_code												 as [source_id_1],
-		'needles'													 as [source_id_2],
-		'staff'														 as [source_id_3]
+		s.staff_code												 as [source_id],
+		'needles'													 as [source_db],
+		'staff'														 as [source_ref]
 	from [JoelBieberNeedles].[dbo].[staff] s
-	left join [sma_MST_IndvContacts] ic
-		on ic.source_id_1 = s.staff_code
+	join [sma_MST_IndvContacts] indv
+		on indv.source_id = s.staff_code
 	where cinnContactID is null
 go
 

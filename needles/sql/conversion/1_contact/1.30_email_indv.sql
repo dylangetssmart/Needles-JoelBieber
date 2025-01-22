@@ -191,6 +191,6 @@ insert into [sma_MST_EmailWebsite]
 		1				  as saga -- indicate email
 	from [JoelBieberNeedles].[dbo].[staff] s
 	join [sma_MST_IndvContacts] ic
-		on ic.source_id_1 = s.staff_code
+		on ic.source_id = s.staff_code
 	--on c.cinsGrade = s.staff_code
 	where ISNULL(email, '') <> ''

@@ -1,4 +1,4 @@
-USE JoelBieberNeedles
+USE JoelBieberSA_Needles
 GO
 
 /* ####################################
@@ -7,6 +7,33 @@ GO
 
 ALTER TABLE [sma_MST_OtherCasesContact] DISABLE TRIGGER ALL
 GO
+
+INSERT INTO [sma_MST_OtherCasesContact]
+	(
+	[OtherCasesID], [OtherCasesContactID], [OtherCasesContactCtgID], [OtherCaseContactAddressID], [OtherCasesContactRole], [OtherCasesCreatedUserID], [OtherCasesContactCreatedDt], [OtherCasesModifyUserID], [OtherCasesContactModifieddt]
+	)
+	SELECT
+		cas.casnCaseID				 AS [OtherCasesID]
+	   ,ioc.CID						 AS [OtherCasesContactID]
+	   ,ioc.CTG						 AS [OtherCasesContactCtgID]
+	   ,ioc.AID						 AS [OtherCaseContactAddressID]
+	   ,ud.Relationship_to_Plaintiff AS [OtherCasesContactRole]
+	   ,368							 AS [OtherCasesCreatedUserID]
+	   ,GETDATE()					 AS [OtherCasesContactCreatedDt]
+	   ,NULL						 AS [OtherCasesModifyUserID]
+	   ,NULL						 AS [OtherCasesContactModifieddt]
+	FROM NeedlesSLF.[dbo].user_party_data ud
+	JOIN sma_TRN_Cases cas
+		ON cas.cassCaseNumber = ud.case_id
+	JOIN NeedlesSLF..names n
+		ON n.names_id = ud.party_id
+	JOIN IndvOrgContacts_Indexed ioc
+		ON ioc.SAGA = n.names_id
+	WHERE ISNULL(ud.Relationship_to_Plaintiff, '') <> ''
+GO
+
+
+SELECT * FROM conversion.user
 
 INSERT INTO [sma_MST_OtherCasesContact]
 	(
@@ -36,10 +63,6 @@ INSERT INTO [sma_MST_OtherCasesContact]
 	WHERE ISNULL(ucd.Relative_Name, '') <> ''
 GO
 
---SELECT * FROM JoelBieberSA_Needles..sma_MST_IndvContacts smic WHERE smic.cinsGrade = 'relative'
---SELECT * FROM JoelBieberSA_Needles..IndvOrgContacts_Indexed ioci WHERE ioci.Name LIKE 'HAROLD GRAHAM'
---229795
---sp_help 'IndvOrgContacts_Indexed'
 
 ---
 ALTER TABLE [sma_MST_OtherCasesContact] ENABLE TRIGGER ALL
@@ -72,10 +95,10 @@ GO
 -- 	,getdate()		as [CaseContactCreateddt]
 -- 	,null			as [caseContactModifyBy]
 -- 	,null			as [CaseContactModifiedDt]
--- FROM [JoelBieberNeedles].[dbo].user_party_data ud
+-- FROM NeedlesSLF.[dbo].user_party_data ud
 -- join sma_TRN_Cases cas
 -- 	on cas.cassCaseNumber = ud.case_id
--- join [JoelBieberNeedles]..names n
+-- join NeedlesSLF..names n
 -- 	on n.names_id = ud.party_id
 -- join IndvOrgContacts_Indexed ioc
 -- 	on ioc.SAGA = n.names_id

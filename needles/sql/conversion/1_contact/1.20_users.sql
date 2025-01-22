@@ -40,11 +40,11 @@ if not exists (
 		select
 			*
 		from sys.columns
-		where Name = N'source_id_1'
+		where Name = N'source_id'
 			and object_id = OBJECT_ID(N'sma_MST_Users')
 	)
 begin
-	alter table [sma_MST_Users] add [source_id_1] VARCHAR(MAX) null;
+	alter table [sma_MST_Users] add [source_id] VARCHAR(MAX) null;
 end
 go
 
@@ -53,11 +53,11 @@ if not exists (
 		select
 			*
 		from sys.columns
-		where Name = N'source_id_2'
+		where Name = N'source_db'
 			and object_id = OBJECT_ID(N'sma_MST_Users')
 	)
 begin
-	alter table [sma_MST_Users] add [source_id_2] VARCHAR(MAX) null;
+	alter table [sma_MST_Users] add [source_db] VARCHAR(MAX) null;
 end
 go
 
@@ -66,34 +66,21 @@ if not exists (
 		select
 			*
 		from sys.columns
-		where Name = N'source_id_3'
+		where Name = N'source_ref'
 			and object_id = OBJECT_ID(N'sma_MST_Users')
 	)
 begin
-	alter table [sma_MST_Users] add [source_id_3] VARCHAR(MAX) null;
+	alter table [sma_MST_Users] add [source_ref] VARCHAR(MAX) null;
 end
-go
-
-
----- Add [saga_char] to [sma_MST_Users]
---if not exists (
---		select
---			*
---		from sys.columns
---		where Name = N'saga_char'
---			and object_id = OBJECT_ID(N'sma_MST_Users')
---	)
---begin
---	alter table [sma_MST_Users] add [saga_char] VARCHAR(255) null;
---end
-
 go
 
 /* --------------------------------------------------------------------------------------------------------------
 - Users
 */
 
--- Create 'aadmin' user
+---------------------------------------------------
+-- aadmin
+---------------------------------------------------
 if (
 		select
 			COUNT(*)
@@ -173,7 +160,10 @@ begin
 	set identity_insert sma_mst_users off
 end
 
--- Create 'conversion' user
+---------------------------------------------------
+-- conversion user
+---------------------------------------------------
+
 if (
 		select
 			COUNT(*)
@@ -248,7 +238,9 @@ begin
 			1			 as [usrbactivestate]
 end
 
+---------------------------------------------------
 -- Insert [sma_MST_Users] from [staff]
+---------------------------------------------------
 insert into [sma_MST_Users]
 	(
 	[usrnContactID],
@@ -280,9 +272,9 @@ insert into [sma_MST_Users]
 	[usrbActiveState],
 	[usrbIsShowInSystem],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select
 		indv.cinnContactID as [usrncontactid],
@@ -314,15 +306,15 @@ insert into [sma_MST_Users]
 		0				   as [usrbactivestate],
 		1				   as [usrbisshowinsystem],
 		null			   as [saga],
-		s.staff_code	   as [source_id_1],
-		'needles'		   as [source_id_2],
-		'staff'			   as [source_id_3]
+		s.staff_code	   as [source_id],
+		'needles'		   as [source_db],
+		'staff'			   as [source_ref]
 	from JohnSalazar_Needles..staff s
 	join sma_MST_IndvContacts indv
-		on indv.source_id_2 = s.staff_code
+		on indv.source_id = s.staff_code
 	--on indv.cinsGrade = s.staff_code
 	left join [sma_MST_Users] u
-		on u.source_id_2 = s.staff_code
+		on u.source_id = s.staff_code
 	where u.usrsloginid is null
 go
 

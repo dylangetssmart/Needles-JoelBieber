@@ -73,9 +73,9 @@ insert into [sma_MST_IndvContacts]
 	[cinsSpouse],
 	[cinsGrade],
 	[saga],
-	[source_id_1],
-	[source_id_2],
-	[source_id_3]
+	[source_id],
+	[source_db],
+	[source_ref]
 	)
 	select distinct
 		1					  as [cinbprimary],
@@ -127,9 +127,9 @@ insert into [sma_MST_IndvContacts]
 		''					  as [cinsspouse],
 		null				  as [cinsgrade],
 		null				  as [saga],
-		ins.insured			  as [source_id_1],
-		'needles'			  as [source_id_2],
-		'insured'			  as [source_id_3]
+		ins.insured			  as [source_id],
+		'needles'			  as [source_db],
+		'insured'			  as [source_ref]
 	from [JoelBieberNeedles].[dbo].[insurance] ins
 	where ISNULL(insured, '') <> ''
 go

@@ -1,5 +1,5 @@
 use JoelBieberSA_Needles
-
+go
 truncate table  CP_UserNotesStatus
 Go
 truncate table  sma_trn_tasknew

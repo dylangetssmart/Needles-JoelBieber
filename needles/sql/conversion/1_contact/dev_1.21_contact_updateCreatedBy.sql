@@ -6,7 +6,12 @@ SELECT * FROM sma_MST_IndvContacts
 SELECT * FROM sma_MST_Users smu
 
 update sma_MST_IndvContacts
-set cinnRecUserID = (select smu.usrnUserID from sma_MST_Users smu)
+set cinnRecUserID = (
+	select u.usrnUserID
+	from sma_MST_Users u
+	join sma_MST_IndvContacts indv
+	on indv.cinnContactID = u.usrnContactID	
+)
 --case
 --	when cte.contact_type = 'Clerk'
 --		then (

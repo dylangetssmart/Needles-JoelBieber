@@ -1,5 +1,6 @@
-USE JoelBieberSA_Needles
-GO
+use JoelBieberSA_Needles
+go
+
 /*
 alter table [sma_MST_Address] disable trigger all
 delete from [sma_MST_Address] 
@@ -9,50 +10,64 @@ alter table [sma_MST_Address] enable trigger all
 -- select distinct addr_Type from  [JoelBieberNeedles].[dbo].[multi_addresses]
 -- select * from  [JoelBieberNeedles].[dbo].[multi_addresses] where addr_type not in ('Home','business', 'other')
 
-ALTER TABLE [sma_MST_Address] DISABLE TRIGGER ALL
-GO
+alter table [sma_MST_Address] disable trigger all
+go
 
 ----(APPENDIX)----
-UPDATE [sma_MST_Address] SET addbPrimary=1
-FROM ( 
-	SELECT 
-		I.cinnContactID	as CID,
-		A.addnAddressID as AID,
-		ROW_NUMBER() OVER(PARTITION BY I.cinnContactID ORDER BY A.addnAddressID ASC) as RowNumber
-	FROM [sma_MST_Indvcontacts] I 
-	JOIN [sma_MST_Address] A on A.addnContactID=I.cinnContactID and A.addnContactCtgID=I.cinnContactCtg and A.addbPrimary<>1 
-	WHERE I.cinnContactID not in ( 
-			SELECT I.cinnContactID
-			FROM [sma_MST_Indvcontacts] I 
-			JOIN [sma_MST_Address] A on A.addnContactID=I.cinnContactID and A.addnContactCtgID=I.cinnContactCtg and A.addbPrimary=1 
-			)
-) A 
-WHERE A.RowNumber=1
-and A.AID=addnAddressID
+update [sma_MST_Address]
+set addbPrimary = 1
+from (
+	select
+		i.cinnContactID as cid,
+		a.addnAddressID as aid,
+		ROW_NUMBER() over (partition by i.cinnContactID order by a.addnAddressID asc) as rownumber
+	from [sma_MST_Indvcontacts] i
+	join [sma_MST_Address] a
+		on a.addnContactID = i.cinnContactID
+		and a.addnContactCtgID = i.cinnContactCtg
+		and a.addbPrimary <> 1
+	where i.cinnContactID not in (
+			select
+				i.cinnContactID
+			from [sma_MST_Indvcontacts] i
+			join [sma_MST_Address] a
+				on a.addnContactID = i.cinnContactID
+				and a.addnContactCtgID = i.cinnContactCtg
+				and a.addbPrimary = 1
+		)
+) a
+where a.rownumber = 1
+and a.aid = addnAddressID
 
-UPDATE [sma_MST_Address] 
-SET addbPrimary=1
-FROM
-( 
-	 SELECT 
-		O.connContactID	as CID,
-		A.addnAddressID as AID,
-		ROW_NUMBER() OVER(PARTITION BY O.connContactID ORDER BY A.addnAddressID ASC) as RowNumber
-	 FROM [sma_MST_OrgContacts] O 
-	 JOIN [sma_MST_Address] A on A.addnContactID=O.connContactID and A.addnContactCtgID=O.connContactCtg and A.addbPrimary<>1 
-	 WHERE O.connContactID NOT IN ( 
-			 SELECT O.connContactID
-			 FROM [sma_MST_OrgContacts] O 
-			 JOIN [sma_MST_Address] A on A.addnContactID=O.connContactID and A.addnContactCtgID=O.connContactCtg and A.addbPrimary=1 
-			)
-) A 
-WHERE A.RowNumber=1
-and A.AID=addnAddressID
+update [sma_MST_Address]
+set addbPrimary = 1
+from (
+	select
+		o.connContactID as cid,
+		a.addnAddressID as aid,
+		ROW_NUMBER() over (partition by o.connContactID order by a.addnAddressID asc) as rownumber
+	from [sma_MST_OrgContacts] o
+	join [sma_MST_Address] a
+		on a.addnContactID = o.connContactID
+		and a.addnContactCtgID = o.connContactCtg
+		and a.addbPrimary <> 1
+	where o.connContactID not in (
+			select
+				o.connContactID
+			from [sma_MST_OrgContacts] o
+			join [sma_MST_Address] a
+				on a.addnContactID = o.connContactID
+				and a.addnContactCtgID = o.connContactCtg
+				and a.addbPrimary = 1
+		)
+) a
+where a.rownumber = 1
+and a.aid = addnAddressID
 
- 
+
 ---
-ALTER TABLE [sma_MST_Address] ENABLE TRIGGER ALL
-GO
+alter table [sma_MST_Address] enable trigger all
+go
 ---
 
 
