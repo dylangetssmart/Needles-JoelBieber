@@ -1,4 +1,6 @@
 use JoelBieberSA_Needles
+go
+
 truncate table sma_trn_incidents
 truncate table sma_trn_settlements
 truncate table sma_TRN_Hospitals
