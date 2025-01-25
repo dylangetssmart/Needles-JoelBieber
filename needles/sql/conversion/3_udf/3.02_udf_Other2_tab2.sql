@@ -34,6 +34,9 @@ VALUES (
 'case_id'
 ),
 (
+'tab_id'
+),
+(
 'tab_id_location'
 ),
 (

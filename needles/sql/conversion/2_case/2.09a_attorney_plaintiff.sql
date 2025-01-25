@@ -103,7 +103,7 @@ insert into [sma_TRN_PlaintiffAttorney]
 			and t.plnnContactCtg = iocp.CTG
 			and t.plnnCaseID = cas.casnCaseID
 go
-
+--select * from JoelBieberNeedles..user_counsel_data ucd where casenum = 229701
 -------------------------------------------------------------------------------
 -- Plaintiff Attorney list
 -------------------------------------------------------------------------------

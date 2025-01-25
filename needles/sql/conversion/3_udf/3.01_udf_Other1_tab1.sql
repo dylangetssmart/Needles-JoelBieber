@@ -34,6 +34,9 @@ VALUES (
 'case_id'
 ),
 (
+'tab_id'
+),
+(
 'tab_id_location'
 ),
 (
@@ -100,7 +103,7 @@ GO
 ----------------------------
 ALTER TABLE [sma_MST_UDFDefinition] DISABLE TRIGGER ALL
 GO
-
+SELECT * FROM other1udf
 IF EXISTS (
 		SELECT
 			*

@@ -144,7 +144,7 @@ insert into [sma_MST_IndvContacts]
 			when exists (
 					select
 						*
-					from [JohnSalazar_Needles].[dbo].[party_Indexed] p
+					from [JoelBieberNeedles].[dbo].[party_Indexed] p
 					where p.party_id = n.names_id
 						and p.incapacitated = 'Y'
 				)
@@ -159,7 +159,7 @@ insert into [sma_MST_IndvContacts]
 			when exists (
 					select
 						*
-					from [JohnSalazar_Needles].[dbo].[party_Indexed] p
+					from [JoelBieberNeedles].[dbo].[party_Indexed] p
 					where p.party_id = n.names_id
 						and p.minor = 'Y'
 				)
@@ -183,24 +183,25 @@ insert into [sma_MST_IndvContacts]
 		CONVERT(VARCHAR(15), aka_full)			 as [cinsnickname],
 		null									 as [cinsprimarylanguage],
 		null									 as [cinsotherlanguage],
-		case
-			when ISNULL(n.race, '') <> ''
-				then (
-						select
-							RaceID
-						from sma_mst_ContactRace
-						where RaceDesc = r.race_name
-					)
-			else null
-		end										 as cinnrace,
+		--case
+		--	when ISNULL(n.race, '') <> ''
+		--		then (
+		--				select
+		--					RaceID
+		--				from sma_mst_ContactRace
+		--				where RaceDesc = r.race_name
+		--			)
+		--	else null
+		--end										 as cinnrace,
+		null as cinnrace,
 		n.[names_id]							 as saga,
 		null									 as source_id,
 		'needles'								 as source_db,
 		'names'									 as source_ref
 	from [JoelBieberNeedles].[dbo].[names] n
-	join [JoelBieberNeedles].[dbo].[Race] r
-		on r.race_id = CONVERT(INT, n.race)
-			and ISNUMERIC(n.race) = 1 -- records with non-int values exist in [names].[race]
+	--LEFT join [JoelBieberNeedles].[dbo].[Race] r
+	--	on r.race_id = CONVERT(INT, n.race)
+	--		and ISNUMERIC(n.race) = 1 -- records with non-int values exist in [names].[race]
 	--join cte_clerks
 	--	on n.names_id = cte_clerks.names_id
 	where n.[person] = 'Y'

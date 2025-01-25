@@ -159,7 +159,7 @@ insert into [sma_MST_IndvContacts]
 		on n.names_id = ucn.user_name
 	where ISNULL(ucd.CLERK, '') <> ''
 
-	--from [JohnSalazar_Needles].[dbo].user_case_data ucd
+	--from [JoelBieberNeedles].[dbo].user_case_data ucd
 	--where ISNULL(ucd.clerk, '') <> ''
 go
 

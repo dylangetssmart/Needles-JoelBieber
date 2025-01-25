@@ -145,7 +145,7 @@ insert into [sma_MST_IndvContacts]
 			when exists (
 					select
 						*
-					from [JohnSalazar_Needles].[dbo].[party_Indexed] p
+					from [JoelBieberNeedles].[dbo].[party_Indexed] p
 					where p.party_id = n.names_id
 						and p.incapacitated = 'Y'
 				)
@@ -160,7 +160,7 @@ insert into [sma_MST_IndvContacts]
 			when exists (
 					select
 						*
-					from [JohnSalazar_Needles].[dbo].[party_Indexed] p
+					from [JoelBieberNeedles].[dbo].[party_Indexed] p
 					where p.party_id = n.names_id
 						and p.minor = 'Y'
 				)

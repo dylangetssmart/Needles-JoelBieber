@@ -1,94 +1,3 @@
-/*
-
-
-
-
-sma_MST_IndvContacts
-sma_MST_Address
-
-
-todo:
-stamp saga
-stamp source_id1
-
-saga = party_id
-sourceid1 = case_id -> use for [AllContactInfo]
-sourceid2
-sourceid3
-
-*/
-
-
-
-
---select
---	*
---from JoelBieberNeedles..user_party_data upd
-
-/*
-user_party_data > user_party_name > names
-*/
-
---select top 5
---	upd.case_id,
---	upd.party_id,
---	upd.Relative_Name
---from JoelBieberNeedles..user_party_data upd
---where ISNULL(upd.Relative_Name, '') <> ''
---select
---	*
---from JoelBieberNeedles..user_party_name upn
-
---select
---	*
---from JoelBieberNeedles..names n
---where n.names_id = 28916
-
---select
---	casenum,
---	ucd.Relative_Name
---from JoelBieberNeedles..user_case_data ucd
---where ISNULL(ucd.Relative_Name, '') <> ''
---select
---	*
---from JoelBieberNeedles..user_case_fields ucf
---where ucf.field_title like '%relative name%'
---select
---	*
---from JoelBieberNeedles..user_case_name
-
----- user case
-
---select top 2
---	casenum,
---	ucd.Relative_Name
---from JoelBieberNeedles..user_case_data ucd
---where ISNULL(ucd.Relative_Name, '') <> ''
---select
---	*
---from JoelBieberNeedles..user_case_fields ucf
---where ucf.field_title like '%relative name%'
---select
---	*
---from JoelBieberNeedles..user_case_name
---select
---	*
---from JoelBieberNeedles..user_case_matter ucm
---where ucm.field_title like '%relative name%'
-
-
----- user party
-
---select
---	*
---from JoelBieberNeedles..user_party_data
---select
---	*
---from JoelBieberNeedles..user_party_name upn
---select
---	*
---from JoelBieberNeedles..user_case_name
-
 use JoelBieberSA_Needles
 go
 
@@ -259,14 +168,13 @@ insert into [sma_MST_IndvContacts]
 		''									 as [cinsoccupation],
 		''									 as [cinsspouse],
 		null								 as [cinsgrade],
-		ucd.casenum							 as [saga],
+		null								 as [saga],
 		ucd.relative_name					 as [source_id],
 		'needles'							 as [source_db],
 		'user_case_data.relative_name'		 as [source_ref]
 	from [JoelBieberNeedles].[dbo].user_case_data ucd
 	where ISNULL(ucd.Relative_Name, '') <> ''
 go
-
 
 
 /* --------------------------------------------------------------------------------------------------------------
@@ -311,13 +219,14 @@ user_party_data
 --)
 
 
+--drop table conversion.user_party_relative
 
--- Step 1: Create a temporary table
+-- create
 if OBJECT_ID('conversion.user_party_relative') is null
 begin
 	create table conversion.user_party_relative (
 		party_id		 INT,
-		case_id			 INT,
+		--case_id			 INT,
 		relative_name	 NVARCHAR(MAX),
 		relative_phone	 NVARCHAR(MAX),
 		relative_address NVARCHAR(MAX),
@@ -327,11 +236,11 @@ begin
 	);
 end
 
--- Step 2: Insert data into the temporary table
+-- insert
 insert into conversion.user_party_relative
 	(
-	party_id,
-	case_id,
+	--party_id,
+	--case_id,
 	relative_name,
 	relative_phone,
 	relative_address,
@@ -339,9 +248,9 @@ insert into conversion.user_party_relative
 	relative_state,
 	relative_zip
 	)
-	select
-		upd.party_id,
-		upd.case_id,
+	select distinct
+		--upd.party_id,
+		--upd.case_id,
 		upd.Relative_Name,
 		upd.Relative_Phone,
 		upd.Relative_Address,
@@ -350,12 +259,13 @@ insert into conversion.user_party_relative
 		upd.Relative_Zip
 	from JoelBieberNeedles..user_party_data upd
 	where ISNULL(upd.Relative_Name, '') <> ''
+		and ISNULL(upd.Relative, '') <> ISNULL(upd.Relative_Name, '')
 
 	union all
 
-	select
-		upd.party_id,
-		upd.case_id,
+	select distinct
+		--upd.party_id,
+		--upd.case_id,
 		upd.Relative,
 		upd.Relative_Phone,
 		upd.Relative_Address,
@@ -363,7 +273,9 @@ insert into conversion.user_party_relative
 		upd.Relative_State,
 		upd.Relative_Zip
 	from JoelBieberNeedles..user_party_data upd
-	where ISNULL(upd.Relative, '') <> '';
+	where ISNULL(upd.Relative, '') <> ''
+		and ISNULL(upd.Relative, '') <> ISNULL(upd.Relative_Name, '')
+;
 
 -- Validate record count
 --SELECT distinct upd.Relative FROM JoelBieberNeedles..user_party_data upd
@@ -486,10 +398,10 @@ insert into [sma_MST_IndvContacts]
 		null									  as [cinsoccupation],
 		''										  as [cinsspouse],
 		''										  as [cinsgrade],
-		conv_upr.party_id						  as [saga],
-		CONVERT(VARCHAR(25), conv_upr.case_id)	  as [source_id],
+		null									  as [saga],
+		conv_upr.relative_name					  as [source_id],
 		'needles'								  as [source_db],
-		'conversion.user_party_relative.case_id'  as [source_ref]
+		'conversion.user_party_relative'		  as [source_ref]
 	from conversion.user_party_relative conv_upr
 --from cte_user_party_relative cte
 
@@ -537,54 +449,55 @@ insert into [sma_MST_Address]
 	[source_db],
 	[source_ref]
 	)
-	select
-		i.cinnContactCtg						 as addncontactctgid,
-		i.cinnContactID							 as addncontactid,
-		t.addnAddTypeID							 as addnaddresstypeid,
-		t.addsDscrptn							 as addsaddresstype,
-		t.addsCode								 as addsaddtypecode,
-		LEFT(conv_upr.[relative_address], 75)	 as addsaddress1,
-		null									 as addsaddress2,
-		null									 as addsaddress3,
-		LEFT(conv_upr.[relative_state], 20)		 as addsstatecode,
-		LEFT(conv_upr.[relative_city], 50)		 as addscity,
-		null									 as addnzipid,
-		LEFT(conv_upr.[relative_zip], 10)		 as addszip,
-		null									 as addscounty,
-		null									 as addscountry,
-		null									 as addbisresidence,
-		1										 as addbprimary,
+	select distinct
+		indv.cinnContactCtg					  as addncontactctgid,
+		indv.cinnContactID					  as addncontactid,
+		t.addnAddTypeID						  as addnaddresstypeid,
+		t.addsDscrptn						  as addsaddresstype,
+		t.addsCode							  as addsaddtypecode,
+		LEFT(conv_upr.[relative_address], 75) as addsaddress1,
+		null								  as addsaddress2,
+		null								  as addsaddress3,
+		LEFT(conv_upr.[relative_state], 20)	  as addsstatecode,
+		LEFT(conv_upr.[relative_city], 50)	  as addscity,
+		null								  as addnzipid,
+		LEFT(conv_upr.[relative_zip], 10)	  as addszip,
+		null								  as addscounty,
+		null								  as addscountry,
+		null								  as addbisresidence,
+		1									  as addbprimary,
 		null,
 		null,
 		null,
 		null,
 		null,
 		null,
-		null									 as [addscomments],
+		null								  as [addscomments],
 		null,
 		null,
-		368										 as addnrecuserid,
-		GETDATE()								 as addddtcreated,
-		368										 as addnmodifyuserid,
-		GETDATE()								 as addddtmodified,
+		368									  as addnrecuserid,
+		GETDATE()							  as addddtcreated,
+		368									  as addnmodifyuserid,
+		GETDATE()							  as addddtmodified,
 		null,
 		null,
 		null,
 		null,
-		conv_upr.party_id						 as [saga],
-		CONVERT(VARCHAR(25), conv_upr.case_id)	 as [source_id],
-		'needles'								 as [source_db],
-		'conversion.user_party_relative.case_id' as [source_ref]
+		null								  as [saga],
+		conv_upr.relative_name				  as [source_id],
+		'needles'							  as [source_db],
+		'conversion.user_party_relative'	  as [source_ref]
 	from conversion.user_party_relative conv_upr
-	join [sma_MST_Indvcontacts] i
-		on i.saga = conv_upr.party_id
+	join [sma_MST_IndvContacts] indv
+		on indv.source_id = conv_upr.relative_name
+			and indv.source_ref = 'conversion.user_party_relative'
 	join [sma_MST_AddressTypes] t
-		on t.addnContactCategoryID = i.cinnContactCtg
+		on t.addnContactCategoryID = indv.cinnContactCtg
 			and t.addsCode = 'HM'
 	where ISNULL(conv_upr.relative_address, '') <> ''
-		or ISNULL(conv_upr.relative_city, '') <> ''
-		or ISNULL(conv_upr.relative_state, '') <> ''
-		or ISNULL(conv_upr.relative_Zip, '') <> ''
+--or ISNULL(conv_upr.relative_city, '') <> ''
+--or ISNULL(conv_upr.relative_state, '') <> ''
+--or ISNULL(conv_upr.relative_Zip, '') <> ''
 
 -------------------------------------------------------------------
 -- TRIGGERS

@@ -46,7 +46,7 @@ go
 --		GETDATE()		 as cewddtmodified,
 --		null			 as cewnlevelno,
 --		1				 as saga -- indicate email
---	from [JohnSalazar_Needles].[dbo].[names] n
+--	from [JoelBieberNeedles].[dbo].[names] n
 --	join [sma_MST_IndvContacts] c
 --		on c.saga = n.names_id
 --	where ISNULL(email, '') <> ''
@@ -69,7 +69,7 @@ go
 --		GETDATE()		 as cewddtmodified,
 --		null			 as cewnlevelno,
 --		2				 as saga -- indicate email_work
---	from [JohnSalazar_Needles].[dbo].[names] n
+--	from [JoelBieberNeedles].[dbo].[names] n
 --	join [sma_MST_IndvContacts] c
 --		on c.saga = n.names_id
 --	where ISNULL(email_work, '') <> ''
@@ -92,7 +92,7 @@ go
 --		GETDATE()		 as cewddtmodified,
 --		null			 as cewnlevelno,
 --		3				 as saga -- indicate other_email
---	from [JohnSalazar_Needles].[dbo].[names] n
+--	from [JoelBieberNeedles].[dbo].[names] n
 --	join [sma_MST_IndvContacts] c
 --		on c.saga = n.names_id
 --	where ISNULL(other_email, '') <> ''
@@ -115,7 +115,7 @@ go
 --		GETDATE()		 as cewddtmodified,
 --		null			 as cewnlevelno,
 --		4				 as saga -- indicate website
---	from [JohnSalazar_Needles].[dbo].[names] n
+--	from [JoelBieberNeedles].[dbo].[names] n
 --	join [sma_MST_IndvContacts] c
 --		on c.saga = n.names_id
 --	where ISNULL(website, '') <> ''
@@ -141,7 +141,7 @@ insert into [sma_MST_EmailWebsite]
 		GETDATE()		 as cewddtmodified,
 		null			 as cewnlevelno,
 		1				 as saga -- indicate email
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	where ISNULL(email, '') <> ''
@@ -163,7 +163,7 @@ insert into [sma_MST_EmailWebsite]
 		GETDATE()		 as cewddtmodified,
 		null			 as cewnlevelno,
 		2				 as saga -- indicate email_work
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	where ISNULL(email_work, '') <> ''
@@ -185,7 +185,7 @@ insert into [sma_MST_EmailWebsite]
 		GETDATE()		 as cewddtmodified,
 		null			 as cewnlevelno,
 		3				 as saga -- indicate other_email
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	where ISNULL(other_email, '') <> ''
@@ -207,7 +207,7 @@ insert into [sma_MST_EmailWebsite]
 		GETDATE()		 as cewddtmodified,
 		null			 as cewnlevelno,
 		4				 as saga -- indicate website
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	where ISNULL(website, '') <> ''

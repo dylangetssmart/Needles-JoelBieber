@@ -75,17 +75,23 @@ go
 -------------------------------------------------------------------------------
 -- Build conversion.insurance_contacts_helper
 -------------------------------------------------------------------------------
-if exists (
-		select
-			*
-		from sys.objects
-		where name = 'conversion.insurance_contacts_helper'
-			and type = 'U'
-	)
-begin
-	drop table conversion.insurance_contacts_helper
-end
-go
+--if exists (
+--		select
+--			*
+--		from sys.objects
+--		where name = 'insurance_contacts_helper'
+--			and type = 'U'
+--			and schema_id
+--	)
+--begin
+--	drop table conversion.insurance_contacts_helper
+--end
+--go
+
+if OBJECT_ID('conversion.insurance_contacts_helper', 'U') is not null
+	begin
+		drop table conversion.insurance_contacts_helper
+	end
 
 create table conversion.insurance_contacts_helper (
 	tableIndex			 INT identity (1, 1) not null,
@@ -159,8 +165,8 @@ insert into conversion.insurance_contacts_helper
 			and ISNULL(ins.adjuster_id, 0) <> 0
 	join [sma_MST_IndvContacts] i
 		on i.cinsLastName = ins.insured
-			and i.cinsGrade = ins.insured
-			and i.saga = -1
+			and i.source_id = ins.insured
+			and i.source_ref = 'insured'
 	join [sma_MST_AllContactInfo] info
 		on info.ContactId = i.cinnContactID
 			and info.ContactCtg = i.cinnContactCtg
@@ -172,12 +178,7 @@ go
 -------------------------------------------------------------------------------
 -- Build conversion.multi_party_helper
 -------------------------------------------------------------------------------
-if exists (
-		select
-			*
-		from sys.objects
-		where Name = 'conversion.multi_party_helper'
-	)
+if object_id('conversion.multi_party_helper') is not null
 begin
 	drop table conversion.multi_party_helper
 end
@@ -209,12 +210,7 @@ where a.ins_id = insurance_id
 go
 
 -- drop multi_party_helper
-if exists (
-		select
-			*
-		from sys.objects
-		where Name = 'conversion.multi_party_helper'
-	)
+if object_id('conversion.multi_party_helper') is not null
 begin
 	drop table conversion.multi_party_helper
 end
@@ -263,3 +259,6 @@ insert into [sma_MST_InsuranceType]
 		intsDscrptn
 	from [sma_MST_InsuranceType]
 go
+
+--select * from [sma_MST_InsuranceType]
+--select distinct i.policy_type from JoelBieberNeedles..insurance i

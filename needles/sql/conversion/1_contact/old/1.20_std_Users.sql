@@ -175,7 +175,7 @@ insert into [sma_MST_Users]
 		s.staff_code	   as [saga_char],
 		0				   as [usrbactivestate],
 		1				   as [usrbisshowinsystem]
-	from JohnSalazar_Needles..staff s
+	from JoelBieberNeedles..staff s
 	join sma_MST_IndvContacts indv
 		on indv.saga_char = s.staff_code
 	--on indv.cinsGrade = s.staff_code
@@ -195,7 +195,7 @@ if not exists (
 		select
 			1
 		from conversion.SourceTables
-		where SourceDB = N'JohnSalazar_Needles'
+		where SourceDB = N'JoelBieberNeedles'
 			and SourceTable = N'staff'
 			and SourceColumn = N'staff_code'
 	)
@@ -205,7 +205,7 @@ begin
 		SourceDB, SourceTable, SourceColumn, SourceDataType
 		)
 	values (
-	N'JohnSalazar_Needles',
+	N'JoelBieberNeedles',
 	N'staff',
 	N'staff_code',
 	'char'
@@ -227,7 +227,7 @@ as
 	select
 		[ID]
 	from [conversion].[SourceTables]
-	where [SourceDB] = N'JohnSalazar_Needles'
+	where [SourceDB] = N'JoelBieberNeedles'
 		and [SourceSchema] = N'dbo'
 		and [SourceTable] = N'staff'
 )
@@ -241,7 +241,7 @@ insert into [conversion].[BridgeMap]
 		cte_sourcetables.ID			  as [sourcetableid],
 		s.staff_code				  as [sourcerecordid_char]
 	from dbo.sma_MST_Users u
-	inner join [JohnSalazar_Needles].[dbo].[staff] s
+	inner join [JoelBieberNeedles].[dbo].[staff] s
 		on u.saga_char = s.staff_code
 	cross join cte_bridgetables
 	cross join cte_sourcetables;

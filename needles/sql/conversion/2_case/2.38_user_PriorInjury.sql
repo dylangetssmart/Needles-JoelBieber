@@ -1,43 +1,78 @@
-USE SANeedlesSLF
-GO
+use JoelBieberSA_Needles
+go
 
 /* ####################################
 1.0 -- Prior/Subsequent Injuries
 */
 
-ALTER TABLE sma_TRN_PriorInjuries DISABLE TRIGGER ALL
-GO
+alter table sma_TRN_PriorInjuries disable trigger all
+go
 
-INSERT INTO sma_TRN_PriorInjuries
+insert into sma_TRN_PriorInjuries
 	(
-	[prlnInjuryID], [prldPrAccidentDt], [prldDiagnosis], [prlsDescription], [prlsComments], [prlnPlaintiffID], [prlnCaseID], [prlnInjuryType], [prlnParentInjuryID], [prlsInjuryDesc], [prlnRecUserID], [prldDtCreated], [prlnModifyUserID], [prldDtModified], [prlnLevelNo], [prlbCaseRelated], [prlbFirmCase], [prlsPrCaseNo], [prlsInjury]
+	[prlnInjuryID],
+	[prldPrAccidentDt],
+	[prldDiagnosis],
+	[prlsDescription],
+	[prlsComments],
+	[prlnPlaintiffID],
+	[prlnCaseID],
+	[prlnInjuryType],
+	[prlnParentInjuryID],
+	[prlsInjuryDesc],
+	[prlnRecUserID],
+	[prldDtCreated],
+	[prlnModifyUserID],
+	[prldDtModified],
+	[prlnLevelNo],
+	[prlbCaseRelated],
+	[prlbFirmCase],
+	[prlsPrCaseNo],
+	[prlsInjury]
 	)
-	SELECT
-		NULL								  AS [prlnInjuryID]
-	   ,NULL								  AS [prldPrAccidentDt]
-	   ,NULL								  AS [prldDiagnosis]
-	   ,NULL								  AS [prlsDescription]
-	   ,NULL								  AS [prlsComments]
-	   ,pln.plnnContactID					  AS [prlnPlaintiffID]
-	   ,cas.casnCaseID						  AS [prlnCaseID]
-	   ,3									  AS [prlnInjuryType]
-	   ,NULL								  AS [prlnParentInjuryID]
-	   ,NULL								  AS [prlsInjuryDesc]
-	   ,368									  AS [prlnRecUserID]
-	   ,GETDATE()							  AS [prldDtCreated]
-	   ,NULL								  AS [prlnModifyUserID]
-	   ,NULL								  AS [prldDtModified]
-	   ,1									  AS [prlnLevelNo]
-	   ,0									  AS [prlbCaseRelated]
-	   ,0									  AS [prlbFirmCase]
-	   ,NULL								  AS [prlsPrCaseNo]
-	   ,'Prior Injuries:' + ud.prior_injuries AS [prlsInjury]
-	FROM NeedlesSLF..user_case_data ud
-	JOIN sma_TRN_Cases cas
-		ON cas.cassCaseNumber = ud.casenum
-	JOIN sma_TRN_Plaintiff pln
-		ON pln.plnnCaseID = cas.casnCaseID
-	WHERE ISNULL(ud.Prior_Injuries, '') <> ''
+	select
+		null			  as [prlninjuryid],
+		null			  as [prldpraccidentdt],
+		null			  as [prlddiagnosis],
+		null			  as [prlsdescription],
+		null			  as [prlscomments],
+		pln.plnnContactID as [prlnplaintiffid],
+		cas.casnCaseID	  as [prlncaseid],
+		3				  as [prlninjurytype],
+		null			  as [prlnparentinjuryid],
+		null			  as [prlsinjurydesc],
+		368				  as [prlnrecuserid],
+		GETDATE()		  as [prlddtcreated],
+		null			  as [prlnmodifyuserid],
+		null			  as [prlddtmodified],
+		1				  as [prlnlevelno],
+		0				  as [prlbcaserelated],
+		0				  as [prlbfirmcase],
+		null			  as [prlsprcaseno],
+		ISNULL('Prior Injury: ' + NULLIF(upd.PRIOR_INJURY, '') + CHAR(13), '') +
+		ISNULL('Prior_INJ: ' + NULLIF(upd.PRIOR_INJ, '') + CHAR(13), '') +
+		ISNULL('Prior Injuries: ' + NULLIF(upd.Prior_Injuries, '') + CHAR(13), '') +
+		''				  as [prlsinjury]
+	from JoelBieberNeedles..user_party_data upd
+	join sma_TRN_Cases cas
+		on cas.cassCaseNumber = upd.case_id
+	join sma_TRN_Plaintiff pln
+		on pln.plnnCaseID = cas.casnCaseID
+	where ISNULL(upd.PRIOR_INJURY, '') <> ''
+		or ISNULL(upd.PRIOR_INJ, '') <> ''
+		or ISNULL(upd.Prior_Injuries, '') <> ''
 
-ALTER TABLE sma_TRN_PriorInjuries ENABLE TRIGGER ALL
-GO
+--FROM JoelBieberNeedles..user_case_data ud
+--JOIN sma_TRN_Cases cas
+--	ON cas.cassCaseNumber = ud.casenum
+--JOIN sma_TRN_Plaintiff pln
+--	ON pln.plnnCaseID = cas.casnCaseID
+
+alter table sma_TRN_PriorInjuries enable trigger all
+go
+
+--select
+--	upd.PRIOR_INJURY,
+--	upd.PRIOR_INJ,
+--	upd.Prior_Injuries
+--from JoelBieberNeedles..user_party_data upd

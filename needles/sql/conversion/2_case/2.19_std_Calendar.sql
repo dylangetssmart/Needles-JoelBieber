@@ -10,10 +10,10 @@ replace:
 ##########################################################################################################################
 */
 
-USE [JoelBieberSA_Needles]
-GO
+use [JoelBieberSA_Needles]
+go
 
-SET QUOTED_IDENTIFIER ON;
+set quoted_identifier on;
 
 /*
 alter table [sma_TRN_CalendarAppointments] disable trigger all
@@ -28,289 +28,318 @@ alter table [sma_trn_AppointmentStaff] disable trigger all
 */
 
 ---(0)---
-IF NOT EXISTS (
-		SELECT
+if not exists (
+		select
 			*
-		FROM sys.columns
-		WHERE Name = N'saga'
-			AND object_id = OBJECT_ID(N'sma_TRN_CalendarAppointments')
+		from sys.columns
+		where Name = N'saga'
+			and object_id = OBJECT_ID(N'sma_TRN_CalendarAppointments')
 	)
-BEGIN
-	ALTER TABLE [sma_TRN_CalendarAppointments] ADD [saga] [VARCHAR](100) NULL;
-END
-GO
+begin
+	alter table [sma_TRN_CalendarAppointments] add [saga] [VARCHAR](100) null;
+end
+go
 
 ----(0)----
-IF EXISTS (
-		SELECT
+if exists (
+		select
 			*
-		FROM sys.objects
-		WHERE name = 'CalendarJudgeStaffCourt'
-			AND type = 'U'
+		from sys.objects
+		where name = 'CalendarJudgeStaffCourt'
+			and type = 'U'
 	)
-BEGIN
-	DROP TABLE CalendarJudgeStaffCourt
-END
-GO
+begin
+	drop table CalendarJudgeStaffCourt
+end
+go
 
 -- Construct table
-SELECT
-	CAL.calendar_id AS CalendarId
-   ,CAS.casnCaseID  AS CaseID
-   ,0				AS Judge_Contact
-   ,0				AS Staff_Contact
-   ,0				AS Court_Contact
-   ,0				AS Court_Address
-   ,0				AS Party_Contact INTO CalendarJudgeStaffCourt
-FROM JoelBieberNeedles.[dbo].[calendar] CAL
-JOIN [sma_TRN_Cases] CAS
-	ON CAS.cassCaseNumber = CAL.casenum
-WHERE ISNULL(CAL.casenum, 0) <> 0
+select
+	cal.calendar_id as calendarid,
+	cas.casnCaseID  as caseid,
+	0				as judge_contact,
+	0				as staff_contact,
+	0				as court_contact,
+	0				as court_address,
+	0				as party_contact
+into CalendarJudgeStaffCourt
+from JoelBieberNeedles.[dbo].[calendar] cal
+join [sma_TRN_Cases] cas
+	on cas.cassCaseNumber = cal.casenum
+where ISNULL(cal.casenum, 0) <> 0
 
 -- Update Judge_Contact with cinnContactID from [sma_MST_IndvContacts]
 -- calendar.judge_link = on [sma_MST_IndvContacts].saga
-UPDATE CalendarJudgeStaffCourt
-SET Judge_Contact = I.cinnContactID
-FROM JoelBieberNeedles.[dbo].[calendar] CAL
-JOIN [sma_TRN_Cases] CAS
-	ON CAS.cassCaseNumber = CAL.casenum
-JOIN [sma_MST_IndvContacts] I
-	ON I.saga = CAL.judge_link
-	AND CAL.judge_link <> 0
-WHERE CAL.calendar_id = CalendarId
+update CalendarJudgeStaffCourt
+set Judge_Contact = I.cinnContactID
+from JoelBieberNeedles.[dbo].[calendar] cal
+join [sma_TRN_Cases] cas
+	on cas.cassCaseNumber = cal.casenum
+join [sma_MST_IndvContacts] i
+	on i.saga = cal.judge_link
+	and cal.judge_link <> 0
+where cal.calendar_id = CalendarId
 
 -- Set Staff_Contact [sma_MST_IndvContacts].cinnContactID
 -- calendar.staff_id = [sma_MST_IndvContacts].cinsGrade
-UPDATE CalendarJudgeStaffCourt
-SET Staff_Contact = J.cinnContactID
-FROM JoelBieberNeedles.[dbo].[calendar] CAL
-JOIN [sma_TRN_Cases] CAS
-	ON CAS.cassCaseNumber = CAL.casenum
-JOIN [sma_MST_IndvContacts] J
-	ON J.cinsGrade = CAL.staff_id
-	AND ISNULL(CAL.staff_id, '') <> ''
-WHERE CAL.calendar_id = CalendarId
+update CalendarJudgeStaffCourt
+set Staff_Contact = J.cinnContactID
+from JoelBieberNeedles.[dbo].[calendar] cal
+join [sma_TRN_Cases] cas
+	on cas.cassCaseNumber = cal.casenum
+join [sma_MST_IndvContacts] j
+	on j.source_id = cal.staff_id
+	and ISNULL(cal.staff_id, '') <> ''
+where cal.calendar_id = CalendarId
 
 -- Set Court_Contact to [sma_MST_OrgContacts].connContactID 
 -- Set Court_Address to [sma_MST_Address].addnAddressID
-UPDATE CalendarJudgeStaffCourt
-SET Court_Contact = O.connContactID
-   ,Court_Address = A.addnAddressID
-FROM JoelBieberNeedles.[dbo].[calendar] CAL
-JOIN [sma_TRN_Cases] CAS
-	ON CAS.cassCaseNumber = CAL.casenum
-JOIN [sma_MST_OrgContacts] O
-	ON O.saga = CAL.court_link
-JOIN [sma_MST_Address] A
-	ON A.addnContactID = O.connContactID
-	AND A.addnContactCtgID = O.connContactCtg
-	AND A.addbPrimary = 1
-WHERE CAL.calendar_id = CalendarId
+update CalendarJudgeStaffCourt
+set Court_Contact = O.connContactID,
+	Court_Address = A.addnAddressID
+from JoelBieberNeedles.[dbo].[calendar] cal
+join [sma_TRN_Cases] cas
+	on cas.cassCaseNumber = cal.casenum
+join [sma_MST_OrgContacts] o
+	on o.saga = cal.court_link
+join [sma_MST_Address] a
+	on a.addnContactID = o.connContactID
+	and a.addnContactCtgID = o.connContactCtg
+	and a.addbPrimary = 1
+where cal.calendar_id = CalendarId
 
 -- Set Party_Contact to [sma_MST_IndvContacts].cinnContactID
-UPDATE CalendarJudgeStaffCourt
-SET Party_Contact = J.cinnContactID
-FROM JoelBieberNeedles.[dbo].[calendar] CAL
-JOIN [sma_TRN_Cases] CAS
-	ON CAS.cassCaseNumber = CAL.casenum
-JOIN [sma_MST_IndvContacts] J
-	ON J.saga = CAL.party_id
-WHERE CAL.calendar_id = CalendarId
+update CalendarJudgeStaffCourt
+set Party_Contact = J.cinnContactID
+from JoelBieberNeedles.[dbo].[calendar] cal
+join [sma_TRN_Cases] cas
+	on cas.cassCaseNumber = cal.casenum
+join [sma_MST_IndvContacts] j
+	on j.saga = cal.party_id
+where cal.calendar_id = CalendarId
 
 
 ---(0)---
-INSERT INTO [sma_MST_ActivityType]
+insert into [sma_MST_ActivityType]
 	(
-	attsDscrptn, attnActivityCtg
+	attsDscrptn,
+	attnActivityCtg
 	)
-	SELECT
-		A.ActivityType
-	   ,(
-			SELECT
+	select
+		a.activitytype,
+		(
+			select
 				atcnPKId
-			FROM sma_MST_ActivityCategory
-			WHERE atcsDscrptn = 'Case-Related Appointment'
+			from sma_MST_ActivityCategory
+			where atcsDscrptn = 'Case-Related Appointment'
 		)
-	FROM (
-		SELECT DISTINCT
-			appointment_type AS ActivityType
-		FROM JoelBieberNeedles.[dbo].[calendar] CAL
-		WHERE ISNULL(appointment_type, '') <> ''
-		EXCEPT
-		SELECT
-			attsDscrptn AS ActivityType
-		FROM sma_MST_ActivityType
-		WHERE attnActivityCtg = (
-				SELECT
+	from (
+		select distinct
+			appointment_type as activitytype
+		from JoelBieberNeedles.[dbo].[calendar] cal
+		where ISNULL(appointment_type, '') <> ''
+		except
+		select
+			attsDscrptn as activitytype
+		from sma_MST_ActivityType
+		where attnActivityCtg = (
+				select
 					atcnPKId
-				FROM sma_MST_ActivityCategory
-				WHERE atcsDscrptn = 'Case-Related Appointment'
+				from sma_MST_ActivityCategory
+				where atcsDscrptn = 'Case-Related Appointment'
 			)
-			AND ISNULL(attsDscrptn, '') <> ''
-	) A
-GO
+			and ISNULL(attsDscrptn, '') <> ''
+	) a
+go
 
 
-ALTER TABLE [sma_TRN_CalendarAppointments] DISABLE TRIGGER ALL
+alter table [sma_TRN_CalendarAppointments] disable trigger all
 
 ----(1)-----
-INSERT INTO [sma_TRN_CalendarAppointments]
+insert into [sma_TRN_CalendarAppointments]
 	(
-	[FromDate], [ToDate], [AppointmentTypeID], [ActivityTypeID], [CaseID], [LocationContactID], [LocationContactGtgID], [JudgeID], [Comments], [StatusID], [Address], [subject], [RecurranceParentID], [AdjournedID], [RecUserID], [DtCreated], [ModifyUserID], [DtModified], [DepositionType], [Deponants], [OriginalAppointmentID], [OriginalAdjournedID], [RecurrenceId], [WorkPlanItemId], [AutoUpdateAppId], [AutoUpdated], [AutoUpdateProviderId], [saga]
+	[FromDate],
+	[ToDate],
+	[AppointmentTypeID],
+	[ActivityTypeID],
+	[CaseID],
+	[LocationContactID],
+	[LocationContactGtgID],
+	[JudgeID],
+	[Comments],
+	[StatusID],
+	[Address],
+	[subject],
+	[RecurranceParentID],
+	[AdjournedID],
+	[RecUserID],
+	[DtCreated],
+	[ModifyUserID],
+	[DtModified],
+	[DepositionType],
+	[Deponants],
+	[OriginalAppointmentID],
+	[OriginalAdjournedID],
+	[RecurrenceId],
+	[WorkPlanItemId],
+	[AutoUpdateAppId],
+	[AutoUpdated],
+	[AutoUpdateProviderId],
+	[saga]
 	)
-	SELECT
-		CASE
-			WHEN CAL.[start_date] BETWEEN '1900-01-01' AND '2079-06-06' AND
-				CONVERT(TIME, ISNULL(CAL.[start_time], '00:00:00')) <> CONVERT(TIME, '00:00:00')
-				THEN CAST(CAST(CAL.[start_date] AS DATETIME) + CAST(CAL.[start_time] AS DATETIME) AS DATETIME)
+	select
+		case
+			when cal.[start_date] between '1900-01-01' and '2079-06-06' and
+				CONVERT(TIME, ISNULL(cal.[start_time], '00:00:00')) <> CONVERT(TIME, '00:00:00')
+				then CAST(CAST(cal.[start_date] as DATETIME) + CAST(cal.[start_time] as DATETIME) as DATETIME)
 			--then cast(cal.[start_date] as datetime)
-			WHEN CAL.[start_date] BETWEEN '1900-01-01' AND '2079-06-06' AND
-				CONVERT(TIME, ISNULL(CAL.[start_time], '00:00:00')) = CONVERT(TIME, '00:00:00')
-				THEN CAST(CAST(CAL.[start_date] AS DATETIME) + CAST('00:00:00' AS DATETIME) AS DATETIME)
-			ELSE '1900-01-01'
-		END													AS [FromDate]
-	   ,CASE
-			WHEN CAL.[stop_date] BETWEEN '1900-01-01' AND '2079-06-06' AND
-				CONVERT(TIME, ISNULL(CAL.[stop_time], '00:00:00')) <> CONVERT(TIME, '00:00:00')
-				THEN CAST(CAST(CAL.[stop_date] AS DATETIME) + CAST(CAL.[stop_time] AS DATETIME) AS DATETIME)
+			when cal.[start_date] between '1900-01-01' and '2079-06-06' and
+				CONVERT(TIME, ISNULL(cal.[start_time], '00:00:00')) = CONVERT(TIME, '00:00:00')
+				then CAST(CAST(cal.[start_date] as DATETIME) + CAST('00:00:00' as DATETIME) as DATETIME)
+			else '1900-01-01'
+		end													as [fromdate],
+		case
+			when cal.[stop_date] between '1900-01-01' and '2079-06-06' and
+				CONVERT(TIME, ISNULL(cal.[stop_time], '00:00:00')) <> CONVERT(TIME, '00:00:00')
+				then CAST(CAST(cal.[stop_date] as DATETIME) + CAST(cal.[stop_time] as DATETIME) as DATETIME)
 			--then cast(cal.[stop_date] as datetime)
-			WHEN CAL.[stop_date] BETWEEN '1900-01-01' AND '2079-06-06' AND
-				CONVERT(TIME, ISNULL(CAL.[stop_time], '00:00:00')) = CONVERT(TIME, '00:00:00')
-				THEN CAST(CAST(CAL.[stop_date] AS DATETIME) + CAST('00:00:00' AS DATETIME) AS DATETIME)
-			ELSE '1900-01-01'
-		END													AS [ToDate]
-	   ,(
-			SELECT
+			when cal.[stop_date] between '1900-01-01' and '2079-06-06' and
+				CONVERT(TIME, ISNULL(cal.[stop_time], '00:00:00')) = CONVERT(TIME, '00:00:00')
+				then CAST(CAST(cal.[stop_date] as DATETIME) + CAST('00:00:00' as DATETIME) as DATETIME)
+			else '1900-01-01'
+		end													as [todate],
+		(
+			select
 				ID
-			FROM [sma_MST_CalendarAppointmentType]
-			WHERE AppointmentType = 'Case-related'
-		)													
-		AS [AppointmentTypeID]
-	   ,CASE
-			WHEN ISNULL(CAL.appointment_type, '') <> ''
-				THEN (
-						SELECT
+			from [sma_MST_CalendarAppointmentType]
+			where AppointmentType = 'Case-related'
+		)													as [appointmenttypeid],
+		case
+			when ISNULL(cal.appointment_type, '') <> ''
+				then (
+						select
 							attnActivityTypeID
-						FROM sma_MST_ActivityType
-						WHERE attnActivityCtg = (
-								SELECT
+						from sma_MST_ActivityType
+						where attnActivityCtg = (
+								select
 									atcnPKId
-								FROM sma_MST_ActivityCategory
-								WHERE atcsDscrptn = 'Case-Related Appointment'
+								from sma_MST_ActivityCategory
+								where atcsDscrptn = 'Case-Related Appointment'
 							)
-							AND attsDscrptn = CAL.appointment_type
+							and attsDscrptn = cal.appointment_type
 					)
-			ELSE (
-					SELECT
+			else (
+					select
 						attnActivityTypeID
-					FROM [sma_MST_ActivityType]
-					WHERE attnActivityCtg = (
-							SELECT
+					from [sma_MST_ActivityType]
+					where attnActivityCtg = (
+							select
 								atcnPKId
-							FROM sma_MST_ActivityCategory
-							WHERE atcsDscrptn = 'Case-Related Appointment'
+							from sma_MST_ActivityCategory
+							where atcsDscrptn = 'Case-Related Appointment'
 						)
-						AND attsDscrptn = 'Appointment'
+						and attsDscrptn = 'Appointment'
 				)
-		END													AS [ActivityTypeID]
-	   ,CAS.casnCaseID										AS [CaseID]
-	   ,MAP.Court_Contact									AS [LocationContactID]
-	   ,2													AS [LocationContactGtgID]
-	   ,MAP.Judge_Contact									AS [JudgeID]
-	   ,ISNULL('party name : ' + NULLIF(CAL.[party_name], '') + CHAR(13), '') +
-		ISNULL('short notes : ' + NULLIF(CAL.[short_notes], '') + CHAR(13), '') +
-		''													AS [Comments]
-	   ,CASE
-			WHEN CAL.status = 'Canceled'
-				THEN (
-						SELECT
-							[StatusId]
-						FROM [sma_MST_AppointmentStatus]
-						WHERE [StatusName] = 'Canceled'
+		end													as [activitytypeid],
+		cas.casnCaseID										as [caseid],
+		map.Court_Contact									as [locationcontactid],
+		2													as [locationcontactgtgid],
+		map.Judge_Contact									as [judgeid],
+		ISNULL('party name : ' + NULLIF(cal.[party_name], '') + CHAR(13), '') +
+		ISNULL('short notes : ' + NULLIF(cal.[short_notes], '') + CHAR(13), '') +
+		''													as [comments],
+		case
+			when cal.status = 'Canceled'
+				then (
+						select
+							[statusid]
+						from [sma_MST_AppointmentStatus]
+						where [StatusName] = 'Canceled'
 					)
-			WHEN CAL.status = 'Done'
-				THEN (
-						SELECT
-							[StatusId]
-						FROM [sma_MST_AppointmentStatus]
-						WHERE [StatusName] = 'Completed'
+			when cal.status = 'Done'
+				then (
+						select
+							[statusid]
+						from [sma_MST_AppointmentStatus]
+						where [StatusName] = 'Completed'
 					)
-			WHEN CAL.status = 'No Show'
-				THEN (
-						SELECT
-							[StatusId]
-						FROM [sma_MST_AppointmentStatus]
-						WHERE [StatusName] = 'Open'
+			when cal.status = 'No Show'
+				then (
+						select
+							[statusid]
+						from [sma_MST_AppointmentStatus]
+						where [StatusName] = 'Open'
 					)
-			WHEN CAL.status = 'Open'
-				THEN (
-						SELECT
-							[StatusId]
-						FROM [sma_MST_AppointmentStatus]
-						WHERE [StatusName] = 'Open'
+			when cal.status = 'Open'
+				then (
+						select
+							[statusid]
+						from [sma_MST_AppointmentStatus]
+						where [StatusName] = 'Open'
 					)
-			WHEN CAL.status = 'Postponed'
-				THEN (
-						SELECT
-							[StatusId]
-						FROM [sma_MST_AppointmentStatus]
-						WHERE [StatusName] = 'Adjourned'
+			when cal.status = 'Postponed'
+				then (
+						select
+							[statusid]
+						from [sma_MST_AppointmentStatus]
+						where [StatusName] = 'Adjourned'
 					)
-			WHEN CAL.status = 'Rescheduled'
-				THEN (
-						SELECT
-							[StatusId]
-						FROM [sma_MST_AppointmentStatus]
-						WHERE [StatusName] = 'Adjourned'
+			when cal.status = 'Rescheduled'
+				then (
+						select
+							[statusid]
+						from [sma_MST_AppointmentStatus]
+						where [StatusName] = 'Adjourned'
 					)
-			ELSE (
-					SELECT
-						[StatusId]
-					FROM [sma_MST_AppointmentStatus]
-					WHERE [StatusName] = 'Open'
+			else (
+					select
+						[statusid]
+					from [sma_MST_AppointmentStatus]
+					where [StatusName] = 'Open'
 				)
-		END													AS [StatusID]
-	   ,NULL												AS [Address]
-	   ,LEFT(CAL.[subject], 120)							AS [Subject]
-	   ,NULL
-	   ,NULL
-	   ,368													AS [RecUserID]
-	   ,CAL.[date_created]									AS [DtCreated]
-	   ,NULL												AS [ModifyUserID]
-	   ,NULL												AS [DtModified]
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,'Case-related:' + CONVERT(VARCHAR, CAL.calendar_id) AS [saga]
-	FROM JoelBieberNeedles.[dbo].[calendar] CAL
-	JOIN [sma_TRN_Cases] CAS
-		ON CAS.cassCaseNumber = CAL.casenum
-	JOIN CalendarJudgeStaffCourt MAP
-		ON MAP.CalendarId = CAL.calendar_id
-	WHERE ISNULL(CAL.casenum, 0) <> 0
-GO
+		end													as [statusid],
+		null												as [address],
+		LEFT(cal.[subject], 120)							as [subject],
+		null,
+		null,
+		368													as [recuserid],
+		cal.[date_created]									as [dtcreated],
+		null												as [modifyuserid],
+		null												as [dtmodified],
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		'Case-related:' + CONVERT(VARCHAR, cal.calendar_id) as [saga]
+	from JoelBieberNeedles.[dbo].[calendar] cal
+	join [sma_TRN_Cases] cas
+		on cas.cassCaseNumber = cal.casenum
+	join CalendarJudgeStaffCourt map
+		on map.CalendarId = cal.calendar_id
+	where ISNULL(cal.casenum, 0) <> 0
+go
 
-ALTER TABLE [sma_TRN_CalendarAppointments] ENABLE TRIGGER ALL
+alter table [sma_TRN_CalendarAppointments] enable trigger all
 
 ----(2)-----
-INSERT INTO [sma_trn_AppointmentStaff]
+insert into [sma_trn_AppointmentStaff]
 	(
-	[AppointmentId], [StaffContactId]
+	[AppointmentId],
+	[StaffContactId]
 	)
-	SELECT
-		APP.AppointmentID
-	   ,MAP.Staff_Contact
-	FROM [sma_TRN_CalendarAppointments] APP
-	JOIN JoelBieberNeedles.[dbo].[calendar] CAL
-		ON APP.saga = 'Case-related:' + CONVERT(VARCHAR, CAL.calendar_id)
-	JOIN CalendarJudgeStaffCourt MAP
-		ON MAP.CalendarId = CAL.calendar_id
+	select
+		app.AppointmentID,
+		map.Staff_Contact
+	from [sma_TRN_CalendarAppointments] app
+	join JoelBieberNeedles.[dbo].[calendar] cal
+		on app.saga = 'Case-related:' + CONVERT(VARCHAR, cal.calendar_id)
+	join CalendarJudgeStaffCourt map
+		on map.CalendarId = cal.calendar_id
 
 
 /*

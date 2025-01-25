@@ -10,23 +10,29 @@ replace:
 ##########################################################################################################################
 */
 
-use [JoelBieberSA_Needles]
-GO
+use JoelBieberSA_Needles
+go
 
 /* ##############################################
 Create temporary table to hold disbursement value codes
 */
-IF OBJECT_ID('tempdb..#DisbursementValueCodes') IS NOT NULL
-    DROP TABLE #DisbursementValueCodes;
+if OBJECT_ID('tempdb..#DisbursementValueCodes') is not null
+	drop table #DisbursementValueCodes;
 
-CREATE TABLE #DisbursementValueCodes (
-    code VARCHAR(10)
+create table #DisbursementValueCodes (
+	code VARCHAR(10)
 );
 
-INSERT INTO #DisbursementValueCodes (code)
-VALUES
-('CAD'), ('CEX'), ('CPY'), ('DTF'), ('EXP'), ('FUT MED'), ('PHO'), ('PST'), 
-('PTF'), ('PTG'), ('PTP'), ('RPT'), ('TEL');
+insert into #DisbursementValueCodes
+	(
+	code
+	)
+values (
+	   'MSC'
+	   ),
+	   (
+'DTF'
+)
 
 /*
 alter table [sma_TRN_Disbursement] disable trigger all
@@ -35,281 +41,378 @@ DBCC CHECKIDENT ('[sma_TRN_Disbursement]', RESEED, 0);
 alter table [sma_TRN_Disbursement] enable trigger all
 */
 
-
-/* ##############################################
-Add saga to sma_TRN_Disbursement
+/* --------------------------------------------------------------------------------------------------------------
+Update [sma_TRN_Disbursement] schema
 */
-if not exists (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_Disbursement'))
+
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'saga'
+			and object_id = OBJECT_ID(N'sma_TRN_Disbursement')
+	)
 begin
-    ALTER TABLE [sma_TRN_Disbursement] ADD [saga] int NULL; 
+	alter table [sma_TRN_Disbursement] add [saga] INT null;
 end
 
+-- source_id_1
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id'
+			and object_id = OBJECT_ID(N'sma_TRN_Disbursement')
+	)
+begin
+	alter table [sma_TRN_Disbursement] add [source_id] VARCHAR(MAX) null;
+end
+go
+
+-- source_id_2
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_db'
+			and object_id = OBJECT_ID(N'sma_TRN_Disbursement')
+	)
+begin
+	alter table [sma_TRN_Disbursement] add [source_db] VARCHAR(MAX) null;
+end
+go
+
+-- source_id_3
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_ref'
+			and object_id = OBJECT_ID(N'sma_TRN_Disbursement')
+	)
+begin
+	alter table [sma_TRN_Disbursement] add [source_ref] VARCHAR(MAX) null;
+end
+go
+
+
 -- Use this to create custom CheckRequestStatuses
-    -- INSERT INTO [sma_MST_CheckRequestStatus] ([description])
-    -- select 'Unrecouped'
-    -- EXCEPT SELECT [description] FROM [sma_MST_CheckRequestStatus]
+-- INSERT INTO [sma_MST_CheckRequestStatus] ([description])
+-- select 'Unrecouped'
+-- EXCEPT SELECT [description] FROM [sma_MST_CheckRequestStatus]
 
 
-/* ##############################################
+/* --------------------------------------------------------------------------------------------------------------
 Create disbursement types for applicable value codes
 */
-INSERT INTO [sma_MST_DisbursmentType]
-(
-    disnTypeCode
-    ,dissTypeName
-)
-(
-	SELECT DISTINCT
-    'CONVERSION'
-    ,VC.[description]
-	FROM [JoelBieberNeedles].[dbo].[value] V
-	    JOIN [JoelBieberNeedles].[dbo].[value_code] VC
-            on VC.code=V.code 
-	WHERE isnull(V.code,'') in (SELECT code FROM #DisbursementValueCodes)
-)
-EXCEPT 
-SELECT 
-    'CONVERSION'
-    ,dissTypeName
-FROM [sma_MST_DisbursmentType] 
 
+insert into [sma_MST_DisbursmentType]
+	(
+	disnTypeCode,
+	dissTypeName
+	)
+	(
+	select distinct
+		'CONVERSION',
+		vc.[description]
+	from [JoelBieberNeedles].[dbo].[value] v
+	join [JoelBieberNeedles].[dbo].[value_code] vc
+		on vc.code = v.code
+	where ISNULL(v.code, '') in (
+			select
+				code
+			from #DisbursementValueCodes
+		))
+	except
+	select
+		'CONVERSION',
+		dissTypeName
+	from [sma_MST_DisbursmentType]
 
-/* ##############################################
+/* --------------------------------------------------------------------------------------------------------------
 Create Disbursement helper table
 */
-if exists (select * from sys.objects where name='value_tab_Disbursement_Helper' and type='U')
+
+if exists (
+		select
+			*
+		from sys.objects
+		where name = 'value_tab_Disbursement_Helper'
+			and type = 'U'
+	)
 begin
 	drop table value_tab_Disbursement_Helper
-end 
-GO
+end
+go
 
 create table value_tab_Disbursement_Helper (
-    TableIndex [int] IDENTITY(1,1) NOT NULL,
-    case_id		    int,
-    value_id		int,
-    ProviderNameId	int,
-    ProviderName	varchar(200),
-    ProviderCID	    int,
-    ProviderCTG	    int,
-    ProviderAID	    int,
-    ProviderUID	    bigint,
-    casnCaseID		int,
-    PlaintiffID	    int,
-CONSTRAINT IOC_Clustered_Index_value_tab_Disbursement_Helper PRIMARY KEY CLUSTERED ( TableIndex )
-) ON [PRIMARY] 
-GO
+	TableIndex	   [INT] identity (1, 1) not null,
+	case_id		   INT,
+	value_id	   INT,
+	ProviderNameId INT,
+	ProviderName   VARCHAR(200),
+	ProviderCID	   INT,
+	ProviderCTG	   INT,
+	ProviderAID	   INT,
+	ProviderUID	   BIGINT,
+	casnCaseID	   INT,
+	PlaintiffID	   INT,
+	constraint IOC_Clustered_Index_value_tab_Disbursement_Helper primary key clustered (TableIndex)
+) on [PRIMARY]
+go
 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Disbursement_Helper_case_id ON [value_tab_Disbursement_Helper] (case_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Disbursement_Helper_value_id ON [value_tab_Disbursement_Helper] (value_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Disbursement_Helper_ProviderNameId ON [value_tab_Disbursement_Helper] (ProviderNameId);   
-GO
+create nonclustered index IX_NonClustered_Index_value_tab_Disbursement_Helper_case_id on [value_tab_Disbursement_Helper] (case_id);
+create nonclustered index IX_NonClustered_Index_value_tab_Disbursement_Helper_value_id on [value_tab_Disbursement_Helper] (value_id);
+create nonclustered index IX_NonClustered_Index_value_tab_Disbursement_Helper_ProviderNameId on [value_tab_Disbursement_Helper] (ProviderNameId);
+go
 
 ---(0)---
 insert into value_tab_Disbursement_Helper
-(
-    case_id
-    ,value_id
-    ,ProviderNameId
-    ,ProviderName
-    ,ProviderCID
-    ,ProviderCTG
-    ,ProviderAID
-    ,ProviderUID
-    ,casnCaseID
-    ,PlaintiffID
-)
-select
-    V.case_id		    as case_id,	        -- needles case
-    V.value_id		    as tab_id,		    -- needles records TAB item
-    V.provider		    as ProviderNameId,  
-    IOC.Name		    as ProviderName,
-    IOC.CID				as ProviderCID,  
-    IOC.CTG				as ProviderCTG,
-    IOC.AID				as ProviderAID,
-    IOC.UNQCID		    as ProviderUID,
-    CAS.casnCaseID	    as casnCaseID,
-    null			    as PlaintiffID
-from [JoelBieberNeedles].[dbo].[value_Indexed] V
-JOIN [sma_TRN_cases] CAS
-    on CAS.cassCaseNumber = V.case_id
-JOIN IndvOrgContacts_Indexed IOC
-    on IOC.SAGA = V.provider and isnull(V.provider,0) <> 0
-where code in (SELECT code FROM #DisbursementValueCodes);
-GO
+	(
+	case_id,
+	value_id,
+	ProviderNameId,
+	ProviderName,
+	ProviderCID,
+	ProviderCTG,
+	ProviderAID,
+	ProviderUID,
+	casnCaseID,
+	PlaintiffID
+	)
+	select
+		v.case_id	   as case_id,	        -- needles case
+		v.value_id	   as tab_id,		    -- needles records TAB item
+		v.provider	   as providernameid,
+		ioc.Name	   as providername,
+		ioc.CID		   as providercid,
+		ioc.CTG		   as providerctg,
+		ioc.AID		   as provideraid,
+		ioc.UNQCID	   as provideruid,
+		cas.casncaseid as casncaseid,
+		null		   as plaintiffid
+	from [JoelBieberNeedles].[dbo].[value_Indexed] v
+	join [sma_TRN_cases] cas
+		on cas.cassCaseNumber = v.case_id
+	join IndvOrgContacts_Indexed ioc
+		on ioc.SAGA = v.provider
+			and ISNULL(v.provider, 0) <> 0
+	where code in (
+			select
+				code
+			from #DisbursementValueCodes
+		);
+go
 
 ---(0)---
-DBCC DBREINDEX('value_tab_Disbursement_Helper',' ',90)  WITH NO_INFOMSGS 
-GO
+dbcc dbreindex ('value_tab_Disbursement_Helper', ' ', 90) with no_infomsgs
+go
 
 
 ---(0)--- value_id may associate with secondary plaintiff
-if exists (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
+if exists (
+		select
+			*
+		from sys.objects
+		where Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
 begin
-    drop table value_tab_Multi_Party_Helper_Temp
+	drop table value_tab_Multi_Party_Helper_Temp
 end
-GO
+go
 
-SELECT 
-    V.case_id		    as cid
-    ,V.value_id		    as vid
-    ,T.plnnPlaintiffID
-INTO value_tab_Multi_Party_Helper_Temp   
-FROM [JoelBieberNeedles].[dbo].[value_Indexed] V
-    JOIN [sma_TRN_cases] CAS
-        on CAS.cassCaseNumber = V.case_id
-    JOIN IndvOrgContacts_Indexed IOC
-        on IOC.SAGA = V.party_id
-    JOIN [sma_TRN_Plaintiff] T
-        on T.plnnContactID=IOC.CID
-        and T.plnnContactCtg=IOC.CTG
-        and T.plnnCaseID=CAS.casnCaseID
+select
+	v.case_id  as cid,
+	v.value_id as vid,
+	t.plnnPlaintiffID
+into value_tab_Multi_Party_Helper_Temp
+from [JoelBieberNeedles].[dbo].[value_Indexed] v
+join [sma_TRN_cases] cas
+	on cas.cassCaseNumber = v.case_id
+join IndvOrgContacts_Indexed ioc
+	on ioc.SAGA = v.party_id
+join [sma_TRN_Plaintiff] t
+	on t.plnnContactID = ioc.cid
+		and t.plnnContactCtg = ioc.CTG
+		and t.plnnCaseID = cas.casnCaseID
 
-update value_tab_Disbursement_Helper set PlaintiffID=A.plnnPlaintiffID
-from value_tab_Multi_Party_Helper_Temp A
-where case_id=A.cid and value_id=A.vid
-GO
+update value_tab_Disbursement_Helper
+set PlaintiffID = A.plnnPlaintiffID
+from value_tab_Multi_Party_Helper_Temp a
+where case_id = a.CID
+and value_id = a.vid
+go
 
 ---(0)--- value_id may associate with defendant. steve malman make it associates to primary plaintiff 
-if exists (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
+if exists (
+		select
+			*
+		from sys.objects
+		where Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
 begin
-    drop table value_tab_Multi_Party_Helper_Temp
+	drop table value_tab_Multi_Party_Helper_Temp
 end
-GO
+go
 
-SELECT 
-    V.case_id		    as cid
-    ,V.value_id		    as vid
-    ,(
-        select plnnPlaintiffID
-        from sma_TRN_Plaintiff
-        where plnnCaseID = CAS.casnCaseID and plnbIsPrimary = 1
-    )                   as plnnPlaintiffID 
+select
+	v.case_id  as cid,
+	v.value_id as vid,
+	(
+		select
+			plnnplaintiffid
+		from sma_TRN_Plaintiff
+		where plnnCaseID = cas.casnCaseID
+			and plnbIsPrimary = 1
+	)		   as plnnplaintiffid
 into value_tab_Multi_Party_Helper_Temp
-FROM [JoelBieberNeedles].[dbo].[value_Indexed] V
-    JOIN [sma_TRN_cases] CAS
-        on CAS.cassCaseNumber = V.case_id
-    JOIN [IndvOrgContacts_Indexed] IOC
-        on IOC.SAGA = V.party_id
-    JOIN [sma_TRN_Defendants] D
-        on D.defnContactID=IOC.CID
-        and D.defnContactCtgID=IOC.CTG
-        and D.defnCaseID=CAS.casnCaseID
-GO
+from [JoelBieberNeedles].[dbo].[value_Indexed] v
+join [sma_TRN_cases] cas
+	on cas.cassCaseNumber = v.case_id
+join [IndvOrgContacts_Indexed] ioc
+	on ioc.SAGA = v.party_id
+join [sma_TRN_Defendants] d
+	on d.defnContactID = ioc.cid
+		and d.defnContactCtgID = ioc.CTG
+		and d.defnCaseID = cas.casnCaseID
+go
 
-update value_tab_Disbursement_Helper set PlaintiffID=A.plnnPlaintiffID
-from value_tab_Multi_Party_Helper_Temp A
-where case_id=A.cid and value_id=A.vid
-GO
+update value_tab_Disbursement_Helper
+set PlaintiffID = A.plnnPlaintiffID
+from value_tab_Multi_Party_Helper_Temp a
+where case_id = a.CID
+and value_id = a.vid
+go
 
 
-/* ##############################################
+/* --------------------------------------------------------------------------------------------------------------
 Create Disbursements
 */
-alter table [sma_TRN_Disbursement] disable trigger all
-GO
 
-INSERT INTO [sma_TRN_Disbursement]
-(
-    disnCaseID,
-    disdCheckDt,
-    disnPayeeContactCtgID,
-    disnPayeeContactID,
-    disnAmount,
-    disnPlaintiffID,
-    dissDisbursementType,
-    UniquePayeeID,
-    dissDescription,
-    dissComments,
-    disnCheckRequestStatus,
-    disdBillDate,
-    disdDueDate,
-    disnRecUserID,
-    disdDtCreated,
-    disnRecoverable,
-    saga
-)
-select 
-    MAP.casnCaseID		                    as disnCaseID
-    ,u.Check_Requested                        as disdCheckDt
-    ,MAP.ProviderCTG	                    as disnPayeeContactCtgID
-    ,MAP.ProviderCID	                    as disnPayeeContactID
-    ,V.total_value		                    as disnAmount
-    ,MAP.PlaintiffID 	                    as disnPlaintiffID
-    ,(
-        select disnTypeID
-        from [sma_MST_DisbursmentType]
-        where dissTypeName = (
-                                select [description]
-                                FROM [JoelBieberNeedles].[dbo].[value_code]
-                                where [code]=V.code
-                            )
-    )                                       as dissDisbursementType
-    ,MAP.ProviderUID	                    as UniquePayeeID
-    ,V.[memo]                               as dissDescription
-    ,v.settlement_memo + 
-    ISNULL('Account Number: ' + NULLIF(CAST(Account_Number AS VARCHAR(MAX)), '') + CHAR(13), '') +
-    ISNULL('Cancel: ' + NULLIF(CAST(Cancel AS VARCHAR(MAX)), '') + CHAR(13), '') +    
-    ISNULL('CM Reviewed: ' + NULLIF(CAST(CM_Reviewed AS VARCHAR(MAX)), '') + CHAR(13), '') +
-    ISNULL('Date Paid: ' + NULLIF(CAST(Date_Paid AS VARCHAR(MAX)), '') + CHAR(13), '') +
-    ISNULL('For Dates From: ' + NULLIF(CAST(For_Dates_From AS VARCHAR(MAX)), '') + CHAR(13), '') +
-    ISNULL('OI Checked: ' + NULLIF(CAST(OI_Checked AS VARCHAR(MAX)), '') + CHAR(13), '')
-                                            as dissComments
-    ,case
-        -- when v.code in ('CEX', 'CSF', 'ICF', 'MCF' )
-        --     then (
-        --             select Id
-        --             FROM [sma_MST_CheckRequestStatus]
-        --             where [Description]='Paid'
-        --         )
-		-- when v.code in ('UCC')
-        --     then (
-        --             select Id
-        --             FROM [sma_MST_CheckRequestStatus]
-        --             where [Description]='Check Pending'
-        --         )
-        when isnull(Check_Requested,'') <> ''
-            then (
-                select Id
-                FROM [sma_MST_CheckRequestStatus]
-                where [Description]='Check Pending'
-            )
-		else NULL
-        end	                                as disnCheckRequestStatus
-    ,case
-        when V.start_date between '1900-01-01' and '2079-06-06'
-            then V.start_date
-        else null 
-        end	                                as disdBillDate
-    ,case
-        when V.stop_date between '1900-01-01' and '2079-06-06'
-            then V.stop_date
-	   else null
-       end	                                as disdDueDate
-    ,(
-        select usrnUserID
-        from sma_MST_Users
-        where saga=V.staff_created
-    )                                       as disnRecUserID
-    ,case
-        when date_created between '1900-01-01' and '2079-06-06'
-            then date_created
-	   else null
-       end	                                as disdDtCreated
-	,case
-        when v.code = 'DTF'
-            then 0 
-        else 1 
-        end		                            as disnRecoverable
-    ,V.value_id			                    as saga
-FROM [JoelBieberNeedles].[dbo].[value_Indexed] V
-JOIN value_tab_Disbursement_Helper MAP
-    on MAP.case_id = V.case_id 
-    and MAP.value_id = V.value_id
-join JoelBieberNeedles..user_tab2_data u
-    on u.case_id = v.case_id
-GO
+alter table [sma_TRN_Disbursement] disable trigger all
+go
+
+insert into [sma_TRN_Disbursement]
+	(
+	disnCaseID,
+	disdCheckDt,
+	disnPayeeContactCtgID,
+	disnPayeeContactID,
+	disnAmount,
+	disnPlaintiffID,
+	dissDisbursementType,
+	UniquePayeeID,
+	dissDescription,
+	dissComments,
+	disnCheckRequestStatus,
+	disdBillDate,
+	disdDueDate,
+	disnRecUserID,
+	disdDtCreated,
+	disnRecoverable,
+	saga,
+	source_id_1,
+	source_id_2,
+	source_id_3
+	)
+	select
+		map.casnCaseID  as disncaseid,
+		null			as disdcheckdt,
+		map.ProviderCTG as disnpayeecontactctgid,
+		map.ProviderCID as disnpayeecontactid,
+		v.total_value   as disnamount,
+		map.PlaintiffID as disnplaintiffid,
+		(
+			select
+				disnTypeID
+			from [sma_MST_DisbursmentType]
+			where dissTypeName = (
+					select
+						[description]
+					from [JoelBieberNeedles].[dbo].[value_code]
+					where [code] = v.code
+				)
+		)				as dissdisbursementtype,
+		map.ProviderUID as uniquepayeeid,
+		v.[memo]		as dissdescription,
+		--,v.settlement_memo + 
+		--ISNULL('Account Number: ' + NULLIF(CAST(Account_Number AS VARCHAR(MAX)), '') + CHAR(13), '') +
+		--ISNULL('Cancel: ' + NULLIF(CAST(Cancel AS VARCHAR(MAX)), '') + CHAR(13), '') +    
+		--ISNULL('CM Reviewed: ' + NULLIF(CAST(CM_Reviewed AS VARCHAR(MAX)), '') + CHAR(13), '') +
+		--ISNULL('Date Paid: ' + NULLIF(CAST(Date_Paid AS VARCHAR(MAX)), '') + CHAR(13), '') +
+		--ISNULL('For Dates From: ' + NULLIF(CAST(For_Dates_From AS VARCHAR(MAX)), '') + CHAR(13), '') +
+		--ISNULL('OI Checked: ' + NULLIF(CAST(OI_Checked AS VARCHAR(MAX)), '') + CHAR(13), '')
+		--                                        as dissComments
+		null			as disscomments,
+		--case
+		--	when v.code in ('MSC', 'DTF')
+		--		then (
+		--				select
+		--					Id
+		--				from [sma_MST_CheckRequestStatus]
+		--				where [Description] = 'Paid'
+		--			)
+		--	-- when v.code in ('UCC')
+		--	--     then (
+		--	--             select Id
+		--	--             FROM [sma_MST_CheckRequestStatus]
+		--	--             where [Description]='Check Pending'
+		--	--         )
+		--	when ISNULL(Check_Requested, '') <> ''
+		--		then (
+		--				select
+		--					Id
+		--				from [sma_MST_CheckRequestStatus]
+		--				where [Description] = 'Check Pending'
+		--			)
+		--	else null
+		--end				  as disncheckrequeststatus,
+		(
+			select
+				Id
+			from [sma_MST_CheckRequestStatus]
+			where [Description] = 'Paid'
+		)				as disncheckrequeststatus,
+		case
+			when v.start_date between '1900-01-01' and '2079-06-06'
+				then v.start_date
+			else null
+		end				as disdbilldate,
+		case
+			when v.stop_date between '1900-01-01' and '2079-06-06'
+				then v.stop_date
+			else null
+		end				as disdduedate,
+		(
+			select
+				usrnUserID
+			from sma_MST_Users
+			where source_id = v.staff_created
+		)				as disnrecuserid,
+		case
+			when date_created between '1900-01-01' and '2079-06-06'
+				then date_created
+			else null
+		end				as disddtcreated,
+		case
+			when v.code = 'DTF'
+				then 0
+			else 1
+		end				as disnrecoverable,
+		v.value_id		as saga,
+		null			as source_id,
+		null			as source_db,
+		null			as source_ref
+	from [JoelBieberNeedles].[dbo].[value_Indexed] v
+	join value_tab_Disbursement_Helper map
+		on map.case_id = v.case_id
+			and map.value_id = v.value_id
+--join JoelBieberNeedles..user_tab2_data u
+--	on u.case_id = v.case_id
+go
+
 ---
 alter table [sma_TRN_Disbursement] enable trigger all
-GO
+go
 ---
 

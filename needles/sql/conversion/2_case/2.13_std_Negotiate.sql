@@ -72,7 +72,7 @@ INSERT INTO [sma_TRN_Negotiations]
 			SELECT
 				usrnContactiD
 			FROM sma_MST_Users
-			WHERE saga = NEG.staff
+			WHERE source_id = NEG.staff
 		)			   
 		AS [negnStaffID]
 	   ,-1			   AS [negnPlaintiffID]

@@ -36,3 +36,5 @@ grow-path/logs/*
 
 needles/data/*
 needles/logs/*
+needles/backups/*
+backups/*

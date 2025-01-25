@@ -10,8 +10,9 @@ replace:
 ##########################################################################################################################
 */
 
-USE [JoelBieberSA_Needles]
-GO
+use [JoelBieberSA_Needles]
+go
+
 /*
 alter table [sma_TRN_PoliceReports] disable trigger all
 delete from [sma_TRN_PoliceReports]
@@ -21,152 +22,174 @@ alter table [sma_TRN_PoliceReports] enable trigger all
 */
 
 ---
-ALTER TABLE [sma_TRN_PoliceReports] DISABLE TRIGGER ALL
-GO
+alter table [sma_TRN_PoliceReports] disable trigger all
+go
+
 ---
 
 ---(0)---
-IF EXISTS (
-		SELECT
+if exists (
+		select
 			*
-		FROM sys.objects
-		WHERE [name] = 'Officer_Helper'
-			AND type = 'U'
+		from sys.objects
+		where [name] = 'officer_helper'
+			and type = 'U'
+			and schema_id = SCHEMA_ID('conversion')
 	)
-BEGIN
-	DROP TABLE Officer_Helper
-END
-GO
+begin
+	drop table conversion.officer_helper
+end
+go
 
-CREATE TABLE Officer_Helper (
-	OfficerCID INT
-   ,OfficerCTG INT
-   ,OfficerAID INT
-   ,saga VARCHAR(400)
+create table conversion.officer_helper (
+	OfficerCID INT,
+	OfficerCTG INT,
+	OfficerAID INT,
+	saga	   VARCHAR(400)
 )
-GO
+go
+
 ----
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_Officer_Helper ON [Officer_Helper] (saga);
+create nonclustered index IX_NonClustered_Index_Officer_Helper on [conversion].[officer_helper] (saga);
 ----
-GO
+go
+
 ---(0)---
-INSERT INTO Officer_Helper
+insert into conversion.officer_helper
 	(
-	OfficerCID, OfficerCTG, OfficerAID, saga
+	OfficerCID,
+	OfficerCTG,
+	OfficerAID,
+	saga
 	)
-	SELECT DISTINCT
-		I.cinnContactID	 AS OfficerCID
-	   ,I.cinnContactCtg AS OfficerCTG
-	   ,A.addnAddressID	 AS OfficerAID
-	   ,I.cinsGrade
-	FROM JoelBieberNeedles.[dbo].[police] P
-	JOIN [sma_MST_IndvContacts] I
+	select distinct
+		i.cinnContactID	 as officercid,
+		i.cinnContactCtg as officerctg,
+		a.addnAddressID	 as officeraid,
+		i.source_id		 as saga
+	--select *
+	from JoelBieberNeedles.[dbo].[police] p
+	join [sma_MST_IndvContacts] i
 		--ON I.cinsGrade = P.officer
 		--	AND I.cinsPrefix = 'Officer'
-		on i.saga = p.officer
-		AND I.cinsPrefix = 'Officer'
-	JOIN [sma_MST_Address] A
-		ON A.addnContactID = I.cinnContactID
-			AND A.addnContactCtgID = I.cinnContactCtg
-			AND A.addbPrimary = 1
+		on i.source_id = p.officer
+			and i.cinsPrefix = 'Officer'
+	join [sma_MST_Address] a
+		on a.addnContactID = i.cinnContactID
+			and a.addnContactCtgID = i.cinnContactCtg
+			and a.addbPrimary = 1
 
-GO
+go
 
-DBCC DBREINDEX ('Officer_Helper', ' ', 90) WITH NO_INFOMSGS
+dbcc dbreindex ('conversion.officer_helper', ' ', 90) with no_infomsgs
 
 
 ---(0)---
-IF EXISTS (
-		SELECT
+if exists (
+		select
 			*
-		FROM sys.objects
-		WHERE name = 'Police_Helper'
-			AND type = 'U'
+		from sys.objects
+		where name = 'police_helper'
+			and type = 'U'
+			and schema_id = SCHEMA_ID('conversion')
 	)
-BEGIN
-	DROP TABLE Police_Helper
-END
-GO
+begin
+	drop table conversion.police_helper
+end
+go
 
-CREATE TABLE Police_Helper (
-	PoliceCID INT
-   ,PoliceCTG INT
-   ,PoliceAID INT
-   ,police_id INT
-   ,case_num INT
-   ,casnCaseID INT
-   ,officerCID INT
-   ,officerAID INT
+create table conversion.police_helper (
+	PoliceCID  INT,
+	PoliceCTG  INT,
+	PoliceAID  INT,
+	police_id  INT,
+	case_num   INT,
+	casnCaseID INT,
+	officerCID INT,
+	officerAID INT
 )
-GO
-----
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_Police_Helper ON [Police_Helper] (police_id);
-----
-GO
+go
 
-INSERT INTO Police_Helper
+----
+create nonclustered index IX_NonClustered_Index_Police_Helper on [conversion].[police_helper] (police_id);
+----
+go
+
+insert into conversion.police_helper
 	(
-	PoliceCID, PoliceCTG, PoliceAID, police_id, case_num, casnCaseID, officerCID, officerAID
+	PoliceCID,
+	PoliceCTG,
+	PoliceAID,
+	police_id,
+	case_num,
+	casnCaseID,
+	officerCID,
+	officerAID
 	)
-	SELECT
-		IOC.CID		   AS PoliceCID
-	   ,IOC.CTG		   AS PoliceCTG
-	   ,IOC.AID		   AS PoliceAID
-	   ,P.police_id	   AS police_id
-	   ,P.case_num
-	   ,CAS.casnCaseID AS casnCaseID
-	   ,(
-			SELECT
-				H.OfficerCID
-			FROM Officer_Helper H
+	select
+		ioc.CID		   as policecid,
+		ioc.CTG		   as policectg,
+		ioc.AID		   as policeaid,
+		p.police_id	   as police_id,
+		p.case_num,
+		cas.casncaseid as casncaseid,
+		(
+			select
+				h.officercid
+			from conversion.officer_helper h
 			--WHERE H.cinsGrade = P.officer
-			WHERE h.saga = P.officer
-		)			   
-		AS officerCID
-	   ,(
-			SELECT
-				H.OfficerAID
-			FROM Officer_Helper H
+			where h.saga = p.officer
+		)			   as officercid,
+		(
+			select
+				h.officeraid
+			from conversion.officer_helper h
 			--WHERE H.cinsGrade = P.officer
-			WHERE H.saga = P.officer
-		)			   
-		AS officerAID
-	FROM JoelBieberNeedles.[dbo].[police] P
-	JOIN [sma_TRN_cases] CAS
-		ON CAS.cassCaseNumber = P.case_num
-	JOIN [IndvOrgContacts_Indexed] IOC
-		ON IOC.SAGA = P.police_id
-GO
+			where h.saga = p.officer
+		)			   as officeraid
+	from JoelBieberNeedles.[dbo].[police] p
+	join [sma_TRN_cases] cas
+		on cas.cassCaseNumber = p.case_num
+	join [IndvOrgContacts_Indexed] ioc
+		on ioc.SAGA = p.police_id
+go
 
-DBCC DBREINDEX ('Police_Helper', ' ', 90) WITH NO_INFOMSGS
-GO
+dbcc dbreindex ('conversion.Police_Helper', ' ', 90) with no_infomsgs
+go
 
 
 ---(2)---
-INSERT INTO [sma_TRN_PoliceReports]
+insert into [sma_TRN_PoliceReports]
 	(
-	[pornCaseID], [pornPoliceID], [pornPoliceAdID], [porsReportNo], [porsComments], [pornPOContactID], [pornPOCtgID], [pornPOAddressID]
+	[pornCaseID],
+	[pornPoliceID],
+	[pornPoliceAdID],
+	[porsReportNo],
+	[porsComments],
+	[pornPOContactID],
+	[pornPOCtgID],
+	[pornPOAddressID]
 	)
 
-	SELECT
-		MAP.casnCaseID		   AS pornCaseID
-	   ,MAP.officerCID		   AS pornPoliceID
-	   ,MAP.officerAID		   AS pornPoliceAdID
-	   ,LEFT(P.report_num, 30) AS porsReportNo
-	   ,ISNULL('Badge:' + NULLIF(P.badge, '') + CHAR(13), '')
-		AS porsComments
-	   ,MAP.PoliceCID		   AS [pornPOContactID]
-	   ,MAP.PoliceCTG		   AS [pornPOCtgID]
-	   ,MAP.PoliceAID		   AS [pornPOAddressID]
-	FROM JoelBieberNeedles.[dbo].[police] P
-	JOIN Police_Helper MAP
-		ON MAP.police_id = P.police_id
-			AND MAP.case_num = P.case_num
-GO
+	select
+		map.casnCaseID		   as porncaseid,
+		map.officerCID		   as pornpoliceid,
+		map.officerAID		   as pornpoliceadid,
+		LEFT(p.report_num, 30) as porsreportno,
+		ISNULL('Badge:' + NULLIF(p.badge, '') + CHAR(13), '')
+		as porscomments,
+		map.PoliceCID		   as [pornpocontactid],
+		map.PoliceCTG		   as [pornpoctgid],
+		map.PoliceAID		   as [pornpoaddressid]
+	from JoelBieberNeedles.[dbo].[police] p
+	join conversion.Police_Helper map
+		on map.police_id = p.police_id
+			and map.case_num = p.case_num
+go
 
 ---
-ALTER TABLE [sma_TRN_PoliceReports] ENABLE TRIGGER ALL
-GO
+alter table [sma_TRN_PoliceReports] enable trigger all
+go
 ---
 
 

@@ -309,11 +309,11 @@ insert into [sma_MST_Users]
 		s.staff_code	   as [source_id],
 		'needles'		   as [source_db],
 		'staff'			   as [source_ref]
-	from JohnSalazar_Needles..staff s
+	from JoelBieberNeedles..staff s
 	join sma_MST_IndvContacts indv
 		on indv.source_id = s.staff_code
 	--on indv.cinsGrade = s.staff_code
-	left join [sma_MST_Users] u
+	join [sma_MST_Users] u
 		on u.source_id = s.staff_code
 	where u.usrsloginid is null
 go

@@ -56,7 +56,7 @@ insert into [sma_MST_ContactNumbers]
 		GETDATE()					as cnnddtmodified,
 		null						as cnnnlevelno,
 		null						as caseno
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -92,7 +92,7 @@ insert into [sma_MST_ContactNumbers]
 		GETDATE()					as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles]..[names] n
+	from [JoelBieberNeedles]..[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -128,7 +128,7 @@ insert into [sma_MST_ContactNumbers]
 		GETDATE()				   as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -164,7 +164,7 @@ insert into [sma_MST_ContactNumbers]
 		GETDATE()					as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -200,7 +200,7 @@ insert into [sma_MST_ContactNumbers]
 		GETDATE()					   as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -239,7 +239,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		GETDATE()					  as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -275,7 +275,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		GETDATE()					  as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -311,7 +311,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		GETDATE()					  as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -347,7 +347,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		GETDATE()					  as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a
@@ -384,7 +384,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		GETDATE()					  as cnnddtmodified,
 		null,
 		null
-	from [JohnSalazar_Needles].[dbo].[names] n
+	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
 	join [sma_MST_Address] a

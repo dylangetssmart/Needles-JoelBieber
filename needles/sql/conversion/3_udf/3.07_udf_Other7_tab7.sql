@@ -2,36 +2,39 @@
 This script populates UDF Other7 with all columns from user_tab7_data
 */
 
-USE JoelBieberSA_Needles
-GO
+use JoelBieberSA_Needles
+go
 
-IF EXISTS (
-		SELECT
+if exists (
+		select
 			*
-		FROM sys.tables
-		WHERE name = 'Other7UDF'
-			AND type = 'U'
+		from sys.tables
+		where name = 'Other7UDF'
+			and type = 'U'
 	)
-BEGIN
-	DROP TABLE Other7UDF
-END
+begin
+	drop table Other7UDF
+end
 
 -- Create temporary table for columns to exclude
-IF OBJECT_ID('tempdb..#ExcludedColumns') IS NOT NULL
-	DROP TABLE #ExcludedColumns;
+if OBJECT_ID('tempdb..#ExcludedColumns') is not null
+	drop table #ExcludedColumns;
 
-CREATE TABLE #ExcludedColumns (
+create table #ExcludedColumns (
 	column_name VARCHAR(128)
 );
-GO
+go
 
 -- Insert columns to exclude
-INSERT INTO #ExcludedColumns
+insert into #ExcludedColumns
 	(
 	column_name
 	)
 VALUES (
 'case_id'
+),
+(
+'tab_id'
 ),
 (
 'tab_id_location'
@@ -48,38 +51,38 @@ VALUES (
 (
 'case_status_client'
 );
-GO
+go
 
 -- Dynamically get all columns from JoelBieberNeedles..user_tab7_data for unpivoting
-DECLARE @sql NVARCHAR(MAX) = N'';
-SELECT
+declare @sql NVARCHAR(MAX) = N'';
+select
 	@sql = STRING_AGG(CONVERT(VARCHAR(MAX),
 	N'CONVERT(VARCHAR(MAX), ' + QUOTENAME(column_name) + N') AS ' + QUOTENAME(column_name)
 	), ', ')
-FROM JoelBieberNeedles.INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = 'user_tab7_data'
-	AND column_name NOT IN (
-		SELECT
+from JoelBieberNeedles.INFORMATION_SCHEMA.COLUMNS
+where table_name = 'user_tab7_data'
+	and column_name not in (
+		select
 			column_name
-		FROM #ExcludedColumns
+		from #ExcludedColumns
 	);
 
 
 -- Dynamically create the UNPIVOT list
-DECLARE @unpivot_list NVARCHAR(MAX) = N'';
-SELECT
+declare @unpivot_list NVARCHAR(MAX) = N'';
+select
 	@unpivot_list = STRING_AGG(QUOTENAME(column_name), ', ')
-FROM JoelBieberNeedles.INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = 'user_tab7_data'
-	AND column_name NOT IN (
-		SELECT
+from JoelBieberNeedles.INFORMATION_SCHEMA.COLUMNS
+where table_name = 'user_tab7_data'
+	and column_name not in (
+		select
 			column_name
-		FROM #ExcludedColumns
+		from #ExcludedColumns
 	);
 
 
 -- Generate the dynamic SQL for creating the pivot table
-SET @sql = N'
+set @sql = N'
 SELECT casnCaseID, casnOrgCaseTypeID, FieldTitle, FieldVal
 INTO Other7UDF
 FROM ( 
@@ -92,123 +95,123 @@ FROM (
 ) pv
 UNPIVOT (FieldVal FOR FieldTitle IN (' + @unpivot_list + N')) AS unpvt;';
 
-EXEC sp_executesql @sql;
-GO
+exec sp_executesql @sql;
+go
 
 ----------------------------
 --UDF DEFINITION
 ----------------------------
-ALTER TABLE [sma_MST_UDFDefinition] DISABLE TRIGGER ALL
-GO
+alter table [sma_MST_UDFDefinition] disable trigger all
+go
 
-IF EXISTS (
-		SELECT
+if exists (
+		select
 			*
-		FROM sys.tables
-		WHERE name = 'Other7UDF'
-			AND type = 'U'
+		from sys.tables
+		where name = 'Other7UDF'
+			and type = 'U'
 	)
-BEGIN
-	INSERT INTO [sma_MST_UDFDefinition]
+begin
+	insert into [sma_MST_UDFDefinition]
 		(
-		[udfsUDFCtg]
-	   ,[udfnRelatedPK]
-	   ,[udfsUDFName]
-	   ,[udfsScreenName]
-	   ,[udfsType]
-	   ,[udfsLength]
-	   ,[udfbIsActive]
-	   ,[udfshortName]
-	   ,[udfsNewValues]
-	   ,[udfnSortOrder]
+		[udfsUDFCtg],
+		[udfnRelatedPK],
+		[udfsUDFName],
+		[udfsScreenName],
+		[udfsType],
+		[udfsLength],
+		[udfbIsActive],
+		[udfshortName],
+		[udfsNewValues],
+		[udfnSortOrder]
 		)
-		SELECT DISTINCT
-			'C'										   AS [udfsUDFCtg]
-		   ,CST.cstnCaseTypeID						   AS [udfnRelatedPK]
-		   ,M.field_title							   AS [udfsUDFName]
-		   ,'Other7'								   AS [udfsScreenName]
-		   ,ucf.UDFType								   AS [udfsType]
-		   ,ucf.field_len							   AS [udfsLength]
-		   ,1										   AS [udfbIsActive]
-		   ,'user_tab7_data' + ucf.column_name		   AS [udfshortName]
-		   ,ucf.dropdownValues						   AS [udfsNewValues]
-		   ,DENSE_RANK() OVER (ORDER BY M.field_title) AS udfnSortOrder
-		FROM [sma_MST_CaseType] CST
-		JOIN CaseTypeMixture mix
-			ON mix.[SmartAdvocate Case Type] = CST.cstsType
-		JOIN [JoelBieberNeedles].[dbo].[user_tab7_matter] M
-			ON M.mattercode = mix.matcode
-				AND M.field_type <> 'label'
-		JOIN (
-			SELECT DISTINCT
-				fieldTitle
-			FROM Other7UDF
+		select distinct
+			'C'										   as [udfsudfctg],
+			cst.cstnCaseTypeID						   as [udfnrelatedpk],
+			m.field_title							   as [udfsudfname],
+			'Other7'								   as [udfsscreenname],
+			ucf.UDFType								   as [udfstype],
+			ucf.field_len							   as [udfslength],
+			1										   as [udfbisactive],
+			'user_tab7_data' + ucf.column_name		   as [udfshortname],
+			ucf.dropdownValues						   as [udfsnewvalues],
+			DENSE_RANK() over (order by m.field_title) as udfnsortorder
+		from [sma_MST_CaseType] cst
+		join CaseTypeMixture mix
+			on mix.[SmartAdvocate Case Type] = cst.cstsType
+		join [JoelBieberNeedles].[dbo].[user_tab7_matter] m
+			on m.mattercode = mix.matcode
+				and m.field_type <> 'label'
+		join (
+			select distinct
+				REPLACE(fieldtitle, '_', ' ') as fieldtitle
+			from Other7UDF
 		) vd
-			ON vd.FieldTitle = M.field_title
-		JOIN [dbo].[NeedlesUserFields] ucf
-			ON ucf.field_num = M.ref_num
-		LEFT JOIN (
-			SELECT DISTINCT
-				table_Name
-			   ,column_name
-			FROM [JoelBieberNeedles].[dbo].[document_merge_params]
-			WHERE table_Name = 'user_tab7_data'
+			on vd.fieldtitle = REPLACE(REPLACE(m.field_title, '/', ''), '.', '')
+		join [dbo].[NeedlesUserFields] ucf
+			on ucf.field_num = m.ref_num
+		left join (
+			select distinct
+				table_Name,
+				column_name
+			from [JoelBieberNeedles].[dbo].[document_merge_params]
+			where table_Name = 'user_tab7_data'
 		) dmp
-			ON dmp.column_name = ucf.field_Title
-		LEFT JOIN [sma_MST_UDFDefinition] def
-			ON def.[udfnRelatedPK] = CST.cstnCaseTypeID
-				AND def.[udfsUDFName] = M.field_title
-				AND def.[udfsScreenName] = 'Other7'
-				AND def.[udfsType] = ucf.UDFType
-				AND def.udfnUDFID IS NULL
-		ORDER BY M.field_title
-END
+			on dmp.column_name = ucf.field_Title
+		left join [sma_MST_UDFDefinition] def
+			on def.[udfnrelatedpk] = cst.cstnCaseTypeID
+				and def.[udfsudfname] = m.field_title
+				and def.[udfsscreenname] = 'Other7'
+				and def.[udfstype] = ucf.UDFType
+				and def.udfnUDFID is null
+		order by m.field_title
+end
 
 
-ALTER TABLE sma_trn_udfvalues DISABLE TRIGGER ALL
-GO
+alter table sma_trn_udfvalues disable trigger all
+go
 
 -- Table will not exist if it's empty or only contains ExlucedColumns
-IF EXISTS (
-		SELECT
+if exists (
+		select
 			*
-		FROM sys.tables
-		WHERE name = 'Other7UDF'
-			AND type = 'U'
+		from sys.tables
+		where name = 'Other7UDF'
+			and type = 'U'
 	)
-BEGIN
-	INSERT INTO [sma_TRN_UDFValues]
+begin
+	insert into [sma_TRN_UDFValues]
 		(
-		[udvnUDFID]
-	   ,[udvsScreenName]
-	   ,[udvsUDFCtg]
-	   ,[udvnRelatedID]
-	   ,[udvnSubRelatedID]
-	   ,[udvsUDFValue]
-	   ,[udvnRecUserID]
-	   ,[udvdDtCreated]
-	   ,[udvnModifyUserID]
-	   ,[udvdDtModified]
-	   ,[udvnLevelNo]
+		[udvnUDFID],
+		[udvsScreenName],
+		[udvsUDFCtg],
+		[udvnRelatedID],
+		[udvnSubRelatedID],
+		[udvsUDFValue],
+		[udvnRecUserID],
+		[udvdDtCreated],
+		[udvnModifyUserID],
+		[udvdDtModified],
+		[udvnLevelNo]
 		)
-		SELECT
-			def.udfnUDFID AS [udvnUDFID]
-		   ,'Other7'	  AS [udvsScreenName]
-		   ,'C'			  AS [udvsUDFCtg]
-		   ,casnCaseID	  AS [udvnRelatedID]
-		   ,0			  AS [udvnSubRelatedID]
-		   ,udf.FieldVal  AS [udvsUDFValue]
-		   ,368			  AS [udvnRecUserID]
-		   ,GETDATE()	  AS [udvdDtCreated]
-		   ,NULL		  AS [udvnModifyUserID]
-		   ,NULL		  AS [udvdDtModified]
-		   ,NULL		  AS [udvnLevelNo]
-		FROM Other7UDF udf
-		LEFT JOIN sma_MST_UDFDefinition def
-			ON def.udfnRelatedPK = udf.casnOrgCaseTypeID
-				AND def.udfsUDFName = FieldTitle
-				AND def.udfsScreenName = 'Other7'
-END
+		select
+			def.udfnUDFID as [udvnudfid],
+			'Other7'	  as [udvsscreenname],
+			'C'			  as [udvsudfctg],
+			casnCaseID	  as [udvnrelatedid],
+			0			  as [udvnsubrelatedid],
+			udf.FieldVal  as [udvsudfvalue],
+			368			  as [udvnrecuserid],
+			GETDATE()	  as [udvddtcreated],
+			null		  as [udvnmodifyuserid],
+			null		  as [udvddtmodified],
+			null		  as [udvnlevelno]
+		from Other7UDF udf
+		left join sma_MST_UDFDefinition def
+			on def.udfnRelatedPK = udf.casnOrgCaseTypeID
+				and def.udfsUDFName = FieldTitle
+				and def.udfsScreenName = 'Other7'
+end
 
-ALTER TABLE sma_trn_udfvalues ENABLE TRIGGER ALL
-GO
+alter table sma_trn_udfvalues enable trigger all
+go

@@ -42,7 +42,7 @@ insert into [sma_TRN_CriticalComments]
 			select
 				usrnUserID
 			from sma_MST_Users
-			where saga = c.staff_1
+			where source_id = c.staff_1
 		)			   as [ctcnrecuserid],
 		case
 			when date_of_incident between '1900-01-01' and '2079-06-01'

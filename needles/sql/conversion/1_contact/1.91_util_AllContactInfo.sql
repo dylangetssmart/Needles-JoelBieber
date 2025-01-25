@@ -1,67 +1,19 @@
 use JoelBieberSA_Needles
 go
 
-drop table [sma_MST_AllContactInfo]
-go
 
-/****** Object:  Table [dbo].[sma_MST_AllContactInfo]    Script Date: 9/9/2015 12:29:41 PM ******/
-set ansi_nulls on
+set ansi_padding on
 go
 
 set quoted_identifier on
 go
 
-set ansi_padding on
-go
-
-
---sp_help sma_mst_address
-create table [dbo].[sma_MST_AllContactInfo] (
-	[uId]			  [BIGINT]		  identity (1, 1) not null,
-	[UniqueContactId] [BIGINT]		  not null,
-	[ContactId]		  [BIGINT]		  not null,
-	[ContactCtg]	  [TINYINT]		  not null,
-	--[Name] [varchar](110) NULL,
-	[Name]			  [VARCHAR](210)  null,
-	[FirstName]		  [VARCHAR](100)  null,
-	--[LastName] [varchar](90) NULL,
-	[LastName]		  [VARCHAR](200)  null,
-	[OtherName]		  [NVARCHAR](255) null,
-	[AddressId]		  [BIGINT]		  null,
-	--[Address1] [varchar](75) NULL,
-	[Address1]		  [VARCHAR](100)  null,
-	[Address2]		  [VARCHAR](150)  null,
-	[Address3]		  [VARCHAR](75)	  null,
-	[City]			  [VARCHAR](50)	  null,
-	[State]			  [VARCHAR](20)	  null,
-	--[Zip] [varchar](10) NULL,
-	[Zip]			  [VARCHAR](20)	  null,
-	[ContactNumber]	  [VARCHAR](80)	  null,
-	[ContactEmail]	  [VARCHAR](255)  null,
-	[ContactTypeId]	  [INT]			  null,
-	[ContactType]	  [VARCHAR](50)	  null,
-	[Comments]		  [VARCHAR](MAX)  null,
-	[DateModified]	  [DATETIME]	  null,
-	[ModifyUserId]	  [INT]			  null,
-	[IsDeleted]		  [BIT]			  null,
-	[NameForLetters]  [NVARCHAR](255) null,
-	[DateOfBirth]	  [DATETIME]	  null,
-	[SSNNo]			  [VARCHAR](100)  null,
-	[County]		  [VARCHAR](50)	  null,
-	[IsActive]		  [BIT]			  null,
-	constraint [PK_sma_MST_AllContactInfo] primary key clustered
-	(
-	[uId] asc
-	) with (pad_index = off, statistics_norecompute = off, ignore_dup_key = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-) on [PRIMARY]
-
-go
+alter table [dbo].[sma_MST_AllContactInfo] disable trigger all
+delete from [dbo].[sma_MST_AllContactInfo]
+dbcc checkident ('[dbo].[sma_MST_AllContactInfo]', reseed, 0);
+alter table [dbo].[sma_MST_AllContactInfo] enable trigger all
 
 set ansi_padding off
-go
-
-
-delete from sma_MST_AllContactInfo
 go
 
 --insert org contacts
@@ -93,22 +45,21 @@ insert into [dbo].[sma_MST_AllContactInfo]
 	[IsDeleted],
 	[IsActive]
 	)
-
 	select
 		CONVERT(BIGINT, ('2' + CONVERT(VARCHAR(30), sma_MST_OrgContacts.connContactID))) as uniquecontactid,
 		CONVERT(BIGINT, sma_MST_OrgContacts.connContactID)								 as contactid,
 		2																				 as contactctg,
-		sma_MST_OrgContacts.consName													 as name,
-		sma_MST_OrgContacts.consName,
+		sma_MST_OrgContacts.consName													 as [name],
+		sma_MST_OrgContacts.consName													 as [nameforletters],
 		null																			 as firstname,
 		null																			 as lastname,
-		sma_MST_OrgContacts.consOtherName												 as othername,
+		null																			 as othername,
 		null																			 as addressid,
 		null																			 as address1,
 		null																			 as address2,
 		null																			 as address3,
 		null																			 as city,
-		null																			 as state,
+		null																			 as [state],
 		null																			 as zip,
 		null																			 as contactnumber,
 		null																			 as contactemail,
@@ -119,13 +70,15 @@ insert into [dbo].[sma_MST_AllContactInfo]
 		347																				 as modifyuserid,
 		0																				 as isdeleted,
 		[conbStatus]
+	--select max(len(consName))
 	from sma_MST_OrgContacts
 	left join sma_MST_OriginalContactTypes
 		on sma_MST_OriginalContactTypes.octnOrigContactTypeID = sma_MST_OrgContacts.connContactTypeID
 go
 
---insert individual contacts
-
+-------------------------------------
+--INSERT INDIVIDUAL CONTACTS
+-------------------------------------
 insert into [dbo].[sma_MST_AllContactInfo]
 	(
 	[UniqueContactId],
@@ -155,7 +108,6 @@ insert into [dbo].[sma_MST_AllContactInfo]
 	[SSNNo],
 	[IsActive]
 	)
-
 	select
 		CONVERT(BIGINT, ('1' + CONVERT(VARCHAR(30), sma_MST_IndvContacts.cinnContactID))) as uniquecontactid,
 		CONVERT(BIGINT, sma_MST_IndvContacts.cinnContactID)								  as contactid,
@@ -164,7 +116,8 @@ insert into [dbo].[sma_MST_AllContactInfo]
 			when ''
 				then ''
 			else cinsLastName + ', '
-		end +
+		end
+		+
 		case ISNULL([cinsFirstName], '')
 			when ''
 				then ''
@@ -181,7 +134,7 @@ insert into [dbo].[sma_MST_AllContactInfo]
 			when ''
 				then ''
 			else ', ' + cinsSuffix
-		end																				  as name,
+		end																				  as [name],
 		case ISNULL([cinsFirstName], '')
 			when ''
 				then ''
@@ -205,16 +158,15 @@ insert into [dbo].[sma_MST_AllContactInfo]
 				then ''
 			else ', ' + cinsSuffix
 		end																				  as [nameforletters],
-
-		ISNULL(sma_MST_IndvContacts.cinsFirstName, '')									  as firstname,
-		ISNULL(sma_MST_IndvContacts.cinsLastName, '')									  as lastname,
-		ISNULL(sma_MST_IndvContacts.cinsNickName, '')									  as othername,
+		LEFT(ISNULL(sma_MST_IndvContacts.cinsFirstName, ''), 100)						  as firstname,
+		LEFT(ISNULL(sma_MST_IndvContacts.cinsLastName, ''), 100)						  as lastname,
+		LEFT(ISNULL(sma_MST_IndvContacts.cinsNickName, ''), 100)						  as othername,
 		null																			  as addressid,
 		null																			  as address1,
 		null																			  as address2,
 		null																			  as address3,
 		null																			  as city,
-		null																			  as state,
+		null																			  as [state],
 		null																			  as zip,
 		null																			  as contactnumber,
 		null																			  as contactemail,
@@ -225,20 +177,20 @@ insert into [dbo].[sma_MST_AllContactInfo]
 		347																				  as modifyuserid,
 		0																				  as isdeleted,
 		[cindBirthDate],
-		[cinsSSNNo],
+		LEFT([cinsSSNNo], 20),
 		[cinbStatus]
+	--select max(len([cinsSSNNo]))
 	from sma_MST_IndvContacts
 	left join sma_MST_OriginalContactTypes
 		on sma_MST_OriginalContactTypes.octnOrigContactTypeID = sma_MST_IndvContacts.cinnContactTypeID
-
 go
 
---fill out address information for all contact types
+--FILL OUT ADDRESS INFORMATION FOR ALL CONTACT TYPES
 update [dbo].[sma_MST_AllContactInfo]
 set [AddressId] = Addrr.addnAddressID,
-	[Address1] = Addrr.addsAddress1,
-	[Address2] = Addrr.addsAddress2,
-	[Address3] = Addrr.addsAddress3,
+	[Address1] = LEFT(Addrr.addsAddress1, 75),
+	[Address2] = LEFT(Addrr.addsAddress2, 75),
+	[Address3] = LEFT(Addrr.addsAddress3, 75),
 	[City] = Addrr.addsCity,
 	[State] = Addrr.addsStateCode,
 	[Zip] = Addrr.addsZip,
@@ -252,9 +204,9 @@ go
 --fill out address information for all contact types, overwriting with primary addresses
 update [dbo].[sma_MST_AllContactInfo]
 set [AddressId] = Addrr.addnAddressID,
-	[Address1] = Addrr.addsAddress1,
-	[Address2] = Addrr.addsAddress2,
-	[Address3] = Addrr.addsAddress3,
+	[Address1] = LEFT(Addrr.addsAddress1, 75),
+	[Address2] = LEFT(Addrr.addsAddress2, 75),
+	[Address3] = LEFT(Addrr.addsAddress3, 75),
 	[City] = Addrr.addsCity,
 	[State] = Addrr.addsStateCode,
 	[Zip] = Addrr.addsZip,
@@ -385,144 +337,3 @@ insert into [sma_MST_ContactTypesForContact]
 		GETDATE()
 	from sma_mst_users
 go
-
-go
-
-/****** Object:  Index [UniqueContactId]    Script Date: 9/21/2015 12:46:06 PM ******/
-create nonclustered index [UniqueContactId] on [dbo].[sma_MST_AllContactInfo]
-(
-[UniqueContactId] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [NonClusteredIndex-20141119-152835]    Script Date: 9/21/2015 12:45:52 PM ******/
-create nonclustered index [NonClusteredIndex-20141119-152835] on [dbo].[sma_MST_AllContactInfo]
-(
-[UniqueContactId] asc,
-[ContactId] asc,
-[ContactCtg] asc,
-[Name] asc,
-[IsDeleted] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [index_Zip]    Script Date: 9/21/2015 12:45:38 PM ******/
-create nonclustered index [index_Zip] on [dbo].[sma_MST_AllContactInfo]
-(
-[Zip] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [index_State]    Script Date: 9/21/2015 12:45:17 PM ******/
-create nonclustered index [index_State] on [dbo].[sma_MST_AllContactInfo]
-(
-[State] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [index_Name_UID]    Script Date: 9/21/2015 12:45:00 PM ******/
-create nonclustered index [index_Name_UID] on [dbo].[sma_MST_AllContactInfo]
-(
-[Name] asc,
-[UniqueContactId] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [index_ContactTypeId]    Script Date: 9/21/2015 12:44:40 PM ******/
-create nonclustered index [index_ContactTypeId] on [dbo].[sma_MST_AllContactInfo]
-(
-[ContactTypeId] asc,
-[ContactId] asc,
-[ContactCtg] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [index_ContactCtg]    Script Date: 9/21/2015 12:44:20 PM ******/
-create nonclustered index [index_ContactCtg] on [dbo].[sma_MST_AllContactInfo]
-(
-[ContactCtg] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [index_City]    Script Date: 9/21/2015 12:44:03 PM ******/
-create nonclustered index [index_City] on [dbo].[sma_MST_AllContactInfo]
-(
-[City] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [IDX_ContactID_CTG]    Script Date: 9/21/2015 12:43:35 PM ******/
-create nonclustered index [IDX_ContactID_CTG] on [dbo].[sma_MST_AllContactInfo]
-(
-[ContactId] asc,
-[ContactCtg] asc
-)
-include ([NameForLetters]) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [ContactTypeIndex]    Script Date: 9/21/2015 12:43:17 PM ******/
-create nonclustered index [ContactTypeIndex] on [dbo].[sma_MST_AllContactInfo]
-(
-[ContactType] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [CategoryId_ContactId]    Script Date: 9/21/2015 12:42:59 PM ******/
-create nonclustered index [CategoryId_ContactId] on [dbo].[sma_MST_AllContactInfo]
-(
-[ContactCtg] asc,
-[ContactId] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-
-
-
-go
-
-/****** Object:  Index [AddressId]    Script Date: 9/21/2015 12:42:53 PM ******/
-create nonclustered index [AddressId] on [dbo].[sma_MST_AllContactInfo]
-(
-[AddressId] asc
-) with (pad_index = off, statistics_norecompute = off, sort_in_tempdb = off, drop_existing = off, online = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 100) on [PRIMARY]
-go
-

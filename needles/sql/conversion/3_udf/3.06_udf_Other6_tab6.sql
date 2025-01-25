@@ -34,6 +34,9 @@ VALUES (
 'case_id'
 ),
 (
+'tab_id'
+),
+(
 'tab_id_location'
 ),
 (
@@ -95,6 +98,7 @@ UNPIVOT (FieldVal FOR FieldTitle IN (' + @unpivot_list + N')) AS unpvt;';
 EXEC sp_executesql @sql;
 GO
 
+
 ----------------------------
 --UDF DEFINITION
 ----------------------------
@@ -133,6 +137,7 @@ BEGIN
 		   ,'user_tab6_data' + ucf.column_name		   AS [udfshortName]
 		   ,ucf.dropdownValues						   AS [udfsNewValues]
 		   ,DENSE_RANK() OVER (ORDER BY M.field_title) AS udfnSortOrder
+		--select *
 		FROM [sma_MST_CaseType] CST
 		JOIN CaseTypeMixture mix
 			ON mix.[SmartAdvocate Case Type] = CST.cstsType
@@ -141,10 +146,10 @@ BEGIN
 				AND M.field_type <> 'label'
 		JOIN (
 			SELECT DISTINCT
-				fieldTitle
+				replace(fieldTitle,'_',' ') as FieldTitle
 			FROM Other6UDF
 		) vd
-			ON vd.FieldTitle = M.field_title
+			ON vd.FieldTitle = replace(replace(M.field_title, '/', ''),'.','')
 		JOIN [dbo].[NeedlesUserFields] ucf
 			ON ucf.field_num = M.ref_num
 		LEFT JOIN (

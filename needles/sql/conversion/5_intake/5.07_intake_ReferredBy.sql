@@ -1,5 +1,5 @@
--- USE JoelBieberNeedles
--- GO
+USE JoelBieberSA_Needles
+GO
 
 INSERT INTO [sma_TRN_OtherReferral]
 (

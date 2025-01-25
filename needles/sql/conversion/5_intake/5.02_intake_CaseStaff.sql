@@ -1,45 +1,48 @@
-ALTER TABLE [sma_TRN_caseStaff] DISABLE TRIGGER ALL
-GO
+alter table [sma_TRN_caseStaff] disable trigger all
+go
 
 ------------------------------------------------------------------------------
 -- Convert staff_1 ###########################################################
 ------------------------------------------------------------------------------
-insert into sma_TRN_caseStaff 
-(
-       [cssnCaseID]
-      ,[cssnStaffID]
-      ,[cssnRoleID]
-      ,[csssComments]
-      ,[cssdFromDate]
-      ,[cssdToDate]
-      ,[cssnRecUserID]
-      ,[cssdDtCreated]
-      ,[cssnModifyUserID]
-      ,[cssdDtModified]
-      ,[cssnLevelNo]
-)
-select 
-	C.casnCaseID			    as [cssnCaseID]
-	,U.usrnContactID            as [cssnStaffID]
-	,(
-        select sbrnSubRoleId
-        from sma_MST_SubRole
-        where sbrsDscrptn = 'Staff' and sbrnRoleID = 10
-    )                           as [cssnRoleID]
-	,null					    as [csssComments]
-	,null					    as cssdFromDate
-	,null                       as cssdToDate
-	,368                        as cssnRecUserID
-	,getdate()				    as [cssdDtCreated]
-	,null					    as [cssnModifyUserID]
-	,null					    as [cssdDtModified]
-	,0					        as cssnLevelNo
-FROM JoelBieberNeedles.[dbo].case_intake N
-JOIN [sma_TRN_Cases] C
-    on C.saga = N.ROW_ID
-inner join [sma_MST_Users] U
-    on U.saga = N.staff_1
-where isnull(N.staff_1,'') <> ''
+insert into sma_TRN_caseStaff
+	(
+	[cssnCaseID],
+	[cssnStaffID],
+	[cssnRoleID],
+	[csssComments],
+	[cssdFromDate],
+	[cssdToDate],
+	[cssnRecUserID],
+	[cssdDtCreated],
+	[cssnModifyUserID],
+	[cssdDtModified],
+	[cssnLevelNo]
+	)
+	select
+		c.casnCaseID	as [cssncaseid],
+		u.usrnContactID as [cssnstaffid],
+		(
+			select
+				sbrnSubRoleId
+			from sma_MST_SubRole
+			where sbrsDscrptn = 'Staff'
+				and sbrnRoleID = 10
+		)				as [cssnroleid],
+		null			as [cssscomments],
+		null			as cssdfromdate,
+		null			as cssdtodate,
+		368				as cssnrecuserid,
+		GETDATE()		as [cssddtcreated],
+		null			as [cssnmodifyuserid],
+		null			as [cssddtmodified],
+		0				as cssnlevelno
+	--select *
+	from JoelBieberNeedles.[dbo].case_intake n
+	join [sma_TRN_Cases] c
+		on c.saga = n.ROW_ID
+	inner join [sma_MST_Users] u
+		on u.source_id = n.staff_1
+	where ISNULL(n.staff_1, '') <> ''
 
-ALTER TABLE [sma_TRN_caseStaff] ENABLE TRIGGER ALL
-GO
+alter table [sma_TRN_caseStaff] enable trigger all
+go

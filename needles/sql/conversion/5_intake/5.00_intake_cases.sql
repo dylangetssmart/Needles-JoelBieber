@@ -1,5 +1,5 @@
-USE JoelBieberSA_Needles
-GO
+use JoelBieberSA_Needles
+go
 
 
 --SELECT
@@ -8,188 +8,254 @@ GO
 --WHERE ISNULL(date_opened, '') <> ''--order by intake_taken
 --sp_help sma_trn_Cases
 
-ALTER TABLE sma_trn_Cases
-ALTER COLUMN saga INT
-GO
+alter table sma_trn_Cases
+alter column saga INT
+go
 
 
-INSERT INTO [dbo].[CaseTypeMixture]
+insert into [dbo].[CaseTypeMixture]
 	(
-	[matcode], [header], [description], [SmartAdvocate Case Type], [SmartAdvocate Case Sub Type]
+	[matcode],
+	[header],
+	[description],
+	[SmartAdvocate Case Type],
+	[SmartAdvocate Case Sub Type]
 	)
-	SELECT
-		''
-	   ,''
-	   ,''
-	   ,'Negligence'
-	   ,'Unknown'
-	EXCEPT
-	SELECT
-		[matcode]
-	   ,[header]
-	   ,[description]
-	   ,[SmartAdvocate Case Type]
-	   ,[SmartAdvocate Case Sub Type]
-	FROM CaseTypeMixture
+	select
+		'',
+		'',
+		'',
+		'Negligence',
+		'Unknown'
+	except
+	select
+		[matcode],
+		[header],
+		[description],
+		[SmartAdvocate Case Type],
+		[SmartAdvocate Case Sub Type]
+	from CaseTypeMixture
 
 --select * from [CaseTypeMixture]
 ----------------------------
 --CASE SUB TYPES
-----------------------------
-INSERT INTO [sma_MST_CaseSubType]
-	(
-	[cstsCode], [cstnGroupID], [cstsDscrptn], [cstnRecUserId], [cstdDtCreated], [cstnModifyUserID], [cstdDtModified], [cstnLevelNo], [cstbDefualt], [saga], [cstnTypeCode]
-	)
-	SELECT
-		NULL							  AS [cstsCode]
-	   ,cstncasetypeid					  AS [cstnGroupID]
-	   ,MIX.[SmartAdvocate Case Sub Type] AS [cstsDscrptn]
-	   ,368								  AS [cstnRecUserId]
-	   ,GETDATE()						  AS [cstdDtCreated]
-	   ,NULL							  AS [cstnModifyUserID]
-	   ,NULL							  AS [cstdDtModified]
-	   ,NULL							  AS [cstnLevelNo]
-	   ,1								  AS [cstbDefualt]
-	   ,NULL							  AS [saga]
-	   ,(
-			SELECT TOP 1
-				stcnCodeId
-			FROM [sma_MST_CaseSubTypeCode]
-			WHERE stcsDscrptn = MIX.[SmartAdvocate Case Sub Type]
-		)								  
-		AS [cstnTypeCode]
-	--select mix.*
-	FROM [sma_MST_CaseType] CST
-	JOIN [CaseTypeMixture] MIX
-		ON ISNULL(MIX.[SmartAdvocate Case Type], '') = ISNULL(CST.cstsType, '') --MIX.matcode=CST.cstsCode  
-	LEFT JOIN [sma_MST_CaseSubType] sub
-		ON sub.[cstnGroupID] = CST.cstnCaseTypeID
-			AND ISNULL(sub.[cstsDscrptn], '') = ISNULL(MIX.[SmartAdvocate Case Sub Type], '')
-	WHERE ISNULL(MIX.[SmartAdvocate Case Type], '') <> ''
-		AND sub.cstnCaseSubTypeID IS NULL
-		AND ISNULL([SmartAdvocate Case Sub Type], '') <> ''
+------------------------------
+--INSERT INTO [sma_MST_CaseSubType]
+--	(
+--	[cstsCode], [cstnGroupID], [cstsDscrptn], [cstnRecUserId], [cstdDtCreated], [cstnModifyUserID], [cstdDtModified], [cstnLevelNo], [cstbDefualt], [saga], [cstnTypeCode]
+--	)
+--	SELECT
+--		NULL							  AS [cstsCode]
+--	   ,cstncasetypeid					  AS [cstnGroupID]
+--	   ,MIX.[SmartAdvocate Case Sub Type] AS [cstsDscrptn]
+--	   ,368								  AS [cstnRecUserId]
+--	   ,GETDATE()						  AS [cstdDtCreated]
+--	   ,NULL							  AS [cstnModifyUserID]
+--	   ,NULL							  AS [cstdDtModified]
+--	   ,NULL							  AS [cstnLevelNo]
+--	   ,1								  AS [cstbDefualt]
+--	   ,NULL							  AS [saga]
+--	   ,(
+--			SELECT TOP 1
+--				stcnCodeId
+--			FROM [sma_MST_CaseSubTypeCode]
+--			WHERE stcsDscrptn = MIX.[SmartAdvocate Case Sub Type]
+--		)								  
+--		AS [cstnTypeCode]
+--	--select mix.*
+--	FROM [sma_MST_CaseType] CST
+--	JOIN [CaseTypeMixture] MIX
+--		ON ISNULL(MIX.[SmartAdvocate Case Type], '') = ISNULL(CST.cstsType, '') --MIX.matcode=CST.cstsCode  
+--	LEFT JOIN [sma_MST_CaseSubType] sub
+--		ON sub.[cstnGroupID] = CST.cstnCaseTypeID
+--			AND ISNULL(sub.[cstsDscrptn], '') = ISNULL(MIX.[SmartAdvocate Case Sub Type], '')
+--	WHERE ISNULL(MIX.[SmartAdvocate Case Type], '') <> ''
+--		AND sub.cstnCaseSubTypeID IS NULL
+--		AND ISNULL([SmartAdvocate Case Sub Type], '') <> ''
 
 
 ---------------------------------------
 --INSERT INTAKE INTO CASES
 ---------------------------------------
-DECLARE @OfficeName NVARCHAR(255);
-DECLARE @StateAbbrv NVARCHAR(255);
-SET @OfficeName = 'Law Offices of Kurt M. Young, LLC';
-SET @StateAbbrv = 'Ohio'
 
-INSERT INTO [sma_TRN_Cases]
+insert into [sma_TRN_Cases]
 	(
-	[cassCaseNumber], [casbAppName], [cassCaseName], [casnCaseTypeID], [casnState], [casdStatusFromDt], [casnStatusValueID], [casdsubstatusfromdt], [casnSubStatusValueID], [casdOpeningDate], [casdClosingDate], [casnCaseValueID], [casnCaseValueFrom], [casnCaseValueTo], [casnCurrentCourt], [casnCurrentJudge], [casnCurrentMagistrate], [casnCaptionID], [cassCaptionText], [casbMainCase], [casbCaseOut], [casbSubOut], [casbWCOut], [casbPartialOut], [casbPartialSubOut], [casbPartiallySettled], [casbInHouse], [casbAutoTimer], [casdExpResolutionDate], [casdIncidentDate], [casnTotalLiability], [cassSharingCodeID], [casnStateID], [casnLastModifiedBy], [casdLastModifiedDate], [casnRecUserID], [casdDtCreated], [casnModifyUserID], [casdDtModified], [casnLevelNo], [cassCaseValueComments], [casbRefIn], [casbDelete], [casbIntaken], [casnOrgCaseTypeID], [CassCaption], [cassMdl], [office_id], [saga], [LIP], [casnSeriousInj], [casnCorpDefn], [casnWebImporter], [casnRecoveryClient], [cas], [ngage], [casnClientRecoveredDt], [CloseReason]
+	[cassCaseNumber],
+	[casbAppName],
+	[cassCaseName],
+	[casnCaseTypeID],
+	[casnState],
+	[casdStatusFromDt],
+	[casnStatusValueID],
+	[casdsubstatusfromdt],
+	[casnSubStatusValueID],
+	[casdOpeningDate],
+	[casdClosingDate],
+	[casnCaseValueID],
+	[casnCaseValueFrom],
+	[casnCaseValueTo],
+	[casnCurrentCourt],
+	[casnCurrentJudge],
+	[casnCurrentMagistrate],
+	[casnCaptionID],
+	[cassCaptionText],
+	[casbMainCase],
+	[casbCaseOut],
+	[casbSubOut],
+	[casbWCOut],
+	[casbPartialOut],
+	[casbPartialSubOut],
+	[casbPartiallySettled],
+	[casbInHouse],
+	[casbAutoTimer],
+	[casdExpResolutionDate],
+	[casdIncidentDate],
+	[casnTotalLiability],
+	[cassSharingCodeID],
+	[casnStateID],
+	[casnLastModifiedBy],
+	[casdLastModifiedDate],
+	[casnRecUserID],
+	[casdDtCreated],
+	[casnModifyUserID],
+	[casdDtModified],
+	[casnLevelNo],
+	[cassCaseValueComments],
+	[casbRefIn],
+	[casbDelete],
+	[casbIntaken],
+	[casnOrgCaseTypeID],
+	[CassCaption],
+	[cassMdl],
+	[office_id],
+	[saga],
+	[LIP],
+	[casnSeriousInj],
+	[casnCorpDefn],
+	[casnWebImporter],
+	[casnRecoveryClient],
+	[cas],
+	[ngage],
+	[casnClientRecoveredDt],
+	[CloseReason]
 	)
-	SELECT DISTINCT
-		'Intake ' + RIGHT('00000' + CONVERT(VARCHAR, row_ID), 5) AS [cassCaseNumber]
-	   ,''														 AS [casbAppName]
-	   ,''														 AS [cassCaseName]
-	   ,(
-			SELECT TOP 1
+	select distinct
+		'Intake ' + RIGHT('00000' + CONVERT(VARCHAR, ROW_ID), 5) as [casscasenumber],
+		''														 as [casbappname],
+		''														 as [casscasename],
+		(
+			select top 1
 				cstnCaseSubTypeID
-			FROM [sma_MST_CaseSubType] ST
-			WHERE ST.cstnGroupID = CST.cstnCaseTypeID
-				AND ST.cstsDscrptn = MIX.[SmartAdvocate Case Sub Type]
-		)														 
-		AS [casnCaseTypeID]
-	   ,(
-			SELECT
+			from [sma_MST_CaseSubType] st
+			where st.cstnGroupID = cst.cstnCaseTypeID
+				and st.cstsDscrptn = mix.[SmartAdvocate Case Sub Type]
+		)														 as [casncasetypeid],
+		(
+			select
 				[sttnStateID]
-			FROM [sma_MST_States]
-			WHERE [sttsDescription] = @StateAbbrv
-		)														 
-		AS [casnState]
-	   ,ISNULL(date_rejected, GETDATE())						 AS [casdStatusFromDt]
-	   ,NULL													 AS [casnStatusValueID]
-	   ,NULL													 AS [casdsubstatusfromdt]
-	   ,NULL													 AS [casnSubStatusValueID]
-	   ,CASE
-			WHEN (C.intake_taken NOT BETWEEN '1900-01-01' AND '2079-12-31')
-				THEN GETDATE()
-			ELSE C.intake_taken
-		END														 AS [casdOpeningDate]
-	   ,CASE
-			WHEN (C.date_rejected BETWEEN '1900-01-01' AND '2079-12-31')
-				THEN C.date_rejected
-			ELSE NULL
-		END														 AS [casdClosingDate]
-	   ,NULL													 AS [casnCaseValueID]
-	   ,NULL													 AS [casnCaseValueFrom]
-	   ,NULL													 AS [casnCaseValueTo]
-	   ,NULL													 AS [casnCurrentCourt]
-	   ,NULL													 AS [casnCurrentJudge]
-	   ,NULL													 AS [casnCurrentMagistrate]
-	   ,NULL													 AS [casnCaptionID]
-	   ,''														 AS [cassCaptionText]
-	   ,1														 AS [casbMainCase]
-	   ,0														 AS [casbCaseOut]
-	   ,0														 AS [casbSubOut]
-	   ,0														 AS [casbWCOut]
-	   ,0														 AS [casbPartialOut]
-	   ,0														 AS [casbPartialSubOut]
-	   ,0														 AS [casbPartiallySettled]
-	   ,0														 AS [casbInHouse]
-	   ,1														 AS [casbAutoTimer]
-	   ,NULL													 AS [casdExpResolutionDate]
-	   ,NULL													 AS [casdIncidentDate]
-	   ,NULL													 AS [casnTotalLiability]
-	   ,NULL													 AS [cassSharingCodeID]
-	   ,(
-			SELECT
+			from [sma_MST_States]
+			where [sttsDescription] = (
+					select
+						o.StateName
+					from conversion.office o
+				)
+		)														 as [casnstate],
+		ISNULL(date_rejected, GETDATE())						 as [casdstatusfromdt],
+		null													 as [casnstatusvalueid],
+		null													 as [casdsubstatusfromdt],
+		null													 as [casnsubstatusvalueid],
+		case
+			when (c.intake_taken not between '1900-01-01' and '2079-12-31')
+				then GETDATE()
+			else c.intake_taken
+		end														 as [casdopeningdate],
+		case
+			when (c.date_rejected between '1900-01-01' and '2079-12-31')
+				then c.date_rejected
+			else null
+		end														 as [casdclosingdate],
+		null													 as [casncasevalueid],
+		null													 as [casncasevaluefrom],
+		null													 as [casncasevalueto],
+		null													 as [casncurrentcourt],
+		null													 as [casncurrentjudge],
+		null													 as [casncurrentmagistrate],
+		null													 as [casncaptionid],
+		''														 as [casscaptiontext],
+		1														 as [casbmaincase],
+		0														 as [casbcaseout],
+		0														 as [casbsubout],
+		0														 as [casbwcout],
+		0														 as [casbpartialout],
+		0														 as [casbpartialsubout],
+		0														 as [casbpartiallysettled],
+		0														 as [casbinhouse],
+		1														 as [casbautotimer],
+		null													 as [casdexpresolutiondate],
+		null													 as [casdincidentdate],
+		null													 as [casntotalliability],
+		null													 as [casssharingcodeid],
+		(
+			select
 				[sttnStateID]
-			FROM [sma_MST_States]
-			WHERE [sttsDescription] = @StateAbbrv
-		)														 
-		AS [casnStateID]
-	   ,NULL													 AS [casnLastModifiedBy]
-	   ,NULL													 AS [casdLastModifiedDate]
-	   ,(
-			SELECT
+			from [sma_MST_States]
+			where [sttsDescription] = (
+					select
+						o.StateName
+					from conversion.office o
+				)
+		)														 as [casnstateid],
+		null													 as [casnlastmodifiedby],
+		null													 as [casdlastmodifieddate],
+		(
+			select
 				usrnUserID
-			FROM sma_MST_Users
-			WHERE saga = C.Taken_by
-		)														 
-		AS [casnRecUserID]
-	   ,CASE
-			WHEN (C.intake_taken BETWEEN '1900-01-01' AND '2079-06-06')
-				THEN C.intake_taken
-			ELSE NULL
-		END														 AS [casdDtCreated]
-	   ,NULL													 AS [casnModifyUserID]
-	   ,NULL													 AS [casdDtModified]
-	   ,0														 AS [casnLevelNo]
-	   ,''														 AS [cassCaseValueComments]
-	   ,NULL													 AS [casbRefIn]
-	   ,NULL													 AS [casbDelete]
-	   ,NULL													 AS [casbIntaken]
-	   ,cstnCaseTypeID											 AS [casnOrgCaseTypeID]
-	   ,''														 AS [CassCaption]
-	   ,0														 AS [cassMdl]
-	   ,(
-			SELECT
+			from sma_MST_Users
+			where saga = c.taken_by
+		)														 as [casnrecuserid],
+		case
+			when (c.intake_taken between '1900-01-01' and '2079-06-06')
+				then c.intake_taken
+			else null
+		end														 as [casddtcreated],
+		null													 as [casnmodifyuserid],
+		null													 as [casddtmodified],
+		0														 as [casnlevelno],
+		''														 as [casscasevaluecomments],
+		null													 as [casbrefin],
+		null													 as [casbdelete],
+		null													 as [casbintaken],
+		cstnCaseTypeID											 as [casnorgcasetypeid],
+		''														 as [casscaption],
+		0														 as [cassmdl],
+		(
+			select
 				office_id
-			FROM sma_MST_Offices
-			WHERE office_name = @OfficeName
-		)														 
-		AS [office_id]
-	   ,ROW_ID													 AS [saga]
-	   ,NULL													 AS [LIP]
-	   ,NULL													 AS [casnSeriousInj]
-	   ,NULL													 AS [casnCorpDefn]
-	   ,NULL													 AS [casnWebImporter]
-	   ,NULL													 AS [casnRecoveryClient]
-	   ,NULL													 AS [cas]
-	   ,NULL													 AS [ngage]
-	   ,NULL													 AS [casnClientRecoveredDt]
-	   ,0														 AS [CloseReason]
-	FROM JoelBieberNeedles.[dbo].[Case_intake] C
-	LEFT JOIN [CaseTypeMixture] MIX
-		ON MIX.matcode = REPLACE(C.matcode, ' ', '')
-	LEFT JOIN sma_MST_CaseType CST
-		ON ISNULL(CST.cstsType, '') = ISNULL(MIX.[SmartAdvocate Case Type], '')
-	WHERE ISNULL(name_ID, '') <> '' AND isnull(C.date_opened,'') <> ''
+			from sma_MST_Offices
+			where office_name = (
+					select
+						o.OfficeName
+					from conversion.office o
+				)
+		)														 as [office_id],
+		ROW_ID													 as [saga],
+		null													 as [lip],
+		null													 as [casnseriousinj],
+		null													 as [casncorpdefn],
+		null													 as [casnwebimporter],
+		null													 as [casnrecoveryclient],
+		null													 as [cas],
+		null													 as [ngage],
+		null													 as [casnclientrecovereddt],
+		0														 as [closereason]
+	select *
+	from JoelBieberNeedles.[dbo].[Case_intake] c
+	left join [CaseTypeMixture] mix
+		on mix.matcode = REPLACE(c.matcode, ' ', '')
+	left join sma_MST_CaseType cst
+		on ISNULL(cst.cstsType, '') = ISNULL(mix.[SmartAdvocate Case Type], '')
+	where ISNULL(name_ID, '') <> ''
+		and ISNULL(c.date_opened, '') <> ''
 
 
 --select * FROM JoelBieberNeedles.[dbo].[Case_intake] C
@@ -197,112 +263,137 @@ INSERT INTO [sma_TRN_Cases]
 ------------------------------------------
 --INTAKE STATUS
 ------------------------------------------
-INSERT INTO [sma_TRN_CaseStatus]
+insert into [sma_TRN_CaseStatus]
 	(
-	[cssnCaseID], [cssnStatusTypeID], [cssnStatusID], [cssnExpDays], [cssdFromDate], [cssdToDt], [csssComments], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo], [cssnDelFlag]
+	[cssnCaseID],
+	[cssnStatusTypeID],
+	[cssnStatusID],
+	[cssnExpDays],
+	[cssdFromDate],
+	[cssdToDt],
+	[csssComments],
+	[cssnRecUserID],
+	[cssdDtCreated],
+	[cssnModifyUserID],
+	[cssdDtModified],
+	[cssnLevelNo],
+	[cssnDelFlag]
 	)
-	SELECT
-		CAS.casnCaseID
-	   ,(
-			SELECT
+	select
+		cas.casnCaseID,
+		(
+			select
 				stpnStatusTypeID
-			FROM sma_MST_CaseStatusType
-			WHERE stpsStatusType = 'Status'
-		)	 
-		AS [cssnStatusTypeID]
-	   ,CASE
-			WHEN C.date_rejected BETWEEN '1900-01-01' AND '2079-06-06'
-				THEN (
-						SELECT
-							cssnStatusID
-						FROM sma_MST_CaseStatus
-						WHERE csssDescription = 'Closed Case'
+			from sma_MST_CaseStatusType
+			where stpsStatusType = 'Status'
+		)	 as [cssnstatustypeid],
+		case
+			when c.date_rejected between '1900-01-01' and '2079-06-06'
+				then (
+						select
+							cssnstatusid
+						from sma_MST_CaseStatus
+						where csssDescription = 'Closed Case'
 					)
-			ELSE (
-					SELECT
-						cssnStatusID
-					FROM sma_MST_CaseStatus
-					WHERE csssDescription = 'Presign - Not scheduled for Sign Up'
+			else (
+					select
+						cssnstatusid
+					from sma_MST_CaseStatus
+					where csssDescription = 'Presign - Not scheduled for Sign Up'
 				)
-		END	 AS [cssnStatusID]
-	   ,''	 AS [cssnExpDays]
-	   ,CASE
-			WHEN C.date_rejected BETWEEN '1900-01-01' AND '2079-06-06'
-				THEN CONVERT(DATE, C.date_rejected)
-			ELSE GETDATE()
-		END	 AS [cssdFromDate]
-	   ,NULL AS [cssdToDt]
-	   ,CASE
-			WHEN date_rejected IS NOT NULL
-				THEN 'Rejected'
-			ELSE ''
-		END	 AS [csssComments]
-	   ,368
-	   ,GETDATE()
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	   ,NULL
-	FROM [sma_trn_cases] CAS
-	JOIN JoelBieberNeedles..case_intake C
-		ON C.ROW_ID = CAS.saga
-GO
+		end	 as [cssnstatusid],
+		''	 as [cssnexpdays],
+		case
+			when c.date_rejected between '1900-01-01' and '2079-06-06'
+				then CONVERT(DATE, c.date_rejected)
+			else GETDATE()
+		end	 as [cssdfromdate],
+		null as [cssdtodt],
+		case
+			when date_rejected is not null
+				then 'Rejected'
+			else ''
+		end	 as [cssscomments],
+		368,
+		GETDATE(),
+		null,
+		null,
+		null,
+		null
+	from [sma_trn_cases] cas
+	join JoelBieberNeedles..case_intake c
+		on c.ROW_ID = cas.saga
+go
 
 ------------------------------
 --INCIDENT
 ------------------------------
----
--- ALTER TABLE [sma_TRN_Incidents] DISABLE TRIGGER ALL
--- GO
--- ALTER TABLE [sma_TRN_Cases] DISABLE TRIGGER ALL
--- GO
--- ---
--- INSERT INTO [sma_TRN_Incidents] (
--- 		[CaseId],
--- 		[IncidentDate],
--- 		[StateID],
--- 		[LiabilityCodeId],
--- 		[IncidentFacts],
--- 		[MergedFacts],
--- 		[Comments],
--- 		[IncidentTime],
--- 		[RecUserID],
--- 		[DtCreated],
--- 		[ModifyUserID],
--- 		[DtModified]
--- )
--- SELECT 
--- 		CAS.casnCaseID		  as CaseId,
--- 		case when ( C.[date_of_incident] between '1900-01-01' and '2079-06-06' ) then convert(date,C.[date_of_incident]) 
--- 			else null end 	  as IncidentDate,
--- 		(select sttnStateID from sma_MST_States where sttsCode='OH')	as [StateID],
--- 		0					 as LiabilityCodeId, 
--- 		C.synopsis			 as IncidentFacts,
--- 		''					 as [MergedFacts],
--- 		null				 as [Comments],
--- 		null				 as [IncidentTime],
--- 		368					 as [RecUserID],
--- 		getdate()			 as [DtCreated],
--- 		null				 as [ModifyUserID],
--- 		null				 as [DtModified]
--- --Select *
--- FROM JoelBieberNeedles..case_intake C
--- JOIN [sma_TRN_cases] CAS on C.ROW_ID = CAS.saga 
+
+--alter table [sma_TRN_Incidents] disable trigger all
+--go
+
+--alter table [sma_TRN_Cases] disable trigger all
+--go
+
+-----
+--insert into [sma_TRN_Incidents]
+--	(
+--	[CaseId],
+--	[IncidentDate],
+--	[StateID],
+--	[LiabilityCodeId],
+--	[IncidentFacts],
+--	[MergedFacts],
+--	[Comments],
+--	[IncidentTime],
+--	[RecUserID],
+--	[DtCreated],
+--	[ModifyUserID],
+--	[DtModified]
+--	)
+--	select
+--		cas.casnCaseID as caseid,
+--		case
+--			when (c.[date_of_incident] between '1900-01-01' and '2079-06-06')
+--				then CONVERT(DATE, c.[date_of_incident])
+--			else null
+--		end			   as incidentdate,
+--		(
+--			select
+--				sttnStateID
+--			from sma_MST_States
+--			where sttsCode = 'VA'
+--		)			   as [stateid],
+--		0			   as liabilitycodeid,
+--		c.synopsis	   as incidentfacts,
+--		''			   as [mergedfacts],
+--		null		   as [comments],
+--		null		   as [incidenttime],
+--		368			   as [recuserid],
+--		GETDATE()	   as [dtcreated],
+--		null		   as [modifyuserid],
+--		null		   as [dtmodified]
+--	--Select *
+--	from JoelBieberNeedles..case_intake c
+--	join [sma_TRN_cases] cas
+--		on c.ROW_ID = cas.saga
 
 
--- UPDATE CAS
--- SET CAS.casdIncidentDate=INC.IncidentDate,
---     CAS.casnStateID=INC.StateID,
---     CAS.casnState=INC.StateID
--- FROM sma_trn_cases as CAS
--- LEFT JOIN sma_TRN_Incidents as INC on casnCaseID=caseid
--- WHERE INC.CaseId=CAS.casncaseid 
+--update CAS
+--set CAS.casdIncidentDate = INC.IncidentDate,
+--	CAS.casnStateID = INC.StateID,
+--	CAS.casnState = INC.StateID
+--from sma_trn_cases as cas
+--left join sma_TRN_Incidents as inc
+--	on casnCaseID = caseid
+--where inc.CaseId = cas.casncaseid
 
----
-ALTER TABLE [sma_TRN_Incidents] ENABLE TRIGGER ALL
-GO
-ALTER TABLE [sma_TRN_Cases] ENABLE TRIGGER ALL
-GO
+-----
+--alter table [sma_TRN_Incidents] enable trigger all
+--go
+
+alter table [sma_TRN_Cases] enable trigger all
+go
 --
 
 ----------------------------

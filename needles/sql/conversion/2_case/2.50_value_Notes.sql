@@ -19,8 +19,8 @@ notes:
 #########################################################################################
 */
 
-USE [JoelBieberSA_Needles]
-GO
+use [JoelBieberSA_Needles]
+go
 
 /*
 alter table [sma_TRN_Notes] disable trigger all
@@ -45,96 +45,118 @@ alter table [sma_TRN_Notes] enable trigger all
 
 
 -- Create note types that don't yet exist
-INSERT INTO [sma_MST_NoteTypes]
+insert into [sma_MST_NoteTypes]
 	(
-	nttsDscrptn, nttsNoteText
+	nttsDscrptn,
+	nttsNoteText
 	)
-	SELECT distinct
+	select distinct
+		vn.topic,
 		vn.topic
-		,vn.topic
-		FROM JoelBieberNeedles..value_notes vn
-	EXCEPT
-	SELECT
-		nttsDscrptn
-	   ,nttsNoteText
-	FROM [sma_MST_NoteTypes]
+	from JoelBieberNeedles..value_notes vn
+	except
+	select
+		nttsDscrptn,
+		nttsNoteText
+	from [sma_MST_NoteTypes]
 
 
 ---
-ALTER TABLE [sma_TRN_Notes] DISABLE TRIGGER ALL
-GO
+alter table [sma_TRN_Notes] disable trigger all
+go
+
 ---
+--SELECT nttsDscrptn, count(*)
+--FROM [sma_MST_NoteTypes]
+--group by nttsDscrptn
+--having count(*) > 1
 
 ----(1)----
-INSERT INTO [sma_TRN_Notes]
+insert into [sma_TRN_Notes]
 	(
-	[notnCaseID], [notnNoteTypeID], [notmDescription], [notmPlainText], [notnContactCtgID], [notnContactId], [notsPriority], [notnFormID], [notnRecUserID], [notdDtCreated], [notnModifyUserID], [notdDtModified], [notnLevelNo], [notdDtInserted], [WorkPlanItemId], [notnSubject]
+	[notnCaseID],
+	[notnNoteTypeID],
+	[notmDescription],
+	[notmPlainText],
+	[notnContactCtgID],
+	[notnContactId],
+	[notsPriority],
+	[notnFormID],
+	[notnRecUserID],
+	[notdDtCreated],
+	[notnModifyUserID],
+	[notdDtModified],
+	[notnLevelNo],
+	[notdDtInserted],
+	[WorkPlanItemId],
+	[notnSubject]
 	)
-	SELECT
-		casnCaseID	 AS [notnCaseID]
-	   ,(
-			SELECT
+	select
+		casnCaseID	 as [notncaseid],
+		(
+			select
 				nttnNoteTypeID
-			FROM [sma_MST_NoteTypes]
-			WHERE nttsDscrptn = n.topic
-		)			 
-		AS [notnNoteTypeID]
-	   ,note		 AS [notmDescription]
-	   ,note		 AS [notmPlainText]
-	   ,0			 AS [notnContactCtgID]
-	   ,NULL		 AS [notnContactId]
-	   ,NULL		 AS [notsPriority]
-	   ,NULL		 AS [notnFormID]
-	   ,U.usrnUserID AS [notnRecUserID]
-	   ,CASE
-			WHEN N.note_date BETWEEN '1900-01-01' AND '2079-06-06' AND
-				CONVERT(TIME, ISNULL(N.note_time, '00:00:00')) <> CONVERT(TIME, '00:00:00')
-				THEN CAST(CAST(N.note_date AS DATE) AS DATETIME) + CAST(CAST(N.note_time AS TIME) AS DATETIME)
-			ELSE NULL
-		END			 AS notdDtCreated
-	   ,NULL		 AS [notnModifyUserID]
-	   ,NULL		 AS notdDtModified
-	   ,NULL		 AS [notnLevelNo]
-	   ,NULL		 AS [notdDtInserted]
-	   ,NULL		 AS [WorkPlanItemId]
-	   ,NULL		 AS [notnSubject]
-	FROM JoelBieberNeedles.[dbo].[value_notes] N
-	JOIN JoelBieberNeedles.[dbo].[value_Indexed] V
-		ON V.value_id = N.value_num
-	JOIN [sma_TRN_Cases] C
-		ON C.cassCaseNumber = V.case_id
-	JOIN [sma_MST_Users] U
-		ON U.saga = N.staff_id
-GO
+			from [sma_MST_NoteTypes]
+			where nttsDscrptn = n.topic
+		)			 as [notnnotetypeid],
+		note		 as [notmdescription],
+		note		 as [notmplaintext],
+		0			 as [notncontactctgid],
+		null		 as [notncontactid],
+		null		 as [notspriority],
+		null		 as [notnformid],
+		u.usrnUserID as [notnrecuserid],
+		case
+			when n.note_date between '1900-01-01' and '2079-06-06' and
+				CONVERT(TIME, ISNULL(n.note_time, '00:00:00')) <> CONVERT(TIME, '00:00:00')
+				then CAST(CAST(n.note_date as DATE) as DATETIME) + CAST(CAST(n.note_time as TIME) as DATETIME)
+			else null
+		end			 as notddtcreated,
+		null		 as [notnmodifyuserid],
+		null		 as notddtmodified,
+		null		 as [notnlevelno],
+		null		 as [notddtinserted],
+		null		 as [workplanitemid],
+		null		 as [notnsubject]
+	from JoelBieberNeedles.[dbo].[value_notes] n
+	join JoelBieberNeedles.[dbo].[value_Indexed] v
+		on v.value_id = n.value_num
+	join [sma_TRN_Cases] c
+		on c.cassCaseNumber = v.case_id
+	join [sma_MST_Users] u
+		on u.source_id = n.staff_id
+go
 
 ---
-ALTER TABLE [sma_TRN_Notes] ENABLE TRIGGER ALL
-GO
+alter table [sma_TRN_Notes] enable trigger all
+go
+
 ---
 
 -----------------------------------------
 --INSERT RELATED TO FIELD FOR NOTES
 -----------------------------------------
-INSERT INTO sma_TRN_NoteContacts
+insert into sma_TRN_NoteContacts
 	(
-	NoteID, UniqueContactID
+	NoteID,
+	UniqueContactID
 	)
-	SELECT DISTINCT
-		note.notnNoteID
-	   ,ioc.UNQCID
+	select distinct
+		note.notnNoteID,
+		ioc.UNQCID
 	--select v.provider, ioc.*, n.note, note.*
-	FROM JoelBieberNeedles..[value_notes] N
-	JOIN JoelBieberNeedles..value_Indexed V
-		ON V.value_id = N.value_num
-	JOIN sma_trn_Cases cas
-		ON cas.cassCaseNumber = v.case_id
-	JOIN IndvOrgContacts_Indexed ioc
-		ON ioc.saga = v.[provider]
-	JOIN [sma_TRN_Notes] note
-		ON note.saga = n.note_key
-			AND note.[notnNoteTypeID] = (
-				SELECT
+	from JoelBieberNeedles..[value_notes] n
+	join JoelBieberNeedles..value_Indexed v
+		on v.value_id = n.value_num
+	join sma_trn_Cases cas
+		on cas.cassCaseNumber = v.case_id
+	join IndvOrgContacts_Indexed ioc
+		on ioc.saga = v.[provider]
+	join [sma_TRN_Notes] note
+		on note.saga = n.note_key
+			and note.[notnNoteTypeID] = (
+				select
 					nttnNoteTypeID
-				FROM [sma_MST_NoteTypes]
-				WHERE nttsDscrptn = n.topic
+				from [sma_MST_NoteTypes]
+				where nttsDscrptn = n.topic
 			)

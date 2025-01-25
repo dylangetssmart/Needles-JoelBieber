@@ -11,7 +11,7 @@ replace:
 */
 
 use [JoelBieberSA_Needles]
-GO
+go
 
 /*
 alter table [sma_TRN_SOLs] disable trigger all
@@ -95,13 +95,14 @@ where CST.VenderCaseType='GMACaseType'
 */
 
 -----
-ALTER TABLE [sma_TRN_SOLs] disable trigger all
-GO
+alter table [sma_TRN_SOLs] disable trigger all
+go
+
 -----
 
 ----(2)----
-INSERT INTO [sma_TRN_SOLs]
-(
+insert into [sma_TRN_SOLs]
+	(
 	[solnCaseID],
 	[solnSOLTypeID],
 	[soldSOLDate],
@@ -112,39 +113,42 @@ INSERT INTO [sma_TRN_SOLs]
 	[soldToProcessServerDt],
 	[soldRcvdDate],
 	[solsType]
-)
-SELECT DISTINCT
-    D.defnCaseID		   as [solnCaseID],
-    null				as [solnSOLTypeID],
-    case
-		when (C.[lim_date] not between '1900-01-01' and '2079-12-31')
-			then null
-		else C.[lim_date]
-		end					as [soldSOLDate],
-    null				   as [soldDateComplied],
-    null					as [soldSnCFilingDate],
-    null				   as [soldServiceDate],
-    D.defnDefendentID	   as [solnDefendentID],
-    null				   as [soldToProcessServerDt],
-    null				   as [soldRcvdDate],
-    'D'				   as [solsType]
-FROM JoelBieberNeedles.[dbo].[cases_Indexed] C 
-JOIN [sma_TRN_Cases] CAS on CAS.cassCaseNumber = C.casenum 
-JOIN [sma_TRN_Defendants] D on D.defnCaseID=CAS.casnCaseID 
-WHERE C.lim_date is not null
-GO
+	)
+	select distinct
+		d.defnCaseID	  as [solncaseid],
+		null			  as [solnsoltypeid],
+		case
+			when (c.[lim_date] not between '1900-01-01' and '2079-12-31')
+				then null
+			else c.[lim_date]
+		end				  as [soldsoldate],
+		null			  as [solddatecomplied],
+		null			  as [soldsncfilingdate],
+		null			  as [soldservicedate],
+		d.defnDefendentID as [solndefendentid],
+		null			  as [soldtoprocessserverdt],
+		null			  as [soldrcvddate],
+		'D'				  as [solstype]
+	from JoelBieberNeedles.[dbo].[cases_Indexed] c
+	join [sma_TRN_Cases] cas
+		on cas.cassCaseNumber = c.casenum
+	join [sma_TRN_Defendants] d
+		on d.defnCaseID = cas.casnCaseID
+	where c.lim_date is not null
+go
 
 -----
-ALTER TABLE [sma_TRN_SOLs] ENABLE TRIGGER ALL
-GO
+alter table [sma_TRN_SOLs] enable trigger all
+go
+
 -----
 
 
 ----(Appendix)----
-UPDATE sma_MST_SOLDetails 
-SET sldnFromIncident=0
-WHERE sldnFromIncident is NULL
-and sldnRecUserID=368
+update sma_MST_SOLDetails
+set sldnFromIncident = 0
+where sldnFromIncident is null
+and sldnRecUserID = 368
 
 
 

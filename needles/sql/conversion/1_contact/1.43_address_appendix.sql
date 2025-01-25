@@ -13,6 +13,94 @@ alter table [sma_MST_Address] enable trigger all
 alter table [sma_MST_Address] disable trigger all
 go
 
+---(APPENDIX)---
+---(A.0)
+insert into [sma_MST_Address]
+	(
+	addnContactCtgID,
+	addnContactID,
+	addnAddressTypeID,
+	addsAddressType,
+	addsAddTypeCode,
+	addbPrimary,
+	addnRecUserID,
+	adddDtCreated
+	)
+	select
+		i.cinnContactCtg as addncontactctgid,
+		i.cinnContactID	 as addncontactid,
+		(
+			select
+				addnAddTypeID
+			from [sma_MST_AddressTypes]
+			where addsDscrptn = 'Other'
+				and addnContactCategoryID = i.cinnContactCtg
+		)				 as addnaddresstypeid,
+		'Other'			 as addsaddresstype,
+		'OTH'			 as addsaddtypecode,
+		1				 as addbprimary,
+		368				 as addnrecuserid,
+		GETDATE()		 as addddtcreated
+	from [sma_MST_IndvContacts] i
+	left join [sma_MST_Address] a
+		on a.addncontactid = i.cinnContactID
+			and a.addncontactctgid = i.cinnContactCtg
+	where a.addnAddressID is null
+
+---(A.1)
+insert into [sma_MST_AddressTypes]
+	(
+	addsCode,
+	addsDscrptn,
+	addnContactCategoryID,
+	addbIsWork
+	)
+	select
+		'OTH_O',
+		'Other',
+		2,
+		0
+	except
+	select
+		addsCode,
+		addsDscrptn,
+		addnContactCategoryID,
+		addbIsWork
+	from [sma_MST_AddressTypes]
+
+
+insert into [sma_MST_Address]
+	(
+	addnContactCtgID,
+	addnContactID,
+	addnAddressTypeID,
+	addsAddressType,
+	addsAddTypeCode,
+	addbPrimary,
+	addnRecUserID,
+	adddDtCreated
+	)
+	select
+		o.connContactCtg as addncontactctgid,
+		o.connContactID	 as addncontactid,
+		(
+			select
+				addnAddTypeID
+			from [sma_MST_AddressTypes]
+			where addsDscrptn = 'Other'
+				and addnContactCategoryID = o.connContactCtg
+		)				 as addnaddresstypeid,
+		'Other'			 as addsaddresstype,
+		'OTH_O'			 as addsaddtypecode,
+		1				 as addbprimary,
+		368				 as addnrecuserid,
+		GETDATE()		 as addddtcreated
+	from [sma_MST_OrgContacts] o
+	left join [sma_MST_Address] a
+		on a.addncontactid = o.connContactID
+			and a.addncontactctgid = o.connContactCtg
+	where a.addnAddressID is null
+
 ----(APPENDIX)----
 update [sma_MST_Address]
 set addbPrimary = 1
