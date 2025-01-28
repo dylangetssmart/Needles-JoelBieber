@@ -1,74 +1,142 @@
-USE JoelBieberSA_Needles
-GO
-
-/* ####################################
-1.0 -- Add Contact to case
+/* ###################################################################################
+description: Inserts records to Other > All Contacts
+steps:
+	- Insert [sma_MST_OtherCasesContact] from user_case_data
+	- Insert [sma_MST_OtherCasesContact] from user_party_data.relative
+	- Insert [sma_MST_OtherCasesContact] from user_party_data.relative_name
+usage_instructions:
+	- 
+dependencies:
+	- 
+notes:
+	-
+todo
+	- 
 */
 
-ALTER TABLE [sma_MST_OtherCasesContact] DISABLE TRIGGER ALL
-GO
 
---INSERT INTO [sma_MST_OtherCasesContact]
---	(
---	[OtherCasesID], [OtherCasesContactID], [OtherCasesContactCtgID], [OtherCaseContactAddressID], [OtherCasesContactRole], [OtherCasesCreatedUserID], [OtherCasesContactCreatedDt], [OtherCasesModifyUserID], [OtherCasesContactModifieddt]
---	)
---	SELECT
---		cas.casnCaseID				 AS [OtherCasesID]
---	   ,ioc.CID						 AS [OtherCasesContactID]
---	   ,ioc.CTG						 AS [OtherCasesContactCtgID]
---	   ,ioc.AID						 AS [OtherCaseContactAddressID]
---	   ,ud.Relationship_to_Plaintiff AS [OtherCasesContactRole]
---	   ,368							 AS [OtherCasesCreatedUserID]
---	   ,GETDATE()					 AS [OtherCasesContactCreatedDt]
---	   ,NULL						 AS [OtherCasesModifyUserID]
---	   ,NULL						 AS [OtherCasesContactModifieddt]
---	FROM NeedlesSLF.[dbo].user_party_data ud
---	JOIN sma_TRN_Cases cas
---		ON cas.cassCaseNumber = ud.case_id
---	JOIN NeedlesSLF..names n
---		ON n.names_id = ud.party_id
---	JOIN IndvOrgContacts_Indexed ioc
---		ON ioc.SAGA = n.names_id
---	WHERE ISNULL(ud.Relationship_to_Plaintiff, '') <> ''
---GO
+use JoelBieberSA_Needles
+go
 
+alter table [sma_MST_OtherCasesContact] disable trigger all
+go
 
---SELECT * FROM conversion.user
+-------------------------------------------------------------------
+-- from user_case_data
+-------------------------------------------------------------------
 
-INSERT INTO [sma_MST_OtherCasesContact]
+insert into [sma_MST_OtherCasesContact]
 	(
-	[OtherCasesID], [OtherCasesContactID], [OtherCasesContactCtgID], [OtherCaseContactAddressID], [OtherCasesContactRole], [OtherCasesCreatedUserID], [OtherCasesContactCreatedDt], [OtherCasesModifyUserID], [OtherCasesContactModifieddt]
+	[OtherCasesID],
+	[OtherCasesContactID],
+	[OtherCasesContactCtgID],
+	[OtherCaseContactAddressID],
+	[OtherCasesContactRole],
+	[OtherCasesCreatedUserID],
+	[OtherCasesContactCreatedDt],
+	[OtherCasesModifyUserID],
+	[OtherCasesContactModifieddt]
 	)
-	SELECT
-		cas.casnCaseID				 AS [OtherCasesID]
-	   ,ioc.CID						 AS [OtherCasesContactID]
-	   ,ioc.CTG						 AS [OtherCasesContactCtgID]
-	   ,ioc.AID						 AS [OtherCaseContactAddressID]
-	   ,'Relative'					 AS [OtherCasesContactRole]
-	   ,368							 AS [OtherCasesCreatedUserID]
-	   ,GETDATE()					 AS [OtherCasesContactCreatedDt]
-	   ,NULL						 AS [OtherCasesModifyUserID]
-	   ,NULL						 AS [OtherCasesContactModifieddt]
+	select
+		cas.casnCaseID as [othercasesid],
+		ioc.CID		   as [othercasescontactid],
+		ioc.CTG		   as [othercasescontactctgid],
+		ioc.AID		   as [othercasecontactaddressid],
+		'Relative'	   as [othercasescontactrole],
+		368			   as [othercasescreateduserid],
+		GETDATE()	   as [othercasescontactcreateddt],
+		null		   as [othercasesmodifyuserid],
+		null		   as [othercasescontactmodifieddt]
 	--SELECT *
-	FROM [JoelBieberNeedles].[dbo].user_case_data ucd
-	JOIN sma_TRN_Cases cas
-		ON CONVERT(VARCHAR, ucd.casenum) = CAS.cassCaseNumber
-	--JOIN [JoelBieberNeedles]..names n
-	--	ON n.names_id = ud.party_id
-	JOIN [sma_MST_IndvContacts] indv
+	from [JoelBieberNeedles].[dbo].user_case_data ucd
+	join sma_TRN_Cases cas
+		on CONVERT(VARCHAR, ucd.casenum) = cas.saga
+	join [sma_MST_IndvContacts] indv
 		on indv.source_id = ucd.Relative_Name
-		and indv.source_ref = 'conversion.user_party_relative'
-	JOIN IndvOrgContacts_Indexed ioc
+			and indv.source_ref = 'user_case_data.relative_name'
+	join IndvOrgContacts_Indexed ioc
 		on ioc.CID = indv.cinnContactID
-		--ON CONVERT(VARCHAR, ucd.casenum) = ioc.saga
-		--ON ic.saga = ucd.casenum
-		--and cinsgrade = 'relative'
-	WHERE ISNULL(ucd.Relative_Name, '') <> ''
-GO
+	where ISNULL(ucd.Relative_Name, '') <> ''
+go
+
+-------------------------------------------------------------------
+-- from user_party_data
+-------------------------------------------------------------------
+
+-- 'Relative_Name'
+insert into [sma_MST_OtherCasesContact]
+	(
+	[OtherCasesID],
+	[OtherCasesContactID],
+	[OtherCasesContactCtgID],
+	[OtherCaseContactAddressID],
+	[OtherCasesContactRole],
+	[OtherCasesCreatedUserID],
+	[OtherCasesContactCreatedDt],
+	[OtherCasesModifyUserID],
+	[OtherCasesContactModifieddt]
+	)
+	select
+		cas.casnCaseID as [othercasesid],
+		ioc.CID		   as [othercasescontactid],
+		ioc.CTG		   as [othercasescontactctgid],
+		ioc.AID		   as [othercasecontactaddressid],
+		'Relative'	   as [othercasescontactrole],
+		368			   as [othercasescreateduserid],
+		GETDATE()	   as [othercasescontactcreateddt],
+		null		   as [othercasesmodifyuserid],
+		null		   as [othercasescontactmodifieddt]
+	--SELECT *
+	from [JoelBieberNeedles].[dbo].user_party_data upd
+	join sma_TRN_Cases cas
+		on upd.case_id = cas.saga
+	join [sma_MST_IndvContacts] indv
+		on indv.source_id = upd.Relative_Name
+			and indv.source_ref = 'conversion.user_party_relative'
+	join IndvOrgContacts_Indexed ioc
+		on ioc.CID = indv.cinnContactID
+	where ISNULL(upd.Relative_Name, '') <> ''
+go
+
+
+-- 'Relative'
+insert into [sma_MST_OtherCasesContact]
+	(
+	[OtherCasesID],
+	[OtherCasesContactID],
+	[OtherCasesContactCtgID],
+	[OtherCaseContactAddressID],
+	[OtherCasesContactRole],
+	[OtherCasesCreatedUserID],
+	[OtherCasesContactCreatedDt],
+	[OtherCasesModifyUserID],
+	[OtherCasesContactModifieddt]
+	)
+	select
+		cas.casnCaseID as [othercasesid],
+		ioc.CID		   as [othercasescontactid],
+		ioc.CTG		   as [othercasescontactctgid],
+		ioc.AID		   as [othercasecontactaddressid],
+		'Relative'	   as [othercasescontactrole],
+		368			   as [othercasescreateduserid],
+		GETDATE()	   as [othercasescontactcreateddt],
+		null		   as [othercasesmodifyuserid],
+		null		   as [othercasescontactmodifieddt]
+	--SELECT *
+	from [JoelBieberNeedles].[dbo].user_party_data upd
+	join sma_TRN_Cases cas
+		on upd.case_id = cas.saga
+	join [sma_MST_IndvContacts] indv
+		on indv.source_id = upd.relative
+			and indv.source_ref = 'conversion.user_party_relative'
+	join IndvOrgContacts_Indexed ioc
+		on ioc.CID = indv.cinnContactID
+	where ISNULL(upd.relative, '') <> ''
+go
 
 ---
-ALTER TABLE [sma_MST_OtherCasesContact] ENABLE TRIGGER ALL
-GO
+alter table [sma_MST_OtherCasesContact] enable trigger all
+go
 
 /* ####################################
 2.0 -- Add comment
