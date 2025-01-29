@@ -219,3 +219,32 @@ begin
 			GETDATE()			  as [conddtcreated]
 end
 go
+
+---------------------------------------------------
+-- [6] - Unidentified Employer
+---------------------------------------------------
+if not exists (
+		select
+			*
+		from [sma_MST_OrgContacts]
+		where consName = 'Unidentified Employer'
+	)
+begin
+	insert into [sma_MST_OrgContacts]
+		(
+		[consName], [connContactCtg], [connContactTypeID], [connRecUserID], [condDtCreated]
+		)
+		select
+			'Unidentified Employer' as [consname],
+			2					  as [conncontactctg],
+			(
+				select
+					octnOrigContactTypeID
+				from [sma_MST_OriginalContactTypes]
+				where octnContactCtgID = 2
+					and octsDscrptn = 'General'
+			)					  as [conncontacttypeid],
+			368					  as [connrecuserid],
+			GETDATE()			  as [conddtcreated]
+end
+go
