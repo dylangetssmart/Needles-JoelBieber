@@ -55,7 +55,7 @@ insert into sma_TRN_PriorInjuries
 		''				  as [prlsinjury]
 	from JoelBieberNeedles..user_party_data upd
 	join sma_TRN_Cases cas
-		on cas.cassCaseNumber = upd.case_id
+		on cas.cassCaseNumber = convert(varchar,upd.case_id)
 	join sma_TRN_Plaintiff pln
 		on pln.plnnCaseID = cas.casnCaseID
 	where ISNULL(upd.PRIOR_INJURY, '') <> ''
