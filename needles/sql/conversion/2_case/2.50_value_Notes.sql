@@ -22,28 +22,6 @@ notes:
 use [JoelBieberSA_Needles]
 go
 
-/*
-alter table [sma_TRN_Notes] disable trigger all
-delete from [sma_TRN_Notes] 
-DBCC CHECKIDENT ('[sma_TRN_Notes]', RESEED, 0);
-alter table [sma_TRN_Notes] enable trigger all
-*/
-
-----(0)----
---INSERT INTO [sma_MST_NoteTypes]
---	(
---	nttsDscrptn, nttsNoteText
---	)
---	SELECT
---		'Balance Verify'			  AS nttsDscrptn
---	   ,'Verify Outstanding Balances' AS nttsNoteText
---	EXCEPT
---	SELECT
---		nttsDscrptn
---	   ,nttsNoteText
---	FROM [sma_MST_NoteTypes]
-
-
 -- Create note types that don't yet exist
 insert into [sma_MST_NoteTypes]
 	(
@@ -94,7 +72,7 @@ insert into [sma_TRN_Notes]
 	select
 		casnCaseID	 as [notncaseid],
 		(
-			select
+			select top 1
 				nttnNoteTypeID
 			from [sma_MST_NoteTypes]
 			where nttsDscrptn = n.topic
@@ -131,8 +109,6 @@ go
 alter table [sma_TRN_Notes] enable trigger all
 go
 
----
-
 -----------------------------------------
 --INSERT RELATED TO FIELD FOR NOTES
 -----------------------------------------
@@ -155,7 +131,7 @@ insert into sma_TRN_NoteContacts
 	join [sma_TRN_Notes] note
 		on note.saga = n.note_key
 			and note.[notnNoteTypeID] = (
-				select
+				select top 1
 					nttnNoteTypeID
 				from [sma_MST_NoteTypes]
 				where nttsDscrptn = n.topic
