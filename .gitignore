@@ -33,6 +33,7 @@ slnx.sqlite
 # Ignore data directories
 grow-path/data/*
 grow-path/logs/*
+grow-path/backups/*
 
 needles/data/*
 needles/logs/*
