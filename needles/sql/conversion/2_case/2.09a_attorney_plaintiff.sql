@@ -86,12 +86,12 @@ insert into [sma_TRN_PlaintiffAttorney]
 		ISNULL('comments : ' + NULLIF(CONVERT(VARCHAR(MAX), c.comments), '') + CHAR(13), '') +
 		ISNULL('Attorney for party : ' + NULLIF(CONVERT(VARCHAR(MAX), iocp.name), '') + CHAR(13), '') +
 		''				  as [plascomments]
-	from JoelBieberNeedles..[counsel_Indexed] c
+	select *from JoelBieberNeedles..[counsel_Indexed] c
 	left join JoelBieberNeedles.[dbo].[user_counsel_data] ud
 		on ud.counsel_id = c.counsel_id
 			and c.case_num = ud.casenum
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = c.case_num
+		on cas.cassCaseNumber = convert(varchar,c.case_num)
 	join IndvOrgContacts_Indexed ioc
 		on ioc.SAGA = c.counsel_id
 			and ISNULL(c.counsel_id, 0) <> 0

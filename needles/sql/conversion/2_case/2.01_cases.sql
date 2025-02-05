@@ -209,8 +209,8 @@ insert into [sma_TRN_Cases]
 		null		   as [source_ref]
 	--select *
 	from [JoelBieberNeedles].[dbo].[cases_Indexed] c
-	left join [JoelBieberNeedles].[dbo].[user_case_data] u
-		on u.casenum = c.casenum
+	--left join [JoelBieberNeedles].[dbo].[user_case_data] u
+	--	on u.casenum = c.casenum
 	join caseTypeMixture mix
 		on mix.matcode = c.matcode
 	left join sma_MST_CaseType cst

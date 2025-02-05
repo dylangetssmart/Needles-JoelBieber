@@ -79,26 +79,7 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_Defendants]
 	(
-	[defnCaseID],
-	[defnContactCtgID],
-	[defnContactID],
-	[defnAddressID],
-	[defnSubRole],
-	[defbIsPrimary],
-	[defbCounterClaim],
-	[defbThirdParty],
-	[defsThirdPartyRole],
-	[defnPriority],
-	[defdFrmDt],
-	[defdToDt],
-	[defnRecUserID],
-	[defdDtCreated],
-	[defnModifyUserID],
-	[defdDtModified],
-	[defnLevelNo],
-	[defsMarked],
-	[saga],
-	[saga_party]
+	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga], [saga_party]
 	)
 	select
 		casnCaseID	  as [defncaseid],
@@ -142,32 +123,14 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_Defendants]
 	(
-	[defnCaseID],
-	[defnContactCtgID],
-	[defnContactID],
-	[defnAddressID],
-	[defnSubRole],
-	[defbIsPrimary],
-	[defbCounterClaim],
-	[defbThirdParty],
-	[defsThirdPartyRole],
-	[defnPriority],
-	[defdFrmDt],
-	[defdToDt],
-	[defnRecUserID],
-	[defdDtCreated],
-	[defnModifyUserID],
-	[defdDtModified],
-	[defnLevelNo],
-	[defsMarked],
-	[saga]
+	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga]
 	--[saga_party]
 	)
 	select
 		casnCaseID	  as [defncaseid],
-		cio.CTG	  as [defncontactctgid],
-		cio.CID	  as [defncontactid],
-		cio.AID	  as [defnaddressid],
+		cio.CTG		  as [defncontactctgid],
+		cio.CID		  as [defncontactid],
+		cio.AID		  as [defnaddressid],
 		sbrnSubRoleId as [defnsubrole],
 		1			  as [defbisprimary],
 		null,
@@ -182,23 +145,23 @@ insert into [sma_TRN_Defendants]
 		null		  as [defddtmodified],
 		null		  as [defnlevelno],
 		null,
-		null as [saga]
-		--p.TableIndex  as [saga_party]
-	select *
+		null		  as [saga]
+	--p.TableIndex  as [saga_party]
+	--select *
 	from JoelBieberNeedles..user_case_data ucd
 	-- case
 	join sma_TRN_Cases cas
-		on cas.cassCaseNumber = convert(varchar,ucd.casenum)
+		on cas.cassCaseNumber = CONVERT(VARCHAR, ucd.casenum)
 	-- contact: conversion.user_case_plaintiff_defendant > sma_mst_indvcontacts > indvorgcontacts_indexed
 	join conversion.user_case_plaintiff_defendant conv_ucpd
 		on conv_ucpd.contact_name = ucd.DEFENDANT
-		and conv_ucpd.plaintiff_or_defendant = 'D'
+			and conv_ucpd.plaintiff_or_defendant = 'D'
 	join sma_mst_indvcontacts indv
 		on indv.source_id = conv_ucpd.contact_name
-		and indv.source_ref = 'cte_user_case_plaintiff_defendant:defendant'
+			and indv.source_ref = 'cte_user_case_plaintiff_defendant:defendant'
 	join IndvOrgContacts_Indexed cio
 		on cio.cid = indv.cinncontactid
-		and cio.ctg = 1
+			and cio.ctg = 1
 	-- role
 	join [sma_MST_SubRole] s
 		on cas.casnOrgCaseTypeID = s.sbrnCaseTypeID
@@ -212,25 +175,7 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_Defendants]
 	(
-	[defnCaseID],
-	[defnContactCtgID],
-	[defnContactID],
-	[defnAddressID],
-	[defnSubRole],
-	[defbIsPrimary],
-	[defbCounterClaim],
-	[defbThirdParty],
-	[defsThirdPartyRole],
-	[defnPriority],
-	[defdFrmDt],
-	[defdToDt],
-	[defnRecUserID],
-	[defdDtCreated],
-	[defnModifyUserID],
-	[defdDtModified],
-	[defnLevelNo],
-	[defsMarked],
-	[saga]
+	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga]
 	)
 	select
 		casnCaseID as [defncaseid],

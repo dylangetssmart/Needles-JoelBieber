@@ -56,7 +56,7 @@ if not exists (
 			*
 		from sys.columns
 		where Name = N'saga'
-			and Object_ID = OBJECT_ID(N'sma_TRN_Settlements')
+			and object_id = OBJECT_ID(N'sma_TRN_Settlements')
 	)
 begin
 	alter table [sma_TRN_Settlements] add [saga] VARCHAR(100) null;
@@ -72,13 +72,13 @@ insert into [sma_MST_SettlementType]
 	SettlTypeName
 	)
 	select
-		'Settlement Recovery'
-	union
-	select
-		'MedPay'
-	union
-	select
-		'Paid To Client'
+		'Verdict'
+	--union
+	--select
+	--	'MedPay'
+	--union
+	--select
+	--	'Paid To Client'
 	except
 	select
 		SettlTypeName
@@ -124,15 +124,7 @@ go
 ---(0)---
 insert into value_tab_Settlement_Helper
 	(
-	case_id,
-	value_id,
-	ProviderNameId,
-	ProviderName,
-	ProviderCID,
-	ProviderCTG,
-	ProviderAID,
-	casnCaseID,
-	PlaintiffID
+	case_id, value_id, ProviderNameId, ProviderName, ProviderCID, ProviderCTG, ProviderAID, casnCaseID, PlaintiffID
 	)
 	select
 		v.case_id	   as case_id,	-- needles case
@@ -244,28 +236,15 @@ go
 
 insert into [sma_TRN_Settlements]
 	(
-	stlnCaseID,
-	stlnSetAmt,
-	stlnNet,
-	stlnNetToClientAmt,
-	stlnPlaintiffID,
-	stlnStaffID,
-	stlnLessDisbursement,
-	stlnGrossAttorneyFee,
-	stlnForwarder,  --referrer
-	stlnOther,
-	InterestOnDisbursement,
-	stlsComments,
-	stlTypeID,
-	stldSettlementDate,
-	saga,
-	stlbTakeMedPay		-- "Take Fee"
+	stlnCaseID, stlnSetAmt, stlnNet, stlnNetToClientAmt, stlnPlaintiffID, stlnStaffID, stlnLessDisbursement, stlnGrossAttorneyFee, stlnForwarder,  --referrer
+	stlnOther, InterestOnDisbursement, stlsComments, stlTypeID, stldSettlementDate, saga, stlbTakeMedPay,		-- "Take Fee"
+	stlnMedPay
 	)
 	select
 		map.casnCaseID  as stlncaseid,
 
 		case
-			when v.code in ('MPP', 'SET')
+			when v.code in ('SET')
 				then v.total_value
 		end				as stlnsetamt,
 		null			as stlnnet,
@@ -312,7 +291,12 @@ insert into [sma_TRN_Settlements]
 			when v.code = 'MPP'
 				then 1
 			else 0
-		end				as stlbtakemedpay		-- ds 2024-11-07 "Take Fee"
+		end				as stlbtakemedpay,		-- ds 2024-11-07 "Take Fee"
+		case
+			when v.code = 'MPP'
+				then v.total_value
+			else 0
+		end				as stlnMedPay
 	from JoelBieberNeedles.[dbo].[value_Indexed] v
 	join value_tab_Settlement_Helper map
 		on map.case_id = v.case_id

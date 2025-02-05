@@ -70,7 +70,7 @@ begin
 end
 go
 
--- source_id_2
+-- source_db
 if not exists (
 		select
 			*
@@ -83,7 +83,7 @@ begin
 end
 go
 
--- source_id_3
+-- source_ref
 if not exists (
 		select
 			*

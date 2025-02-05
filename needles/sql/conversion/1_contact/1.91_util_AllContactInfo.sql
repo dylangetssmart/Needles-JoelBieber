@@ -105,7 +105,6 @@ insert into [dbo].[sma_MST_AllContactInfo]
 	[ModifyUserId],
 	[IsDeleted],
 	[DateOfBirth],
-	[SSNNo],
 	[IsActive]
 	)
 	select
@@ -177,7 +176,6 @@ insert into [dbo].[sma_MST_AllContactInfo]
 		347																				  as modifyuserid,
 		0																				  as isdeleted,
 		[cindBirthDate],
-		LEFT([cinsSSNNo], 20),
 		[cinbStatus]
 	--select max(len([cinsSSNNo]))
 	from sma_MST_IndvContacts

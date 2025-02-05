@@ -64,9 +64,6 @@ insert into conversion.user_case_plaintiff_defendant
 alter table [sma_MST_IndvContacts] disable trigger all
 go
 
-alter table [sma_MST_Address] disable trigger all
-go
-
 -------------------------------------------------------------------
 -- Insert Individual Contacts
 insert into [sma_MST_IndvContacts]
@@ -201,7 +198,4 @@ go
 
 
 alter table [sma_MST_IndvContacts] enable trigger all
-go
-
-alter table [sma_MST_Address] enable trigger all
 go
