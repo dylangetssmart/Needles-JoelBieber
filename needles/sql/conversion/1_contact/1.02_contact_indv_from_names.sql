@@ -21,6 +21,7 @@ use JoelBieberSA_Needles
 go
 
 alter table [sma_MST_IndvContacts] disable trigger all
+go
 
 /* --------------------------------------------------------------------------------------------------------------
 Insert from [names]
@@ -43,36 +44,28 @@ Insert from [names]
 
 --)
 
+
+/* --------------------------------------------------------------------------------------------------------------
+Insert [sma_Mst_ContactRace] from [race]
+*/
+
+insert into sma_MST_ContactRace
+	(
+	RaceDesc
+	)
+	select distinct
+		race_name
+	from [JoelBieberNeedles]..race
+	except
+	select
+		RaceDesc
+	from sma_Mst_ContactRace
+go
+
+
 insert into [sma_MST_IndvContacts]
 	(
-	[cinsPrefix],
-	[cinsSuffix],
-	[cinsFirstName],
-	[cinsMiddleName],
-	[cinsLastName],
-	[cinsHomePhone],
-	[cinsWorkPhone],
-	[cinsSSNNo],
-	[cindBirthDate],
-	[cindDateOfDeath],
-	[cinnGender],
-	[cinsMobile],
-	[cinsComments],
-	[cinnContactCtg],
-	[cinnContactTypeID],
-	[cinnContactSubCtgID],
-	[cinnRecUserID],
-	[cindDtCreated],
-	[cinbStatus],
-	[cinbPreventMailing],
-	[cinsNickName],
-	[cinsPrimaryLanguage],
-	[cinsOtherLanguage],
-	[cinnRace],
-	[saga],
-	[source_id],
-	[source_db],
-	[source_ref]
+	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo], [cindBirthDate], [cindDateOfDeath], [cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID], [cinnContactSubCtgID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing], [cinsNickName], [cinsPrimaryLanguage], [cinsOtherLanguage], [cinnRace], [saga], [source_id], [source_db], [source_ref]
 	)
 	select
 		LEFT(n.[prefix], 20)					 as [cinsprefix],
@@ -183,31 +176,28 @@ insert into [sma_MST_IndvContacts]
 		CONVERT(VARCHAR(15), aka_full)			 as [cinsnickname],
 		null									 as [cinsprimarylanguage],
 		null									 as [cinsotherlanguage],
-		--case
-		--	when ISNULL(n.race, '') <> ''
-		--		then (
-		--				select
-		--					RaceID
-		--				from sma_mst_ContactRace
-		--				where RaceDesc = r.race_name
-		--			)
-		--	else null
-		--end										 as cinnrace,
-		null as cinnrace,
+		case
+			when ISNULL(n.race, '') <> ''
+				then (
+						select
+							RaceID
+						from sma_mst_ContactRace
+						where RaceDesc = r.race_name
+					)
+			else null
+		end										 as cinnrace,
+		null									 as cinnrace,
 		n.[names_id]							 as saga,
 		null									 as source_id,
 		'needles'								 as source_db,
 		'names'									 as source_ref
 	from [JoelBieberNeedles].[dbo].[names] n
-	--LEFT join [JoelBieberNeedles].[dbo].[Race] r
-	--	on r.race_id = CONVERT(INT, n.race)
-	--		and ISNUMERIC(n.race) = 1 -- records with non-int values exist in [names].[race]
+	left join [JoelBieberNeedles].[dbo].[Race] r
+		on r.race_id = TRY_CONVERT(INT, n.race)
 	--join cte_clerks
 	--	on n.names_id = cte_clerks.names_id
 	where n.[person] = 'Y'
 go
 
 alter table [sma_MST_IndvContacts] enable trigger all
-
---select * from JoelBieberNeedles..race r
---select distinct race from JoelBieberNeedles..names
+go
