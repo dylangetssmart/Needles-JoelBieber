@@ -1,0 +1,125 @@
+﻿Name,Person,Status,SAUserID,SAContactID,StaffCode,SALoginID,Prefix,SAFirst,SAMiddle,SALast,Suffix,Active,Visible
+NULL,Jose Vallines,No Needles User,368,8,,aadmin,Mr.,Staff,,Unassigned,,1,1
+NULL,Jose Vallines,No Needles User,369,10,,implementation,Mr.,Implementation,,SA,NULL,1,1
+Brittany Brown,Jose Vallines,Matched via name,370,12,BROWN,bbrown,NULL,Brittany,NULL,Brown,NULL,1,1
+Ashley Kusterer,Jose Vallines,Matched via name,371,13,KUSTERER,akusterer,,Ashley,,Kusterer,,1,1
+NULL,Jose Vallines,Updated,372,14,SANDYG,sgillespie,,Sandy,,Gillespie,,1,1
+Katie Marshall,Jose Vallines,Matched via name,373,15,KMARSH,kmarshall,,Katie,,Marshall,,1,1
+Katie Marshall,Jose Vallines,Matched via name,373,15,KGRAHAM,kmarshall,,Katie,,Marshall,,1,1
+Christine Drummond,Jose Vallines,Matched via name,374,16,TINAD,cdrummond,,Christine,,Drummond,,1,1
+Jessica Currier,Jose Vallines,Matched via name,375,17,CURRIER,jcurrier,,Jessica,,Currier,,1,1
+NULL,Jose Vallines,Updated,376,18,TABITHA,tepperson,,Tabitha,,Epperson,,1,1
+Kristen Jones,Jose Vallines,Matched via name,377,19,KRISTEN,kjones,,Kristen,,Jones,,1,1
+Dana Bryant,Jose Vallines,Matched via name,378,20,DANAB,dbryant,,Dana,,Bryant,,1,1
+Dana Bryant,Jose Vallines,Matched via name,378,20,DANA,dbryant,,Dana,,Bryant,,1,1
+Alaina Sheldon,Jose Vallines,Matched via name,379,21,ALAINA,asheldon,,Alaina,,Sheldon,,1,1
+Kelly Mills,Jose Vallines,Matched via name,380,22,KELLY,kmills,,Kelly,,Mills,,1,1
+Ashley Wilkens,Jose Vallines,Matched via name,381,23,ADAYTON,awilkens,,Ashley,,Wilkens,,1,1
+Alexis Puzzella,Jose Vallines,Matched via name,382,24,PUZZELLA,apuzzella,,Alexis,,Puzzella,,1,1
+Lindsay Kelley,Jose Vallines,Matched via name,383,25,LKELLEY,lkelley,,Lindsay,,Kelley,,1,1
+Courtney Engelking,Jose Vallines,Matched via name,384,26,COURTNEY,cengelking,,Courtney,,Engelking,,1,1
+Karie Hall,Jose Vallines,Matched via name,385,27,KHALL,khall,,Karie,,Hall,,1,1
+Carrie Mason,Jose Vallines,Matched via name,386,28,CMASON,cmason,,Carrie,,Mason,,1,1
+NULL,Jose Vallines,Updated,387,29,AMANDAS,aking,,Amanda,,King,,1,1
+Melissa Hague,Jose Vallines,Matched via name,388,30,HAGUE,mhague,,Melissa,,Hague,,1,1
+Brittany Lescault,Jose Vallines,Matched via name,389,34,LESCAULT,blescault,,Brittany,,Lescault,,1,1
+Amy Neighbors,Jose Vallines,Matched via name,390,54,NEIGHBOR,aneighbors,,Amy,,Neighbors,,1,1
+Jordan Burris,Jose Vallines,Matched via name,391,55,JBURRIS,jburris,,Jordan,,Burris,,1,1
+NULL,Jose Vallines,Updated,392,56,HAMM,ahamm,,Alexis,,Hamm,,1,1
+Alexa Pence,Jose Vallines,Matched via name,393,57,ALEXA,apence,,Alexa,,Pence,,1,1
+Alexis Johnson,Jose Vallines,Matched via name,394,58,ALEXIS,ajohnson,NULL,Alexis,NULL,Johnson,NULL,1,1
+Allison Waggoner,Jose Vallines,Matched via name,395,59,ALLISON,awaggoner,NULL,Allison,NULL,Waggoner,NULL,1,1
+Amanda Adolph,Jose Vallines,Matched via name,396,60,AMANDAA,aadolph,NULL,Amanda,NULL,Adolph,NULL,1,1
+Amelia Howell,Jose Vallines,Matched via name,397,61,AMELIA,ahowell,NULL,Amelia,NULL,Howell,NULL,1,1
+Amy Adams,Jose Vallines,Matched via name,398,62,AMYA,aadams,NULL,Amy,NULL,Adams,NULL,1,1
+Andrea Geiger,Jose Vallines,Matched via name,399,63,AGEIGER,ageiger,NULL,Andrea,NULL,Geiger,NULL,1,1
+Andrew Adams,Jose Vallines,Matched via name,400,64,ANDREW,andrew,NULL,Andrew,NULL,Adams,NULL,1,1
+Angela Rodriguez,Jose Vallines,Matched via name,401,65,ANGELAR,arodriguez,NULL,Angela,NULL,Rodriguez,NULL,1,1
+NULL,Jose Vallines,Updated,402,136,VITRANO,mvitrano,NULL,Michelle,NULL,Vitrano,NULL,1,1
+Jason Hart,Jose Vallines,Matched via name,403,94,JHART,jhart,NULL,Jason,NULL,Hart,NULL,1,1
+Katie Fowler,Jose Vallines,Matched via name,404,100,KFOWLER,kfowler,NULL,Katie,NULL,Fowler,NULL,1,1
+NULL,Jose Vallines,Updated,405,101,KSTEVEN,kstevenson,,Kelly,,Stevenson,,1,1
+Kris Rhodes,Jose Vallines,Matched via name,406,102,RHODES,krhodes,NULL,Kris,NULL,Rhodes,NULL,1,1
+Olivia Harriman,Jose Vallines,Matched via name,407,109,HARRIMAN,oharriman,NULL,Olivia,NULL,Harriman,NULL,1,1
+Angie Quintero,Jose Vallines,Matched via name,408,66,ANGIEQ,aquintero,NULL,Angie,NULL,Quintero,NULL,0,0
+Rebecca Schlegel,Jose Vallines,Matched via name,409,68,SCHLEGEL,rschlegel,NULL,Rebecca,NULL,Schlegel,NULL,1,1
+Rebecca Schlegel,Jose Vallines,Matched via name,409,68,BECCA,rschlegel,NULL,Rebecca,NULL,Schlegel,NULL,1,1
+Bosiljka Letic,Jose Vallines,Matched via name,410,69,LETIC,bletic,NULL,Bosiljka,NULL,Letic,NULL,1,1
+Brandon Shackelford,Jose Vallines,Matched via name,411,70,BRANDON,bshackelford,NULL,Brandon,NULL,Shackelford,NULL,1,1
+Brittanni Harrison,Jose Vallines,Matched via name,412,72,HARRISON,bharrison,NULL,Brittanni,NULL,Harrison,NULL,1,1
+Brooklin Horsley,Jose Vallines,Matched via name,413,73,HORSLEY,bhorsley,NULL,Brooklin,NULL,Horsley,NULL,1,1
+Caitlin Gometz,Jose Vallines,Matched via name,414,75,CGOMETZ,cgometz,NULL,Caitlin,NULL,Gometz,NULL,1,1
+Caroline Kropka,Jose Vallines,Matched via name,415,76,KROPKA,ckropka,NULL,Caroline,NULL,Kropka,NULL,1,1
+NULL,Jose Vallines,Updated,416,77,MEADOR,cmeador,NULL,Charlotte,NULL,Meador,NULL,1,1
+Charlsley Carey,Jose Vallines,Matched via name,417,78,CAREY,ccarey,NULL,Charlsley,NULL,Carey,NULL,1,1
+April Rojas,Jose Vallines,Matched via name,418,67,APRIL,arojas,NULL,April,NULL,Rojas,NULL,0,0
+Brian Orange,Jose Vallines,Matched via name,419,71,ORANGE,borange,NULL,Brian,NULL,Orange,NULL,1,1
+Bruce Carey,Jose Vallines,Matched via name,420,74,BRUCE,bcarey,NULL,Bruce,NULL,Carey,NULL,1,1
+Christopher Stanley,Jose Vallines,Matched via name,421,79,CSTANLEY,cstanley,NULL,Christopher,NULL,Stanley,NULL,1,1
+Christine Song,Jose Vallines,Matched via name,422,80,SONG,csong,NULL,Christine,NULL,Song,NULL,1,1
+Cindy Green,Jose Vallines,Matched via name,423,81,GREEN,cgreen,NULL,Cindy,NULL,Green,NULL,1,1
+NULL,Jose Vallines,Updated,424,82,CONALEX,calexander,NULL,Connor,NULL,Alexander,NULL,1,1
+NULL,Jose Vallines,Updated,425,83,CONLAUER,clauer,NULL,Connor,NULL,Lauer,NULL,1,1
+NULL,Jose Vallines,Updated,426,84,DENNIS,dlanier,NULL,Dennis,NULL,Lanier,NULL,1,1
+Elio Collantes,Jose Vallines,Matched via name,427,85,ELIO,ecollantes,NULL,Elio,NULL,Collantes,NULL,1,1
+Emily Fournier,Jose Vallines,Matched via name,428,86,FOURNIER,efournier,NULL,Emily,NULL,Fournier,NULL,1,1
+NULL,Jose Vallines,Updated,429,87,ERNESTO,esanchez,NULL,Ernesto,NULL,Sanchez,NULL,1,1
+Jessica Robinson,Jose Vallines,Matched via name,430,95,ROBINSON,jrobinson,NULL,Jessica,NULL,Robinson,NULL,1,1
+NULL,Jose Vallines,No Needles User,431,88,,fchristian,NULL,Fabiola,NULL,Christian,NULL,0,0
+NULL,Jose Vallines,Updated,432,89,GEOFF,gglick,NULL,Geoff,NULL,Glick,NULL,1,1
+NULL,Jose Vallines,Updated,433,90,GREGORY,gohalloran,,Gregory,,O'Halloran,,1,1
+Gretchen Biersbach,Jose Vallines,Matched via name,434,91,GRETCHEN,gbiersbach,NULL,Gretchen,NULL,Biersbach,NULL,1,1
+Ilse Lorenzo,Jose Vallines,Matched via name,435,92,LORENZO,ilorenzo,NULL,Ilse,NULL,Lorenzo,NULL,1,1
+Jarvis Chandler,Jose Vallines,Matched via name,436,93,JARVIS,jchandler,NULL,Jarvis,NULL,Chandler,NULL,1,1
+NULL,Jose Vallines,Updated,437,96,JOEL,jbieber,NULL,Joel,NULL,Bieber,NULL,1,1
+Jonathan Hogins,Jose Vallines,Matched via name,438,97,JONATHAN,jhogins,NULL,Jonathan,NULL,Hogins,NULL,1,1
+Jordan Volpe,Jose Vallines,Matched via name,439,98,VOLPE,jvolpe,NULL,Jordan,NULL,Volpe,NULL,1,1
+Jumana Al Mulhim,Jose Vallines,Matched via name,440,99,ALMULHIM,jalmulhim,NULL,Jumana,NULL,Al Mulhim,NULL,1,1
+Krysten Harrelson,Jose Vallines,Matched via name,441,103,KRYSTEN,kharrelson,NULL,Krysten,NULL,Harrelson,NULL,1,1
+Lisa Lee,Jose Vallines,Matched via name,442,104,LLEE,llee,NULL,Lisa,NULL,Lee,NULL,1,1
+Lynn Cavolina,Jose Vallines,Matched via name,443,105,CAVOLINA,lcavolina,NULL,Lynn,NULL,Cavolina,NULL,1,1
+Melissa Ephron,Jose Vallines,Matched via name,444,106,EPHRON,mephron,NULL,Melissa,NULL,Ephron,NULL,1,1
+Nicole Webber,Jose Vallines,Matched via name,445,107,NWEBBER,nwebber,NULL,Nicole,NULL,Webber,NULL,1,1
+Nikki Wyatt,Jose Vallines,Matched via name,446,108,WYATT,nwyatt,NULL,Nikki,NULL,Wyatt,NULL,1,1
+NULL,Jose Vallines,No Needles User,447,151,,suite100boardroom,NULL,Suite 100 RVA,NULL,Boardroom,NULL,0,1
+NULL,Jose Vallines,Updated,448,110,LANGAN,olangan,NULL,Olivia,NULL,Langan,NULL,1,1
+Parker Jackson,Jose Vallines,Matched via name,449,111,PARKER,pjackson,NULL,Parker,NULL,Jackson,NULL,1,1
+Patricia Lauer,Jose Vallines,Matched via name,450,112,PLAUER,plauer,NULL,Patricia,NULL,Lauer,NULL,1,1
+Ryan Thomas,Jose Vallines,Matched via name,451,113,RYAN,rthomas,NULL,Ryan,NULL,Thomas,NULL,1,1
+NULL,Jose Vallines,No Needles User,452,114,,sonstad,NULL,Samantha,NULL,Onstad,NULL,0,0
+Sara Harris,Jose Vallines,Matched via name,453,115,SHARRIS,sharris,NULL,Sara,NULL,Harris,NULL,1,1
+Shari Garrett,Jose Vallines,Matched via name,454,116,SHARI,sgarrett,NULL,Shari,NULL,Garrett,NULL,1,1
+Steven Lauer,Jose Vallines,Matched via name,455,117,SLAUER,slauer,NULL,Steven,NULL,Lauer,NULL,1,1
+Steven Meston,Jose Vallines,Matched via name,456,118,MESTON,smeston,NULL,Steven,NULL,Meston,NULL,0,0
+NULL,Jose Vallines,No Needles User,457,119,,scrutchfield,NULL,Susan,NULL,Crutchfield,NULL,0,0
+Susan Martin,Jose Vallines,Matched via name,458,120,SMARTIN,smartin,NULL,Susan,NULL,Martin,NULL,1,1
+NULL,Jose Vallines,Updated,459,121,KONVICKA,tkonvicka,NULL,Thomas,NULL,Konvicka,NULL,1,1
+NULL,Jose Vallines,Updated,460,122,LANE,tlane,NULL,Thomas,NULL,Lane,NULL,1,1
+Victoria Burton,Jose Vallines,Matched via name,461,123,BURTON,vburton,NULL,Victoria,NULL,Burton,NULL,1,1
+Amy Riles,Jose Vallines,Matched via name,462,124,ARILES,ariles,NULL,Amy,NULL,Riles,NULL,1,1
+Darcy Gill,Jose Vallines,Matched via name,463,125,DARCY,dgill,NULL,Darcy,NULL,Gill,NULL,1,1
+Jennifer Hula,Jose Vallines,Matched via name,464,126,JHULA,jhula,NULL,Jennifer,NULL,Hula,NULL,1,1
+Jennifer Keyorian,Jose Vallines,Matched via name,465,127,KEYORIAN,jkeyorian,NULL,Jennifer,NULL,Keyorian,NULL,1,1
+Jennifer Smalley,Jose Vallines,Matched via name,466,128,JSMALLEY,jsmalley,NULL,Jennifer,NULL,Smalley,NULL,1,1
+Jordan Kuhn,Jose Vallines,Matched via name,467,129,JKUHN,jkuhn,NULL,Jordan,NULL,Kuhn,NULL,1,1
+Julie Jacot,Jose Vallines,Matched via name,468,130,JULIEJ,jjacot,NULL,Julie,NULL,Jacot,NULL,1,1
+NULL,Jose Vallines,Updated,469,131,HAYDEN,khayden,NULL,Katelynn,NULL,Hayden,NULL,1,1
+Lamonte Hazell,Jose Vallines,Matched via name,470,132,HAZELL,lhazell,NULL,Lamonte,NULL,Hazell,NULL,1,1
+Leila Beaman,Jose Vallines,Matched via name,471,133,BEAMAN,lbeaman,NULL,Leila,NULL,Beaman,NULL,1,1
+Leo Roy,Jose Vallines,Matched via name,472,134,LEOROY,lroy,NULL,Leo,NULL,Roy,NULL,1,1
+Meridyth Dutzer,Jose Vallines,Matched via name,473,135,MERIDYTH,mdutzer,NULL,Meridyth,NULL,Dutzer,NULL,1,1
+NULL,Jose Vallines,Updated,474,137,RICHARD,rzahn,NULL,Richard,NULL,Zahn,NULL,1,1
+Robert Peresich,Jose Vallines,Matched via name,475,138,PERESICH,rperesich,NULL,Robert,NULL,Peresich,NULL,1,1
+Shirley Fragoso,Jose Vallines,Matched via name,476,139,SHIRLEY,sfragoso,NULL,Shirley,NULL,Fragoso,NULL,1,1
+Sierra Auerbach,Jose Vallines,Matched via name,477,140,AUERBACH,sauerbach,NULL,Sierra,NULL,Auerbach,NULL,1,1
+NULL,Jose Vallines,Updated,478,141,ANGELA,adurham,NULL,Angie,NULL,Durham,NULL,1,1
+NULL,Jose Vallines,Updated,479,142,EDWIN,eturnage,NULL,Edwin,NULL,Turnage,NULL,1,1
+Michael Swindell,Jose Vallines,Matched via name,480,143,SWINDELL,mswindell,NULL,Michael,NULL,Swindell,NULL,1,1
+Samantha Kimbrough,Jose Vallines,Matched via name,481,144,SAMANTHA,skimbrough,NULL,Samantha,NULL,Kimbrough,NULL,1,1
+Scott Bradley,Jose Vallines,Matched via name,482,145,SBRADLEY,sbradley,NULL,Scott,NULL,Bradley,NULL,1,1
+Sherri Southerland,Jose Vallines,Matched via name,483,146,SOUTHER,ssoutherland,NULL,Sherri,NULL,Southerland,NULL,1,1
+Aubrey Allen,Jose Vallines,Matched via name,484,147,AUBREY,aallen,NULL,Aubrey,NULL,Allen,NULL,1,1
+Mark Rollison,Jose Vallines,Matched via name,485,148,ROLLISON,mrollison,NULL,Mark,NULL,Rollison,NULL,1,1
+NULL,Jose Vallines,Updated,486,167,APOPE,apope,NULL,Andrea,NULL,Pope,NULL,1,1
+NULL,Jose Vallines,Updated,487,168,PLUNKETT,mplunkett,NULL,Miranda,NULL,Plunkett,NULL,1,1
+,,,,,,,,,,,,,
