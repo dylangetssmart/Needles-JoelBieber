@@ -13,7 +13,7 @@ as
 	-- user_case_data.Dr_Referral
 	select distinct
 		ucd.Dr_Referral as contact_name,
-		'Dr_Referral' as source_ref
+		'user_case_data.Dr_Referral' as source_ref
 	from JoelBieberNeedles..user_case_data ucd
 	where ISNULL(ucd.Dr_Referral, '') <> ''
 
@@ -22,7 +22,7 @@ as
 	-- user_case_data.Referred_to
 	select distinct
 		ucd.Referred_to as contact_name,
-		'Referred_to' as source_ref
+		'user_case_data.Referred_to' as source_ref
 	from JoelBieberNeedles..user_case_data ucd
 	where ISNULL(ucd.Referred_to, '') <> ''
 )

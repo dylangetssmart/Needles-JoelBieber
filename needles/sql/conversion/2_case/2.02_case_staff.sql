@@ -13,53 +13,52 @@ notes:
 
 
 
-USE [JoelBieberSA_Needles]
-GO
+use [JoelBieberSA_Needles]
+go
 
 
 ----(0) staff roles ----
 -- Add the following roles into sma_MST_SubRoleCode if they do not exist
-INSERT INTO [sma_MST_SubRoleCode]
+insert into [sma_MST_SubRoleCode]
 	(
-	srcsDscrptn
-   ,srcnRoleID
+	srcsDscrptn, srcnRoleID
 	)
 	(
 	--In Needles, box 1 = paralegal, box 2 = attorney, box 3 = negotiator, box 4 = clerical.  Also, box 6 = prior paralegal, box 7 = prior attorney.  Can the roles be imported?
-	SELECT
-		'Attorney'
-	   ,10
-	UNION ALL
-	SELECT
-		'Intake Paralegal'
-	   ,10
-	UNION ALL
-	SELECT
-		'Primary Paralegal'
-	   ,10
-	UNION ALL
-	SELECT
-		'Primary Attorney'
-	   ,10
-	UNION ALL
-	SELECT
-		'Negotiator'
-	   ,10
-	UNION ALL
-	SELECT
-		'Overseeing Attorney/Paralegal'
-	   ,10
+	select
+		'Attorney',
+		10
+	union all
+	select
+		'Intake Paralegal',
+		10
+	union all
+	select
+		'Primary Paralegal',
+		10
+	union all
+	select
+		'Primary Attorney',
+		10
+	union all
+	select
+		'Negotiator',
+		10
+	union all
+	select
+		'Overseeing Attorney/Paralegal',
+		10
 	)
-	EXCEPT
-	SELECT
-		srcsDscrptn
-	   ,srcnRoleID
-	FROM [sma_MST_SubRoleCode]
+	except
+	select
+		srcsDscrptn,
+		srcnRoleID
+	from [sma_MST_SubRoleCode]
 
 
 
-ALTER TABLE [sma_TRN_caseStaff] DISABLE TRIGGER ALL
-GO
+alter table [sma_TRN_caseStaff] disable trigger all
+go
 
 
 /*
@@ -128,183 +127,152 @@ Hardcode staff_1 through staff_10 with "Staff"
 ------------------------------------------------------------------------------
 -- Convert staff_1 ###########################################################
 ------------------------------------------------------------------------------
-INSERT INTO sma_TRN_caseStaff
+insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID]
-   ,[cssnStaffID]
-   ,[cssnRoleID]
-   ,[csssComments]
-   ,[cssdFromDate]
-   ,[cssdToDate]
-   ,[cssnRecUserID]
-   ,[cssdDtCreated]
-   ,[cssnModifyUserID]
-   ,[cssdDtModified]
-   ,[cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
 	)
-	SELECT
-		CAS.casnCaseID  AS [cssnCaseID]
-	   ,U.usrnContactID AS [cssnStaffID]
-	   --,iu.SAContactID AS [cssnStaffID]
-	   ,(
-			SELECT
+	select
+		CAS.casnCaseID					   as [cssnCaseID],
+		COALESCE(m.SAUserID, u.usrnUserID) as [cssnStaffID], -- Use SAUserID if available, otherwise fallback to usrnUserID
+		--,U.usrnContactID AS [cssnStaffID]
+		--,iu.SAContactID AS [cssnStaffID]
+		(
+			select
 				sbrnSubRoleId
-			FROM sma_MST_SubRole
-			WHERE sbrsDscrptn = 'Primary Attorney'
-				AND sbrnRoleID = 10
-		)				
-		AS [cssnRoleID]
-	   ,NULL			AS [csssComments]
-	   ,NULL			AS cssdFromDate
-	   ,NULL			AS cssdToDate
-	   ,368				AS cssnRecUserID
-	   ,GETDATE()		AS [cssdDtCreated]
-	   ,NULL			AS [cssnModifyUserID]
-	   ,NULL			AS [cssdDtModified]
-	   ,0				AS cssnLevelNo
-	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
-	INNER JOIN [sma_TRN_cases] CAS
-		ON CAS.cassCaseNumber = C.casenum
-	INNER JOIN [sma_MST_Users] U
-		ON (U.source_id = C.staff_1)
-	--INNER JOIN implementation_users iu
-	--	ON iu.StaffCode = c.staff_1
+			from sma_MST_SubRole
+			where sbrsDscrptn = 'Primary Attorney'
+				and sbrnRoleID = 10
+		)								   as [cssnRoleID],
+		null							   as [csssComments],
+		null							   as cssdFromDate,
+		null							   as cssdToDate,
+		368								   as cssnRecUserID,
+		GETDATE()						   as [cssdDtCreated],
+		null							   as [cssnModifyUserID],
+		null							   as [cssdDtModified],
+		0								   as cssnLevelNo
+	from JoelBieberNeedles.[dbo].[cases_Indexed] C
+	inner join [sma_TRN_cases] CAS
+		on CAS.cassCaseNumber = C.casenum
+	inner join [sma_MST_Users] U
+		on (U.source_id = C.staff_1)
+	left join [conversion].[imp_user_map] m
+		on m.StaffCode = c.staff_1
+
+--INNER JOIN implementation_users iu
+--	ON iu.StaffCode = c.staff_1
 
 --------------------
 ----STAFF 2
 --------------------
-INSERT INTO sma_TRN_caseStaff
+insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID]
-   ,[cssnStaffID]
-   ,[cssnRoleID]
-   ,[csssComments]
-   ,[cssdFromDate]
-   ,[cssdToDate]
-   ,[cssnRecUserID]
-   ,[cssdDtCreated]
-   ,[cssnModifyUserID]
-   ,[cssdDtModified]
-   ,[cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
 	)
-	SELECT
-		CAS.casnCaseID  AS [cssnCaseID]
-	   ,U.usrnContactID AS [cssnStaffID]
-	   --,iu.SAContactID AS [cssnStaffID]
-	   ,(
-			SELECT
+	select
+		CAS.casnCaseID					   as [cssnCaseID],
+		COALESCE(m.SAUserID, u.usrnUserID) as [casnrecuserid], -- Use SAUserID if available, otherwise fallback to usrnUserID
+		--U.usrnContactID as [cssnStaffID]
+		--,iu.SAContactID AS [cssnStaffID]
+		(
+			select
 				sbrnSubRoleId
-			FROM sma_MST_SubRole
-			WHERE sbrsDscrptn = 'Primary Paralegal'
-				AND sbrnRoleID = 10
-		)				
-		AS [cssnRoleID]
-	   ,NULL			AS [csssComments]
-	   ,NULL			AS cssdFromDate
-	   ,NULL			AS cssdToDate
-	   ,368				AS cssnRecUserID
-	   ,GETDATE()		AS [cssdDtCreated]
-	   ,NULL			AS [cssnModifyUserID]
-	   ,NULL			AS [cssdDtModified]
-	   ,0				AS cssnLevelNo
-	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
-	JOIN [sma_TRN_cases] CAS
-		ON CAS.cassCaseNumber = C.casenum
-	JOIN [sma_MST_Users] U
-		ON (U.source_id = C.staff_2)
-	--INNER JOIN implementation_users iu
-	--	ON iu.StaffCode = c.staff_2
+			from sma_MST_SubRole
+			where sbrsDscrptn = 'Primary Paralegal'
+				and sbrnRoleID = 10
+		)								   as [cssnRoleID],
+		null							   as [csssComments],
+		null							   as cssdFromDate,
+		null							   as cssdToDate,
+		368								   as cssnRecUserID,
+		GETDATE()						   as [cssdDtCreated],
+		null							   as [cssnModifyUserID],
+		null							   as [cssdDtModified],
+		0								   as cssnLevelNo
+	from JoelBieberNeedles.[dbo].[cases_Indexed] C
+	join [sma_TRN_cases] CAS
+		on CAS.cassCaseNumber = C.casenum
+	join [sma_MST_Users] U
+		on (U.source_id = C.staff_2)
+	left join [conversion].[imp_user_map] m
+		on m.StaffCode = c.staff_2
+--INNER JOIN implementation_users iu
+--	ON iu.StaffCode = c.staff_2
 
 --------------------
 ----STAFF 3
 --------------------
-INSERT INTO sma_TRN_caseStaff
+insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID]
-   ,[cssnStaffID]
-   ,[cssnRoleID]
-   ,[csssComments]
-   ,[cssdFromDate]
-   ,[cssdToDate]
-   ,[cssnRecUserID]
-   ,[cssdDtCreated]
-   ,[cssnModifyUserID]
-   ,[cssdDtModified]
-   ,[cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
 	)
-	SELECT
-		CAS.casnCaseID  AS [cssnCaseID]
-	   ,U.usrnContactID AS [cssnStaffID]
-	   --,iu.SAContactID AS [cssnStaffID]
-	   ,(
-			SELECT
+	select
+		CAS.casnCaseID					   as [cssnCaseID],
+		COALESCE(m.SAUserID, u.usrnUserID) as [casnrecuserid], -- Use SAUserID if available, otherwise fallback to usrnUserID
+		--U.usrnContactID as [cssnStaffID]
+		--,iu.SAContactID AS [cssnStaffID]
+		(
+			select
 				sbrnSubRoleId
-			FROM sma_MST_SubRole
-			WHERE sbrsDscrptn = 'Negotiator'
-				AND sbrnRoleID = 10
-		)				
-		AS [cssnRoleID]
-	   ,NULL			AS [csssComments]
-	   ,NULL			AS cssdFromDate
-	   ,NULL			AS cssdToDate
-	   ,368				AS cssnRecUserID
-	   ,GETDATE()		AS [cssdDtCreated]
-	   ,NULL			AS [cssnModifyUserID]
-	   ,NULL			AS [cssdDtModified]
-	   ,0				AS cssnLevelNo
-	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
-	JOIN [sma_TRN_cases] CAS
-		ON CAS.cassCaseNumber = C.casenum
-	JOIN [sma_MST_Users] U
-		ON (U.source_id = C.staff_3)
-	--INNER JOIN implementation_users iu
-	--	ON iu.StaffCode = c.staff_3
+			from sma_MST_SubRole
+			where sbrsDscrptn = 'Negotiator'
+				and sbrnRoleID = 10
+		)								   as [cssnRoleID],
+		null							   as [csssComments],
+		null							   as cssdFromDate,
+		null							   as cssdToDate,
+		368								   as cssnRecUserID,
+		GETDATE()						   as [cssdDtCreated],
+		null							   as [cssnModifyUserID],
+		null							   as [cssdDtModified],
+		0								   as cssnLevelNo
+	from JoelBieberNeedles.[dbo].[cases_Indexed] C
+	join [sma_TRN_cases] CAS
+		on CAS.cassCaseNumber = C.casenum
+	join [sma_MST_Users] U
+		on (U.source_id = C.staff_3)
+	left join [conversion].[imp_user_map] m
+		on m.StaffCode = c.staff_3
+--INNER JOIN implementation_users iu
+--	ON iu.StaffCode = c.staff_3
 
 
 --------------------
 ----STAFF 4
 --------------------
-INSERT INTO sma_TRN_caseStaff
+insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID]
-   ,[cssnStaffID]
-   ,[cssnRoleID]
-   ,[csssComments]
-   ,[cssdFromDate]
-   ,[cssdToDate]
-   ,[cssnRecUserID]
-   ,[cssdDtCreated]
-   ,[cssnModifyUserID]
-   ,[cssdDtModified]
-   ,[cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
 	)
-	SELECT
-		CAS.casnCaseID  AS [cssnCaseID]
-	   ,U.usrnContactID AS [cssnStaffID]
-	   --,iu.SAContactID AS [cssnStaffID]
-	   ,(
-			SELECT
+	select
+		CAS.casnCaseID					   as [cssnCaseID],
+		COALESCE(m.SAUserID, u.usrnUserID) as [casnrecuserid], -- Use SAUserID if available, otherwise fallback to usrnUserID
+		--U.usrnContactID as [cssnStaffID]
+		--,iu.SAContactID AS [cssnStaffID]
+		(
+			select
 				sbrnSubRoleId
-			FROM sma_MST_SubRole
-			WHERE sbrsDscrptn = 'Overseeing Attorney/Paralegal'
-				AND sbrnRoleID = 10
-		)				
-		AS [cssnRoleID]
-	   ,NULL			AS [csssComments]
-	   ,NULL			AS cssdFromDate
-	   ,NULL			AS cssdToDate
-	   ,368				AS cssnRecUserID
-	   ,GETDATE()		AS [cssdDtCreated]
-	   ,NULL			AS [cssnModifyUserID]
-	   ,NULL			AS [cssdDtModified]
-	   ,0				AS cssnLevelNo
-	FROM JoelBieberNeedles.[dbo].[cases_Indexed] C
-	INNER JOIN [sma_TRN_cases] CAS
-		ON CAS.cassCaseNumber = C.casenum
-	INNER JOIN [sma_MST_Users] U
-		ON (U.source_id = C.staff_4)
-	--INNER JOIN implementation_users iu
-	--	ON iu.StaffCode = c.staff_4
+			from sma_MST_SubRole
+			where sbrsDscrptn = 'Overseeing Attorney/Paralegal'
+				and sbrnRoleID = 10
+		)								   as [cssnRoleID],
+		null							   as [csssComments],
+		null							   as cssdFromDate,
+		null							   as cssdToDate,
+		368								   as cssnRecUserID,
+		GETDATE()						   as [cssdDtCreated],
+		null							   as [cssnModifyUserID],
+		null							   as [cssdDtModified],
+		0								   as cssnLevelNo
+	from JoelBieberNeedles.[dbo].[cases_Indexed] C
+	inner join [sma_TRN_cases] CAS
+		on CAS.cassCaseNumber = C.casenum
+	inner join [sma_MST_Users] U
+		on (U.source_id = C.staff_4)
+	left join [conversion].[imp_user_map] m
+		on m.StaffCode = c.staff_4
+--INNER JOIN implementation_users iu
+--	ON iu.StaffCode = c.staff_4
 
 
 --------------------
@@ -513,8 +481,8 @@ INSERT INTO sma_TRN_caseStaff
 
 
 ---
-ALTER TABLE [sma_TRN_caseStaff] ENABLE TRIGGER ALL
-GO
+alter table [sma_TRN_caseStaff] enable trigger all
+go
 ---
 
 

@@ -63,7 +63,7 @@ insert into [sma_TRN_ReferredOut]
 		on CONVERT(VARCHAR, ucd.casenum) = cas.cassCaseNumber
 	join sma_MST_IndvContacts indv
 		on indv.source_id = ucd.Referred_to
-			and indv.source_ref = 'Referred_to'
+			and indv.source_ref = 'user_case_data.Referred_to'
 	join [IndvOrgContacts_Indexed] ioc
 		on ioc.cid = indv.cinncontactid
 			and ioc.ctg = 1

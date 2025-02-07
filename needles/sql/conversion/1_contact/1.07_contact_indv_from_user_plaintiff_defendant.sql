@@ -1,3 +1,17 @@
+/* ###################################################################################
+description: Create individual contacts from user_case_data.plaintiff
+steps:
+	- insert from staff
+usage_instructions:
+	-
+dependencies:
+	- 
+notes:
+	-
+source: [staff]
+target: [sma_MST_IndvContacts]
+saga: saga_char
+*/
 
 
 
@@ -25,6 +39,8 @@
 --	where ISNULL(ucd.DEFENDANT, '') <> ''
 --)
 
+use JoelBieberSA_Needles
+go
 
 --drop table conversion.user_case_plaintiff_defendant
 

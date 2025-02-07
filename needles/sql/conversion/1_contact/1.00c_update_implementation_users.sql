@@ -20,60 +20,6 @@ use JoelBieberSA_Needles
 go
 
 
----- saga (INT)
----- Check if the column 'saga' exists and if it's not of type INT, change its type
---if not exists (
---		select
---			*
---		from sys.columns
---		where Name = N'saga'
---			and object_id = OBJECT_ID(N'sma_MST_Users')
---	)
---begin
---	-- Add the 'saga' column if it does not exist
---	alter table [sma_MST_Users] add [saga] INT null;
---end
---go
-
----- source_id
---if not exists (
---		select
---			*
---		from sys.columns
---		where Name = N'source_id'
---			and object_id = OBJECT_ID(N'sma_MST_Users')
---	)
---begin
---	alter table [sma_MST_Users] add [source_id] VARCHAR(MAX) null;
---end
---go
-
----- source_db
---if not exists (
---		select
---			*
---		from sys.columns
---		where Name = N'source_db'
---			and object_id = OBJECT_ID(N'sma_MST_Users')
---	)
---begin
---	alter table [sma_MST_Users] add [source_db] VARCHAR(MAX) null;
---end
---go
-
----- source_ref
---if not exists (
---		select
---			*
---		from sys.columns
---		where Name = N'source_ref'
---			and object_id = OBJECT_ID(N'sma_MST_Users')
---	)
---begin
---	alter table [sma_MST_Users] add [source_ref] VARCHAR(MAX) null;
---end
---go
-
 -- Attempt to match via name
 --update sma_mst_users
 --set source_id = (
@@ -91,7 +37,7 @@ update sma_MST_Users
 set source_id = imp.staffcode,
 	source_db = 'needles'
 from sma_mst_users u
-join Implementation_Users_1738864619 imp
+join conversion.imp_user_map imp
 	on u.usrnUserID = imp.SAUserID
 where u.source_id is null
 

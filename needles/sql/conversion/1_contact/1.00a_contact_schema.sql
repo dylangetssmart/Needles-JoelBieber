@@ -39,37 +39,37 @@ begin
 end
 go
 
----- saga (INT)
----- Check if the column 'saga' exists and if it's not of type INT, change its type
---if exists (
---		select
---			1
---		from sys.columns
---		where Name = N'saga'
---			and Object_ID = OBJECT_ID(N'sma_MST_IndvContacts')
---	)
---begin
---	-- Check the data type of the 'saga' column
---	if exists (
---			select
---				1
---			from INFORMATION_SCHEMA.COLUMNS
---			where TABLE_NAME = N'sma_MST_IndvContacts'
---				and COLUMN_NAME = N'saga'
---				and DATA_TYPE <> 'int'
---		)
---	begin
---		-- Drop and re-add the 'saga' column as INT if it exists with a different data type
---		alter table [sma_MST_IndvContacts] drop column [saga];
---		alter table [sma_MST_IndvContacts] add [saga] INT null;
---	end
---end
---else
---begin
---	-- Add the 'saga' column if it does not exist
---	alter table [sma_MST_IndvContacts] add [saga] INT null;
---end
---go
+-- saga (INT)
+-- Check if the column 'saga' exists and if it's not of type INT, change its type
+if exists (
+		select
+			1
+		from sys.columns
+		where Name = N'saga'
+			and Object_ID = OBJECT_ID(N'sma_MST_IndvContacts')
+	)
+begin
+	-- Check the data type of the 'saga' column
+	if exists (
+			select
+				1
+			from INFORMATION_SCHEMA.COLUMNS
+			where TABLE_NAME = N'sma_MST_IndvContacts'
+				and COLUMN_NAME = N'saga'
+				and DATA_TYPE <> 'int'
+		)
+	begin
+		-- Drop and re-add the 'saga' column as INT if it exists with a different data type
+		alter table [sma_MST_IndvContacts] drop column [saga];
+		alter table [sma_MST_IndvContacts] add [saga] INT null;
+	end
+end
+else
+begin
+	-- Add the 'saga' column if it does not exist
+	alter table [sma_MST_IndvContacts] add [saga] INT null;
+end
+go
 
 go
 
@@ -116,6 +116,10 @@ go
 -- [sma_MST_OrgContacts]
 ---------------------------------------------------
 
+alter table sma_MST_OrgContacts
+alter column saga int
+go
+
 -- saga
 if not exists (
 		select
@@ -138,7 +142,7 @@ if not exists (
 			and Object_ID = OBJECT_ID(N'sma_MST_OrgContacts')
 	)
 begin
-	alter table [sma_MST_OrgContacts] add [source_id] VARCHAR(max) null;
+	alter table [sma_MST_OrgContacts] add [source_id] VARCHAR(MAX) null;
 end
 go
 
@@ -151,7 +155,7 @@ if not exists (
 			and Object_ID = OBJECT_ID(N'sma_MST_OrgContacts')
 	)
 begin
-	alter table [sma_MST_OrgContacts] add [source_db] VARCHAR(max) null;
+	alter table [sma_MST_OrgContacts] add [source_db] VARCHAR(MAX) null;
 end
 go
 
@@ -164,482 +168,6 @@ if not exists (
 			and Object_ID = OBJECT_ID(N'sma_MST_OrgContacts')
 	)
 begin
-	alter table [sma_MST_OrgContacts] add [source_ref] VARCHAR(max) null;
+	alter table [sma_MST_OrgContacts] add [source_ref] VARCHAR(MAX) null;
 end
 go
-
-
---/* --------------------------------------------------------------------------------------------------------------
---Unidentified Contacts
---*/
-
---alter table sma_MST_IndvContacts disable trigger all
---go
-
------------------------------------------------------
----- [1] Unidentified Staff
------------------------------------------------------
---if not exists (
---		select
---			*
---		from sma_MST_IndvContacts
---		where [cinsFirstName] = 'Staff'
---			and [cinsLastName] = 'Unassigned'
---	)
---begin
---	insert into [sma_MST_IndvContacts]
---		(
---		[cinbPrimary],
---		[cinnContactTypeID],
---		[cinnContactSubCtgID],
---		[cinsPrefix],
---		[cinsFirstName],
---		[cinsMiddleName],
---		[cinsLastName],
---		[cinsSuffix],
---		[cinsNickName],
---		[cinbStatus],
---		[cinsSSNNo],
---		[cindBirthDate],
---		[cinsComments],
---		[cinnContactCtg],
---		[cinnRefByCtgID],
---		[cinnReferredBy],
---		[cindDateOfDeath],
---		[cinsCVLink],
---		[cinnMaritalStatusID],
---		[cinnGender],
---		[cinsBirthPlace],
---		[cinnCountyID],
---		[cinsCountyOfResidence],
---		[cinbFlagForPhoto],
---		[cinsPrimaryContactNo],
---		[cinsHomePhone],
---		[cinsWorkPhone],
---		[cinsMobile],
---		[cinbPreventMailing],
---		[cinnRecUserID],
---		[cindDtCreated],
---		[cinnModifyUserID],
---		[cindDtModified],
---		[cinnLevelNo],
---		[cinsPrimaryLanguage],
---		[cinsOtherLanguage],
---		[cinbDeathFlag],
---		[cinsCitizenship],
---		[cinsHeight],
---		[cinnWeight],
---		[cinsReligion],
---		[cindMarriageDate],
---		[cinsMarriageLoc],
---		[cinsDeathPlace],
---		[cinsMaidenName],
---		[cinsOccupation],
---		[saga],
---		[cinsSpouse],
---		[cinsGrade]
---		)
-
---		select
---			1,
---			10,
---			null,
---			'Mr.',
---			'Staff',
---			'',
---			'Unassigned',
---			null,
---			null,
---			1,
---			null,
---			null,
---			null,
---			1,
---			'',
---			'',
---			null,
---			'',
---			'',
---			1,
---			'',
---			1,
---			1,
---			null,
---			null,
---			'',
---			'',
---			null,
---			0,
---			368,
---			GETDATE(),
---			'',
---			null,
---			0,
---			'',
---			'',
---			'',
---			'',
---			null + null,
---			null,
---			'',
---			null,
---			'',
---			'',
---			'',
---			'',
---			'',
---			'',
---			null
---end
-
------------------------------------------------------
----- [2] Unidentified Individual
------------------------------------------------------
-
---if not exists (
---		select
---			*
---		from sma_MST_IndvContacts
---		where [cinsFirstName] = 'Individual'
---			and [cinsLastName] = 'Unidentified'
---	)
---begin
---	insert into [sma_MST_IndvContacts]
---		(
---		[cinbPrimary],
---		[cinnContactTypeID],
---		[cinnContactSubCtgID],
---		[cinsPrefix],
---		[cinsFirstName],
---		[cinsMiddleName],
---		[cinsLastName],
---		[cinsSuffix],
---		[cinsNickName],
---		[cinbStatus],
---		[cinsSSNNo],
---		[cindBirthDate],
---		[cinsComments],
---		[cinnContactCtg],
---		[cinnRefByCtgID],
---		[cinnReferredBy],
---		[cindDateOfDeath],
---		[cinsCVLink],
---		[cinnMaritalStatusID],
---		[cinnGender],
---		[cinsBirthPlace],
---		[cinnCountyID],
---		[cinsCountyOfResidence],
---		[cinbFlagForPhoto],
---		[cinsPrimaryContactNo],
---		[cinsHomePhone],
---		[cinsWorkPhone],
---		[cinsMobile],
---		[cinbPreventMailing],
---		[cinnRecUserID],
---		[cindDtCreated],
---		[cinnModifyUserID],
---		[cindDtModified],
---		[cinnLevelNo],
---		[cinsPrimaryLanguage],
---		[cinsOtherLanguage],
---		[cinbDeathFlag],
---		[cinsCitizenship],
---		[cinsHeight],
---		[cinnWeight],
---		[cinsReligion],
---		[cindMarriageDate],
---		[cinsMarriageLoc],
---		[cinsDeathPlace],
---		[cinsMaidenName],
---		[cinsOccupation],
---		[saga],
---		[cinsSpouse],
---		[cinsGrade]
---		)
-
---		select
---			1,
---			10,
---			null,
---			'Mr.',
---			'Individual',
---			'',
---			'Unidentified',
---			null,
---			null,
---			1,
---			null,
---			null,
---			null,
---			1,
---			'',
---			'',
---			null,
---			'',
---			'',
---			1,
---			'',
---			1,
---			1,
---			null,
---			null,
---			'',
---			'',
---			null,
---			0,
---			368,
---			GETDATE(),
---			'',
---			null,
---			0,
---			'',
---			'',
---			'',
---			'',
---			null + null,
---			null,
---			'',
---			null,
---			'',
---			'',
---			'',
---			'Unknown',
---			'',
---			'Doe',
---			null
---end
-
------------------------------------------------------
----- [3] Unidentified Plaintiff
------------------------------------------------------
-
---if not exists (
---		select
---			*
---		from sma_MST_IndvContacts
---		where [cinsFirstName] = 'Plaintiff'
---			and [cinsLastName] = 'Unidentified'
---	)
---begin
---	insert into [sma_MST_IndvContacts]
---		(
---		[cinbPrimary],
---		[cinnContactTypeID],
---		[cinnContactSubCtgID],
---		[cinsPrefix],
---		[cinsFirstName],
---		[cinsMiddleName],
---		[cinsLastName],
---		[cinsSuffix],
---		[cinsNickName],
---		[cinbStatus],
---		[cinsSSNNo],
---		[cindBirthDate],
---		[cinsComments],
---		[cinnContactCtg],
---		[cinnRefByCtgID],
---		[cinnReferredBy],
---		[cindDateOfDeath],
---		[cinsCVLink],
---		[cinnMaritalStatusID],
---		[cinnGender],
---		[cinsBirthPlace],
---		[cinnCountyID],
---		[cinsCountyOfResidence],
---		[cinbFlagForPhoto],
---		[cinsPrimaryContactNo],
---		[cinsHomePhone],
---		[cinsWorkPhone],
---		[cinsMobile],
---		[cinbPreventMailing],
---		[cinnRecUserID],
---		[cindDtCreated],
---		[cinnModifyUserID],
---		[cindDtModified],
---		[cinnLevelNo],
---		[cinsPrimaryLanguage],
---		[cinsOtherLanguage],
---		[cinbDeathFlag],
---		[cinsCitizenship],
---		[cinsHeight],
---		[cinnWeight],
---		[cinsReligion],
---		[cindMarriageDate],
---		[cinsMarriageLoc],
---		[cinsDeathPlace],
---		[cinsMaidenName],
---		[cinsOccupation],
---		[saga],
---		[cinsSpouse],
---		[cinsGrade]
---		)
-
---		select
---			1,
---			10,
---			null,
---			'',
---			'Plaintiff',
---			'',
---			'Unidentified',
---			null,
---			null,
---			1,
---			null,
---			null,
---			null,
---			1,
---			'',
---			'',
---			null,
---			'',
---			'',
---			1,
---			'',
---			1,
---			1,
---			null,
---			null,
---			'',
---			'',
---			null,
---			0,
---			368,
---			GETDATE(),
---			'',
---			null,
---			0,
---			'',
---			'',
---			'',
---			'',
---			null + null,
---			null,
---			'',
---			null,
---			'',
---			'',
---			'',
---			'',
---			'',
---			'',
---			null
---end
-
------------------------------------------------------
----- [4] Unidentified Defendant
------------------------------------------------------
-
---if not exists (
---		select
---			*
---		from sma_MST_IndvContacts
---		where [cinsFirstName] = 'Defendant'
---			and [cinsLastName] = 'Unidentified'
---	)
---begin
---	insert into [sma_MST_IndvContacts]
---		(
---		[cinbPrimary],
---		[cinnContactTypeID],
---		[cinnContactSubCtgID],
---		[cinsPrefix],
---		[cinsFirstName],
---		[cinsMiddleName],
---		[cinsLastName],
---		[cinsSuffix],
---		[cinsNickName],
---		[cinbStatus],
---		[cinsSSNNo],
---		[cindBirthDate],
---		[cinsComments],
---		[cinnContactCtg],
---		[cinnRefByCtgID],
---		[cinnReferredBy],
---		[cindDateOfDeath],
---		[cinsCVLink],
---		[cinnMaritalStatusID],
---		[cinnGender],
---		[cinsBirthPlace],
---		[cinnCountyID],
---		[cinsCountyOfResidence],
---		[cinbFlagForPhoto],
---		[cinsPrimaryContactNo],
---		[cinsHomePhone],
---		[cinsWorkPhone],
---		[cinsMobile],
---		[cinbPreventMailing],
---		[cinnRecUserID],
---		[cindDtCreated],
---		[cinnModifyUserID],
---		[cindDtModified],
---		[cinnLevelNo],
---		[cinsPrimaryLanguage],
---		[cinsOtherLanguage],
---		[cinbDeathFlag],
---		[cinsCitizenship],
---		[cinsHeight],
---		[cinnWeight],
---		[cinsReligion],
---		[cindMarriageDate],
---		[cinsMarriageLoc],
---		[cinsDeathPlace],
---		[cinsMaidenName],
---		[cinsOccupation],
---		[saga],
---		[cinsSpouse],
---		[cinsGrade]
---		)
-
---		select distinct
---			1,
---			10,
---			null,
---			'',
---			'Defendant',
---			'',
---			'Unidentified',
---			null,
---			null,
---			1,
---			null,
---			null,
---			null,
---			1,
---			'',
---			'',
---			null,
---			'',
---			'',
---			1,
---			'',
---			1,
---			1,
---			null,
---			null,
---			'',
---			'',
---			null,
---			0,
---			368,
---			GETDATE(),
---			'',
---			null,
---			0,
---			'',
---			'',
---			'',
---			'',
---			null + null,
---			null,
---			'',
---			null,
---			'',
---			'',
---			'',
---			'',
---			'',
---			'',
---			null
---end
---go

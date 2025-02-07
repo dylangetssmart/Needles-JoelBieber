@@ -45,9 +45,9 @@ begin
 	)
 end
 
-select
-	*
-from [sma_MST_WagesTypes]
+--select
+--	*
+--from [sma_MST_WagesTypes]
 
 
 -------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ insert into [dbo].[sma_TRN_Employment]
 		null			 as [empddatehired],			--date hired  Date From:
 		null			 as [empnudf1],
 		null			 as [empnudf2],
-		null			 as [empnrecuserid],
+		368			 as [empnrecuserid],
 		--case
 		--	when ISNULL(v.staff_created, '') <> ''
 		--		then (

@@ -1,5 +1,5 @@
 /* ###################################################################################
-description: Handle all operations related to [sma_MST_IndvContacts]
+description: Create individual contacts from [staff]
 steps:
 	- insert from staff
 usage_instructions:
@@ -24,30 +24,7 @@ go
 */
 insert into [sma_MST_IndvContacts]
 	(
-	[cinsPrefix],
-	[cinsSuffix],
-	[cinsFirstName],
-	[cinsMiddleName],
-	[cinsLastName],
-	[cinsHomePhone],
-	[cinsWorkPhone],
-	[cinsSSNNo],
-	[cindBirthDate],
-	[cindDateOfDeath],
-	[cinnGender],
-	[cinsMobile],
-	[cinsComments],
-	[cinnContactCtg],
-	[cinnContactTypeID],
-	[cinnRecUserID],
-	[cindDtCreated],
-	[cinbStatus],
-	[cinbPreventMailing],
-	[cinsNickName],
-	[saga],
-	[source_id],
-	[source_db],
-	[source_ref]
+	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo], [cindBirthDate], [cindDateOfDeath], [cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing], [cinsNickName], [saga], [source_id], [source_db], [source_ref]
 	)
 	select
 		LEFT(s.prefix, 20)											 as [cinsprefix],
@@ -86,10 +63,26 @@ insert into [sma_MST_IndvContacts]
 		s.staff_code												 as [source_id],
 		'needles'													 as [source_db],
 		'staff'														 as [source_ref]
+	--select *
+	from JoelBieberNeedles..staff s
+	left join conversion.imp_user_map m
+		on s.staff_code = m.StaffCode
+	left join [sma_MST_IndvContacts] ind
+		on m.SAContactID = ind.cinnContactID
+	where m.StaffCode is null  -- Staff does not exist in imp_user_map
+		and (ind.cinnContactID is null
+		or m.SAContactID is null)  -- No contact in sma_MST_IndvContacts
+		and s.staff_code not in ('aadmin');  -- Exclude 'aadmin'
+	
+	/* ds 2025-02-07
+	Identify staff members that are not in imp_user_map and do not have an individual contact
+
+
 	from [JoelBieberNeedles].[dbo].[staff] s
 	join [sma_MST_IndvContacts] indv
-		on indv.source_id = s.staff_code
+	on indv.source_id = s.staff_code
 	where cinnContactID is null
+	*/
 go
 
 alter table [sma_MST_IndvContacts] enable trigger all

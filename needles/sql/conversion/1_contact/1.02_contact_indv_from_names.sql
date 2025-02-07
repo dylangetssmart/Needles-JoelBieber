@@ -1,5 +1,5 @@
 /* ###################################################################################
-description: Create general individual contacts
+description: Create individual contacts
 steps:
 	- insert [sma_MST_IndvContacts] from [needles].[names]
 usage_instructions:
@@ -65,7 +65,10 @@ go
 
 insert into [sma_MST_IndvContacts]
 	(
-	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo], [cindBirthDate], [cindDateOfDeath], [cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID], [cinnContactSubCtgID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing], [cinsNickName], [cinsPrimaryLanguage], [cinsOtherLanguage], [cinnRace], [saga], [source_id], [source_db], [source_ref]
+	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo],
+	[cindBirthDate], [cindDateOfDeath], [cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID],
+	[cinnContactSubCtgID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing], [cinsNickName], [cinsPrimaryLanguage],
+	[cinsOtherLanguage], [cinnRace], [saga], [source_id], [source_db], [source_ref]
 	)
 	select
 		LEFT(n.[prefix], 20)					 as [cinsprefix],
@@ -186,14 +189,18 @@ insert into [sma_MST_IndvContacts]
 					)
 			else null
 		end										 as cinnrace,
-		null									 as cinnrace,
 		n.[names_id]							 as saga,
 		null									 as source_id,
 		'needles'								 as source_db,
 		'names'									 as source_ref
 	from [JoelBieberNeedles].[dbo].[names] n
 	left join [JoelBieberNeedles].[dbo].[Race] r
-		on r.race_id = TRY_CONVERT(INT, n.race)
+		--on r.race_id = TRY_CONVERT(INT, n.race)
+		on r.race_id = case
+				when ISNUMERIC(n.race) = 1
+					then CONVERT(INT, n.race)
+				else null
+			end
 	--join cte_clerks
 	--	on n.names_id = cte_clerks.names_id
 	where n.[person] = 'Y'
@@ -201,3 +208,7 @@ go
 
 alter table [sma_MST_IndvContacts] enable trigger all
 go
+
+--SELECT COLUMN_NAME, DATA_TYPE
+--FROM INFORMATION_SCHEMA.COLUMNS
+--WHERE TABLE_NAME = 'sma_MST_IndvContacts' AND DATA_TYPE = 'tinyint';

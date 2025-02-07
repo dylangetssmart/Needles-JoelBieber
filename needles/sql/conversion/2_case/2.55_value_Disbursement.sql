@@ -108,8 +108,7 @@ Create disbursement types for applicable value codes
 
 insert into [sma_MST_DisbursmentType]
 	(
-	disnTypeCode,
-	dissTypeName
+	disnTypeCode, dissTypeName
 	)
 	(
 	select distinct
@@ -169,16 +168,7 @@ go
 ---(0)---
 insert into value_tab_Disbursement_Helper
 	(
-	case_id,
-	value_id,
-	ProviderNameId,
-	ProviderName,
-	ProviderCID,
-	ProviderCTG,
-	ProviderAID,
-	ProviderUID,
-	casnCaseID,
-	PlaintiffID
+	case_id, value_id, ProviderNameId, ProviderName, ProviderCID, ProviderCTG, ProviderAID, ProviderUID, casnCaseID, PlaintiffID
 	)
 	select
 		v.case_id	   as case_id,	        -- needles case
@@ -294,34 +284,15 @@ go
 
 insert into [sma_TRN_Disbursement]
 	(
-	disnCaseID,
-	disdCheckDt,
-	disnPayeeContactCtgID,
-	disnPayeeContactID,
-	disnAmount,
-	disnPlaintiffID,
-	dissDisbursementType,
-	UniquePayeeID,
-	dissDescription,
-	dissComments,
-	disnCheckRequestStatus,
-	disdBillDate,
-	disdDueDate,
-	disnRecUserID,
-	disdDtCreated,
-	disnRecoverable,
-	saga,
-	source_id_1,
-	source_id_2,
-	source_id_3
+	disnCaseID, disdCheckDt, disnPayeeContactCtgID, disnPayeeContactID, disnAmount, disnPlaintiffID, dissDisbursementType, UniquePayeeID, dissDescription, dissComments, disnCheckRequestStatus, disdBillDate, disdDueDate, disnRecUserID, disdDtCreated, disnRecoverable, saga, source_id_1, source_id_2, source_id_3
 	)
 	select
-		map.casnCaseID  as disncaseid,
-		null			as disdcheckdt,
-		map.ProviderCTG as disnpayeecontactctgid,
-		map.ProviderCID as disnpayeecontactid,
-		v.total_value   as disnamount,
-		map.PlaintiffID as disnplaintiffid,
+		map.casnCaseID					   as disncaseid,
+		null							   as disdcheckdt,
+		map.ProviderCTG					   as disnpayeecontactctgid,
+		map.ProviderCID					   as disnpayeecontactid,
+		v.total_value					   as disnamount,
+		map.PlaintiffID					   as disnplaintiffid,
 		(
 			select
 				disnTypeID
@@ -332,9 +303,9 @@ insert into [sma_TRN_Disbursement]
 					from [JoelBieberNeedles].[dbo].[value_code]
 					where [code] = v.code
 				)
-		)				as dissdisbursementtype,
-		map.ProviderUID as uniquepayeeid,
-		v.[memo]		as dissdescription,
+		)								   as dissdisbursementtype,
+		map.ProviderUID					   as uniquepayeeid,
+		v.[memo]						   as dissdescription,
 		--,v.settlement_memo + 
 		--ISNULL('Account Number: ' + NULLIF(CAST(Account_Number AS VARCHAR(MAX)), '') + CHAR(13), '') +
 		--ISNULL('Cancel: ' + NULLIF(CAST(Cancel AS VARCHAR(MAX)), '') + CHAR(13), '') +    
@@ -343,7 +314,7 @@ insert into [sma_TRN_Disbursement]
 		--ISNULL('For Dates From: ' + NULLIF(CAST(For_Dates_From AS VARCHAR(MAX)), '') + CHAR(13), '') +
 		--ISNULL('OI Checked: ' + NULLIF(CAST(OI_Checked AS VARCHAR(MAX)), '') + CHAR(13), '')
 		--                                        as dissComments
-		null			as disscomments,
+		null							   as disscomments,
 		--case
 		--	when v.code in ('MSC', 'DTF')
 		--		then (
@@ -372,41 +343,46 @@ insert into [sma_TRN_Disbursement]
 				Id
 			from [sma_MST_CheckRequestStatus]
 			where [Description] = 'Paid'
-		)				as disncheckrequeststatus,
+		)								   as disncheckrequeststatus,
 		case
 			when v.start_date between '1900-01-01' and '2079-06-06'
 				then v.start_date
 			else null
-		end				as disdbilldate,
+		end								   as disdbilldate,
 		case
 			when v.stop_date between '1900-01-01' and '2079-06-06'
 				then v.stop_date
 			else null
-		end				as disdduedate,
-		(
-			select
-				usrnUserID
-			from sma_MST_Users
-			where source_id = v.staff_created
-		)				as disnrecuserid,
+		end								   as disdduedate,
+		--(
+		--	select
+		--		usrnUserID
+		--	from sma_MST_Users
+		--	where source_id = v.staff_created
+		--)				as disnrecuserid,
+		COALESCE(m.SAUserID, u.usrnUserID) as disnrecuserid, -- Use SAUserID if available, otherwise fallback to usrnUserID
 		case
 			when date_created between '1900-01-01' and '2079-06-06'
 				then date_created
 			else null
-		end				as disddtcreated,
+		end								   as disddtcreated,
 		case
 			when v.code = 'DTF'
 				then 0
 			else 1
-		end				as disnrecoverable,
-		v.value_id		as saga,
-		null			as source_id,
-		null			as source_db,
-		null			as source_ref
+		end								   as disnrecoverable,
+		v.value_id						   as saga,
+		null							   as source_id,
+		null							   as source_db,
+		null							   as source_ref
 	from [JoelBieberNeedles].[dbo].[value_Indexed] v
 	join value_tab_Disbursement_Helper map
 		on map.case_id = v.case_id
 			and map.value_id = v.value_id
+	left join [conversion].[imp_user_map] m
+		on m.StaffCode = v.staff_created
+	left join [sma_MST_Users] u
+		on u.source_id = v.staff_created
 --join JoelBieberNeedles..user_tab2_data u
 --	on u.case_id = v.case_id
 go

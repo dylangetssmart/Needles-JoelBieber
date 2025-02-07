@@ -192,5 +192,6 @@ insert into [sma_MST_EmailWebsite]
 	from [JoelBieberNeedles].[dbo].[staff] s
 	join [sma_MST_IndvContacts] ic
 		on ic.source_id = s.staff_code
+		and ic.source_ref = 'staff'
 	--on c.cinsGrade = s.staff_code
 	where ISNULL(email, '') <> ''

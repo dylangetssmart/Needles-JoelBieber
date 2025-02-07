@@ -1,14 +1,13 @@
 /* ###################################################################################
-description: Handle all operations related to [sma_MST_IndvContacts]
+description: Create individual contacts from [insurance]
 steps:
-- insert from insurance
-- update bridge
+	- insert from insurance
 usage_instructions:
--
+	-
 dependencies:
-- 
+	- 
 notes:
--
+	-
 source: [insurance]
 target: [sma_MST_IndvContacts]
 saga: saga_char

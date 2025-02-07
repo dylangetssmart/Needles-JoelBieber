@@ -38,7 +38,7 @@ insert into [sma_TRN_OtherReferral]
 		on CONVERT(VARCHAR, ucd.casenum) = cas.cassCaseNumber
 	join sma_MST_IndvContacts indv
 		on indv.source_id = ucd.Dr_Referral
-			and indv.source_ref = 'Dr_referral'
+			and indv.source_ref = 'user_case_data.Dr_referral'
 	join [IndvOrgContacts_Indexed] ioc
 		on ioc.cid = indv.cinncontactid
 			and ioc.ctg = 1

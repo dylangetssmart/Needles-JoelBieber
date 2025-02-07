@@ -9,17 +9,14 @@ update user created by and modified by now that users exist
 use JoelBieberSA_Needles
 go
 
-update sma_MST_IndvContacts
-set cinnRecUserID = (
-	select
-		u.usrnUserID
-	from sma_MST_Users u
-	join sma_MST_IndvContacts indv
-		on indv.cinnContactID = u.usrnContactID
-)
+update ind
+set ind.cinnRecUserID = u.usrnUserID
 from sma_MST_IndvContacts ind
 join JoelBieberNeedles..names n
 	on n.names_id = ind.saga
+join sma_MST_Users u
+	on ind.cinnContactID = u.usrnContactID;
+
 
 
 -----------------------------------------------------------------------------------------------

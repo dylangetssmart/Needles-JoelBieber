@@ -27,23 +27,7 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_PlaintiffAttorney]
 	(
-	[planPlaintffID],
-	[planCaseID],
-	[planPlCtgID],
-	[planPlContactID],
-	[planLawfrmAddID],
-	[planLawfrmContactID],
-	[planAtorneyAddID],
-	[planAtorneyContactID],
-	[planAtnTypeID],
-	[plasFileNo],
-	[planRecUserID],
-	[pladDtCreated],
-	[planModifyUserID],
-	[pladDtModified],
-	[planLevelNo],
-	[planRefOutID],
-	[plasComments]
+	[planPlaintffID], [planCaseID], [planPlCtgID], [planPlContactID], [planLawfrmAddID], [planLawfrmContactID], [planAtorneyAddID], [planAtorneyContactID], [planAtnTypeID], [plasFileNo], [planRecUserID], [pladDtCreated], [planModifyUserID], [pladDtModified], [planLevelNo], [planRefOutID], [plasComments]
 	)
 	select distinct
 		t.plnnPlaintiffID as [planplaintffid],
@@ -86,12 +70,13 @@ insert into [sma_TRN_PlaintiffAttorney]
 		ISNULL('comments : ' + NULLIF(CONVERT(VARCHAR(MAX), c.comments), '') + CHAR(13), '') +
 		ISNULL('Attorney for party : ' + NULLIF(CONVERT(VARCHAR(MAX), iocp.name), '') + CHAR(13), '') +
 		''				  as [plascomments]
-	select *from JoelBieberNeedles..[counsel_Indexed] c
+	--select *
+	from JoelBieberNeedles..[counsel_Indexed] c
 	left join JoelBieberNeedles.[dbo].[user_counsel_data] ud
 		on ud.counsel_id = c.counsel_id
 			and c.case_num = ud.casenum
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = convert(varchar,c.case_num)
+		on cas.cassCaseNumber = CONVERT(VARCHAR, c.case_num)
 	join IndvOrgContacts_Indexed ioc
 		on ioc.SAGA = c.counsel_id
 			and ISNULL(c.counsel_id, 0) <> 0
@@ -103,16 +88,14 @@ insert into [sma_TRN_PlaintiffAttorney]
 			and t.plnnContactCtg = iocp.CTG
 			and t.plnnCaseID = cas.casnCaseID
 go
+
 --select * from JoelBieberNeedles..user_counsel_data ucd where casenum = 229701
 -------------------------------------------------------------------------------
 -- Plaintiff Attorney list
 -------------------------------------------------------------------------------
 insert into sma_TRN_LawFirmAttorneys
 	(
-	SourceTableRowID,
-	UniqueContactID,
-	IsDefendant,
-	IsPrimary
+	SourceTableRowID, UniqueContactID, IsDefendant, IsPrimary
 	)
 	select
 		a.lawfirmid			as sourcetablerowid,
@@ -125,8 +108,8 @@ insert into sma_TRN_LawFirmAttorneys
 		end					as isprimary
 	from (
 		select
-			f.planAtnID as lawfirmid,
-			ac.UniqueContactId as attorneycontactid,
+			f.planAtnID														   as lawfirmid,
+			ac.UniqueContactID												   as attorneycontactid,
 			ROW_NUMBER() over (partition by f.planCaseID order by f.planAtnID) as sequencenumber
 		from [sma_TRN_PlaintiffAttorney] f
 		left join sma_MST_AllContactInfo ac

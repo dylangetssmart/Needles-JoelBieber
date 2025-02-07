@@ -31,6 +31,9 @@ i.e. "clerks" are created by insert from names
 --'needles'								 as source_id_2,
 --'names'									 as source_id_3
 
+use JoelBieberSA_Needles
+go
+
 ;with cte_indv_contacts
 as
 (

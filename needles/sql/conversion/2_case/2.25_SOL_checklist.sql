@@ -84,6 +84,8 @@ insert into [sma_TRN_SOLs]
 
 go
 
+--SELECT * FROM JoelBieberNeedles.[dbo].[checklist_dir]
+
 alter table [sma_TRN_SOLs] enable trigger all
 
 

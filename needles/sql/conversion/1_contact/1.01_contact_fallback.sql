@@ -1,5 +1,5 @@
 /* ###################################################################################
-description: Handles common operations related to [sma_MST_IndvContacts]
+description: Create unidentified contacts to be used as fallbacks where applicable
 steps:
 	- Insert [sma_MST_IndvContacts] fallback contacts
 		- Unassigned Staff
@@ -12,6 +12,7 @@ steps:
 		- Unidentified Court
 		- Unidentified Lienor
 		- Unidentified School
+		- Unidentified Employer
 usage_instructions:
 	-
 dependencies:
