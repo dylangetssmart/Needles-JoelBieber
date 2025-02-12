@@ -3,13 +3,14 @@ update party roles to fix Employer mapping
 
 */
 
-use JoelBieberSA_Needles
+use SA
+go
 
-select * from joelbiebersa_needles..partyroles
+select * from partyroles
 
 update PartyRoles
 set [SA Party] = 'DEFENDANT',
 	[SA Roles] = '(D)-EMPLOYER'
 where [Needles Roles] = 'EMPLOYER'
 
-select * from joelbiebersa_needles..partyroles
+select * from partyroles

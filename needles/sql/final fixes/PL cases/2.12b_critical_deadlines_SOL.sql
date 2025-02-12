@@ -10,7 +10,7 @@ replace:
 ##########################################################################################################################
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 /*
@@ -146,10 +146,10 @@ go
 
 --SELECT * FROM sma_MST_SOLDetails sms
 ----(Appendix)----
-update sma_MST_SOLDetails
-set sldnFromIncident = 0
-where sldnFromIncident is null
-and sldnRecUserID = 368
+--update sma_MST_SOLDetails
+--set sldnFromIncident = 0
+--where sldnFromIncident is null
+--and sldnRecUserID = 368
 
 
 

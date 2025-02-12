@@ -13,7 +13,7 @@ notes:
 	-
 */
 
-use JoelBieberSA_Needles
+use SA
 go
 
 alter table [sma_TRN_Cases] disable trigger all

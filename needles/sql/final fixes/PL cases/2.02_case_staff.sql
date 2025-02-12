@@ -13,7 +13,7 @@ notes:
 
 
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 
@@ -220,7 +220,7 @@ insert into sma_TRN_caseStaff
 		'cases_indexed.staff_1' as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	inner join [sma_TRN_cases] CAS
-		on CAS.cassCaseNumber = C.casenum
+		on CAS.cassCaseNumber = convert(varchar, C.casenum)
 	inner join [sma_MST_Users] U
 		on (U.source_id = C.staff_1)
 	left join [conversion].[imp_user_map] m
@@ -267,7 +267,7 @@ insert into sma_TRN_caseStaff
 		'cases_indexed.staff_2' as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	join [sma_TRN_cases] CAS
-		on CAS.cassCaseNumber = C.casenum
+		on CAS.cassCaseNumber = convert(varchar, C.casenum)
 	join [sma_MST_Users] U
 		on (U.source_id = C.staff_2)
 	left join [conversion].[imp_user_map] m
@@ -314,7 +314,7 @@ insert into sma_TRN_caseStaff
 		'cases_indexed.staff_3' as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	join [sma_TRN_cases] CAS
-		on CAS.cassCaseNumber = C.casenum
+		on CAS.cassCaseNumber = convert(varchar, C.casenum)
 	join [sma_MST_Users] U
 		on (U.source_id = C.staff_3)
 	left join [conversion].[imp_user_map] m
@@ -362,7 +362,7 @@ insert into sma_TRN_caseStaff
 		'cases_indexed.staff_4' as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	inner join [sma_TRN_cases] CAS
-		on CAS.cassCaseNumber = C.casenum
+		on CAS.cassCaseNumber = convert(varchar, C.casenum)
 	inner join [sma_MST_Users] U
 		on (U.source_id = C.staff_4)
 	left join [conversion].[imp_user_map] m

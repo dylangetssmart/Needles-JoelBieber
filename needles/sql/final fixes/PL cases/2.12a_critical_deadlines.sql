@@ -10,7 +10,7 @@ replace:
 ##########################################################################################################################
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 /*
@@ -194,7 +194,7 @@ go
 dbcc dbreindex ('criticalDeadline_Helper', ' ', 90) with no_infomsgs
 go
 
-select * FROM criticalDeadline_Helper MAP
+--select * FROM criticalDeadline_Helper MAP
 
 /*
 Create Critical Deadline records
@@ -264,9 +264,13 @@ go
 alter table sma_TRN_CriticalDeadlines disable trigger all
 go
 
-update [sma_TRN_CriticalDeadlines]
+update crit
 set crddCompliedDate = GETDATE()
+from  [sma_TRN_CriticalDeadlines] crit
+join sma_TRN_Cases cas
+on cas.casnCaseID = crit.crdnCaseID
 where crddDueDate < GETDATE()
+and cas.source_ref = 'PL'
 go
 
 alter table sma_TRN_CriticalDeadlines enable trigger all

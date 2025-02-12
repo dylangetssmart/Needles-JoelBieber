@@ -12,7 +12,7 @@ notes:
 */
 
 
-USE [JoelBieberSA_Needles]
+use [SA]
 GO
 /*
 delete from [sma_TRN_PlaintiffDeath] 

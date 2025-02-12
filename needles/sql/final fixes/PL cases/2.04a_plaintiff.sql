@@ -11,7 +11,7 @@ notes:
 	-
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 if not exists (

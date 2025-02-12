@@ -10,7 +10,7 @@ notes:
 	-
 */
 
-USE [JoelBieberSA_Needles]
+use [SA]
 GO
 
 ALTER TABLE sma_trn_Casevalue DISABLE TRIGGER ALL

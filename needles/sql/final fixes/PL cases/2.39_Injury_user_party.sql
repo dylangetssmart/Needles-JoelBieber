@@ -1,4 +1,4 @@
-use JoelBieberSA_Needles
+use SA
 go
 
 alter table [sma_TRN_PlaintiffInjury] disable trigger all

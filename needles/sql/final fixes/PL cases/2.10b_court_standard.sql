@@ -10,7 +10,7 @@ replace:
 ##########################################################################################################################
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 
@@ -113,7 +113,7 @@ insert into [sma_TRN_CourtDocket]
 	join [sma_TRN_cases] cas
 		on cas.casnCaseID = crt.crtnCaseID
 	join [JoelBieberNeedles].[dbo].[cases] c
-		on c.casenum = cas.cassCaseNumber
+		on convert(varchar, c.casenum) = cas.cassCaseNumber
 	where cas.source_ref = 'PL'
 go
 

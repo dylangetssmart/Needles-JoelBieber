@@ -19,7 +19,7 @@ notes:
 #########################################################################################
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 -- Create note types that don't yet exist
@@ -85,14 +85,14 @@ insert into [sma_TRN_Notes]
 		null		  as [source_id],
 		'needles'	  as [source_db],
 		'value_notes' as [source_ref]
-	from JoelBieberNeedlesMissingNotes.[dbo].[value_notes] n
-	join JoelBieberNeedlesMissingNotes.[dbo].[value_Indexed] v
+	from JoelBieberNeedles.[dbo].[value_notes] n
+	join JoelBieberNeedles.[dbo].[value_Indexed] v
 		on v.value_id = n.value_num
 	join [sma_TRN_Cases] c
-		on c.cassCaseNumber = convert(varchar, v.case_id)
+		on c.cassCaseNumber = CONVERT(VARCHAR, v.case_id)
 	join [sma_MST_Users] u
 		on u.source_id = n.staff_id
-		where c.source_ref = 'PL'
+	where c.source_ref = 'PL'
 go
 
 ---
@@ -114,7 +114,7 @@ insert into sma_TRN_NoteContacts
 	join JoelBieberNeedles..value_Indexed v
 		on v.value_id = n.value_num
 	join sma_trn_Cases cas
-		on cas.cassCaseNumber = convert(varchar, v.case_id)
+		on cas.cassCaseNumber = CONVERT(VARCHAR, v.case_id)
 	join IndvOrgContacts_Indexed ioc
 		on ioc.saga = v.[provider]
 	join [sma_TRN_Notes] note
@@ -125,3 +125,4 @@ insert into sma_TRN_NoteContacts
 				from [sma_MST_NoteTypes]
 				where nttsDscrptn = n.topic
 			)
+	where cas.source_ref = 'pl'

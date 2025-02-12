@@ -2,7 +2,7 @@
 
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 /*
@@ -90,7 +90,7 @@ insert into [sma_TRN_Notes]
 		'needles'						   as [source_db],
 		'case_notes_Indexed'			   as [source_ref]
 	--select n.note_key, m.SAUserID, u.usrnUserID, COALESCE(m.SAUserID, u.usrnUserID)
-	from JoelBieberNeedlesMissingNotes.[dbo].[case_notes_Indexed] n
+	from JoelBieberNeedles.[dbo].[case_notes_Indexed] n
 	join [sma_TRN_Cases] c
 		on c.cassCaseNumber = convert(varchar, n.case_num)
 	left join [conversion].[imp_user_map] m
@@ -104,6 +104,7 @@ insert into [sma_TRN_Notes]
 	--where n.case_num = 226555
 	--and n.staff_id IN ('kmarsh', 'kgraham')
 	where ns.notnNoteID is null
+	and c.source_ref = 'PL'
 go
 
 

@@ -10,7 +10,7 @@ replace:
 ##########################################################################################################################
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
 ---------------------------------------------------
@@ -175,7 +175,7 @@ insert into [sma_TRN_Negotiations]
 	left join JoelBieberNeedles.[dbo].[insurance_Indexed] INS
 		on INS.insurance_id = NEG.insurance_id
 	join [sma_TRN_cases] CAS
-		on CAS.cassCaseNumber = NEG.case_id
+		on CAS.cassCaseNumber = convert(varchar, NEG.case_id)
 	left join [JoelBieberSA_Needles].[conversion].[Insurance_Contacts_Helper] MAP
 		on INS.insurance_id = MAP.insurance_id
 	left join [conversion].[imp_user_map] m
