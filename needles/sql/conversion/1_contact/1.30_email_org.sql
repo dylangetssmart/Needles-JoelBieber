@@ -32,17 +32,8 @@ go
 -- Email
 insert into [sma_MST_EmailWebsite]
 	(
-	[cewnContactCtgID],
-	[cewnContactID],
-	[cewsEmailWebsiteFlag],
-	[cewsEmailWebSite],
-	[cewbDefault],
-	[cewnRecUserID],
-	[cewdDtCreated],
-	[cewnModifyUserID],
-	[cewdDtModified],
-	[cewnLevelNo],
-	[saga]
+	[cewnContactCtgID], [cewnContactID], [cewsEmailWebsiteFlag], [cewsEmailWebSite], [cewbDefault], [cewnRecUserID], [cewdDtCreated], [cewnModifyUserID], [cewdDtModified], [cewnLevelNo], [saga], [source_id], [source_db], [source_ref]
+
 	)
 	select
 		c.connContactCtg as cewncontactctgid,
@@ -55,7 +46,10 @@ insert into [sma_MST_EmailWebsite]
 		368				 as cewnmodifyuserid,
 		GETDATE()		 as cewddtmodified,
 		null			 as cewnlevelno,
-		1				 as saga -- indicate email
+		1				 as saga, -- indicate email
+		null			 as [source_id],
+		'needles'		 as [source_db],
+		'names.email'	 as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
@@ -64,30 +58,24 @@ insert into [sma_MST_EmailWebsite]
 -- Work Email
 insert into [sma_MST_EmailWebsite]
 	(
-	[cewnContactCtgID],
-	[cewnContactID],
-	[cewsEmailWebsiteFlag],
-	[cewsEmailWebSite],
-	[cewbDefault],
-	[cewnRecUserID],
-	[cewdDtCreated],
-	[cewnModifyUserID],
-	[cewdDtModified],
-	[cewnLevelNo],
-	[saga]
+	[cewnContactCtgID], [cewnContactID], [cewsEmailWebsiteFlag], [cewsEmailWebSite], [cewbDefault], [cewnRecUserID], [cewdDtCreated], [cewnModifyUserID], [cewdDtModified], [cewnLevelNo], [saga], [source_id], [source_db], [source_ref]
+
 	)
 	select
-		c.connContactCtg as cewncontactctgid,
-		c.connContactID	 as cewncontactid,
-		'E'				 as cewsemailwebsiteflag,
-		n.email_work	 as cewsemailwebsite,
-		null			 as cewbdefault,
-		368				 as cewnrecuserid,
-		GETDATE()		 as cewddtcreated,
-		368				 as cewnmodifyuserid,
-		GETDATE()		 as cewddtmodified,
-		null			 as cewnlevelno,
-		2				 as saga -- indicate email_work
+		c.connContactCtg   as cewncontactctgid,
+		c.connContactID	   as cewncontactid,
+		'E'				   as cewsemailwebsiteflag,
+		n.email_work	   as cewsemailwebsite,
+		null			   as cewbdefault,
+		368				   as cewnrecuserid,
+		GETDATE()		   as cewddtcreated,
+		368				   as cewnmodifyuserid,
+		GETDATE()		   as cewddtmodified,
+		null			   as cewnlevelno,
+		2				   as saga, -- indicate email_work
+		null			   as [source_id],
+		'needles'		   as [source_db],
+		'names.email_work' as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
@@ -96,30 +84,24 @@ insert into [sma_MST_EmailWebsite]
 -- Other Email
 insert into [sma_MST_EmailWebsite]
 	(
-	[cewnContactCtgID],
-	[cewnContactID],
-	[cewsEmailWebsiteFlag],
-	[cewsEmailWebSite],
-	[cewbDefault],
-	[cewnRecUserID],
-	[cewdDtCreated],
-	[cewnModifyUserID],
-	[cewdDtModified],
-	[cewnLevelNo],
-	[saga]
+	[cewnContactCtgID], [cewnContactID], [cewsEmailWebsiteFlag], [cewsEmailWebSite], [cewbDefault], [cewnRecUserID], [cewdDtCreated], [cewnModifyUserID], [cewdDtModified], [cewnLevelNo], [saga], [source_id], [source_db], [source_ref]
+
 	)
 	select
-		c.connContactCtg as cewncontactctgid,
-		c.connContactID	 as cewncontactid,
-		'E'				 as cewsemailwebsiteflag,
-		n.other_email	 as cewsemailwebsite,
-		null			 as cewbdefault,
-		368				 as cewnrecuserid,
-		GETDATE()		 as cewddtcreated,
-		368				 as cewnmodifyuserid,
-		GETDATE()		 as cewddtmodified,
-		null			 as cewnlevelno,
-		3				 as saga -- indicate other_email
+		c.connContactCtg	as cewncontactctgid,
+		c.connContactID		as cewncontactid,
+		'E'					as cewsemailwebsiteflag,
+		n.other_email		as cewsemailwebsite,
+		null				as cewbdefault,
+		368					as cewnrecuserid,
+		GETDATE()			as cewddtcreated,
+		368					as cewnmodifyuserid,
+		GETDATE()			as cewddtmodified,
+		null				as cewnlevelno,
+		3					as saga, -- indicate other_email
+		null				as [source_id],
+		'needles'			as [source_db],
+		'names.other_email' as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id
@@ -128,17 +110,7 @@ insert into [sma_MST_EmailWebsite]
 -- Website
 insert into [sma_MST_EmailWebsite]
 	(
-	[cewnContactCtgID],
-	[cewnContactID],
-	[cewsEmailWebsiteFlag],
-	[cewsEmailWebSite],
-	[cewbDefault],
-	[cewnRecUserID],
-	[cewdDtCreated],
-	[cewnModifyUserID],
-	[cewdDtModified],
-	[cewnLevelNo],
-	[saga]
+	[cewnContactCtgID], [cewnContactID], [cewsEmailWebsiteFlag], [cewsEmailWebSite], [cewbDefault], [cewnRecUserID], [cewdDtCreated], [cewnModifyUserID], [cewdDtModified], [cewnLevelNo], [saga], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.connContactCtg as cewncontactctgid,
@@ -151,7 +123,10 @@ insert into [sma_MST_EmailWebsite]
 		368				 as cewnmodifyuserid,
 		GETDATE()		 as cewddtmodified,
 		null			 as cewnlevelno,
-		4				 as saga -- indicate website
+		4				 as saga, -- indicate website
+		null			 as [source_id],
+		'needles'		 as [source_db],
+		'names.website'	 as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_OrgContacts] c
 		on c.saga = n.names_id

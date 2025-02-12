@@ -25,8 +25,7 @@ go
 -- Create note types that don't yet exist
 insert into [sma_MST_NoteTypes]
 	(
-	nttsDscrptn,
-	nttsNoteText
+	nttsDscrptn, nttsNoteText
 	)
 	select distinct
 		vn.topic,
@@ -52,50 +51,40 @@ go
 ----(1)----
 insert into [sma_TRN_Notes]
 	(
-	[notnCaseID],
-	[notnNoteTypeID],
-	[notmDescription],
-	[notmPlainText],
-	[notnContactCtgID],
-	[notnContactId],
-	[notsPriority],
-	[notnFormID],
-	[notnRecUserID],
-	[notdDtCreated],
-	[notnModifyUserID],
-	[notdDtModified],
-	[notnLevelNo],
-	[notdDtInserted],
-	[WorkPlanItemId],
-	[notnSubject]
+	[notnCaseID], [notnNoteTypeID], [notmDescription], [notmPlainText], [notnContactCtgID], [notnContactId], [notsPriority], [notnFormID], [notnRecUserID], [notdDtCreated], [notnModifyUserID], [notdDtModified], [notnLevelNo], [notdDtInserted], [WorkPlanItemId], [notnSubject], [saga], [source_id], [source_db], [source_ref]
+
 	)
 	select
-		casnCaseID	 as [notncaseid],
+		casnCaseID	  as [notncaseid],
 		(
 			select top 1
 				nttnNoteTypeID
 			from [sma_MST_NoteTypes]
 			where nttsDscrptn = n.topic
-		)			 as [notnnotetypeid],
-		note		 as [notmdescription],
-		note		 as [notmplaintext],
-		0			 as [notncontactctgid],
-		null		 as [notncontactid],
-		null		 as [notspriority],
-		null		 as [notnformid],
-		u.usrnUserID as [notnrecuserid],
+		)			  as [notnnotetypeid],
+		note		  as [notmdescription],
+		note		  as [notmplaintext],
+		0			  as [notncontactctgid],
+		null		  as [notncontactid],
+		null		  as [notspriority],
+		null		  as [notnformid],
+		u.usrnUserID  as [notnrecuserid],
 		case
 			when n.note_date between '1900-01-01' and '2079-06-06' and
 				CONVERT(TIME, ISNULL(n.note_time, '00:00:00')) <> CONVERT(TIME, '00:00:00')
 				then CAST(CAST(n.note_date as DATE) as DATETIME) + CAST(CAST(n.note_time as TIME) as DATETIME)
 			else null
-		end			 as notddtcreated,
-		null		 as [notnmodifyuserid],
-		null		 as notddtmodified,
-		null		 as [notnlevelno],
-		null		 as [notddtinserted],
-		null		 as [workplanitemid],
-		null		 as [notnsubject]
+		end			  as notddtcreated,
+		null		  as [notnmodifyuserid],
+		null		  as notddtmodified,
+		null		  as [notnlevelno],
+		null		  as [notddtinserted],
+		null		  as [workplanitemid],
+		null		  as [notnsubject],
+		n.note_key	  as [saga],
+		null		  as [source_id],
+		'needles'	  as [source_db],
+		'value_notes' as [source_ref]
 	from JoelBieberNeedles.[dbo].[value_notes] n
 	join JoelBieberNeedles.[dbo].[value_Indexed] v
 		on v.value_id = n.value_num
@@ -114,8 +103,7 @@ go
 -----------------------------------------
 insert into sma_TRN_NoteContacts
 	(
-	NoteID,
-	UniqueContactID
+	NoteID, UniqueContactID
 	)
 	select distinct
 		note.notnNoteID,

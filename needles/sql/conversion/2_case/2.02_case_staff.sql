@@ -57,6 +57,64 @@ insert into [sma_MST_SubRoleCode]
 
 
 
+---------------------------------------------------
+-- [sma_TRN_caseStaff]
+---------------------------------------------------
+
+-- saga
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'saga'
+			and Object_ID = OBJECT_ID(N'sma_TRN_caseStaff')
+	)
+begin
+	alter table [sma_TRN_caseStaff] add [saga] INT null;
+end
+go
+
+-- source_id
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id'
+			and Object_ID = OBJECT_ID(N'sma_TRN_caseStaff')
+	)
+begin
+	alter table [sma_TRN_caseStaff] add [source_id] VARCHAR(MAX) null;
+end
+go
+
+-- source_db
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_db'
+			and Object_ID = OBJECT_ID(N'sma_TRN_caseStaff')
+	)
+begin
+	alter table [sma_TRN_caseStaff] add [source_db] VARCHAR(MAX) null;
+end
+go
+
+-- source_ref
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_ref'
+			and Object_ID = OBJECT_ID(N'sma_TRN_caseStaff')
+	)
+begin
+	alter table [sma_TRN_caseStaff] add [source_ref] VARCHAR(MAX) null;
+end
+go
+
+
+
 alter table [sma_TRN_caseStaff] disable trigger all
 go
 
@@ -129,7 +187,7 @@ Hardcode staff_1 through staff_10 with "Staff"
 ------------------------------------------------------------------------------
 insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		CAS.casnCaseID					   as [cssnCaseID],
@@ -150,7 +208,10 @@ insert into sma_TRN_caseStaff
 		GETDATE()						   as [cssdDtCreated],
 		null							   as [cssnModifyUserID],
 		null							   as [cssdDtModified],
-		0								   as cssnLevelNo
+		0								   as cssnLevelNo,
+		c.staff_1						   as [source_id],
+		'needles'						   as [source_db],
+		'cases_indexed.staff_1'			   as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	inner join [sma_TRN_cases] CAS
 		on CAS.cassCaseNumber = C.casenum
@@ -167,7 +228,7 @@ insert into sma_TRN_caseStaff
 --------------------
 insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		CAS.casnCaseID					   as [cssnCaseID],
@@ -188,7 +249,10 @@ insert into sma_TRN_caseStaff
 		GETDATE()						   as [cssdDtCreated],
 		null							   as [cssnModifyUserID],
 		null							   as [cssdDtModified],
-		0								   as cssnLevelNo
+		0								   as cssnLevelNo,
+		c.staff_2						   as [source_id],
+		'needles'						   as [source_db],
+		'cases_indexed.staff_2'			   as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	join [sma_TRN_cases] CAS
 		on CAS.cassCaseNumber = C.casenum
@@ -204,7 +268,7 @@ insert into sma_TRN_caseStaff
 --------------------
 insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		CAS.casnCaseID					   as [cssnCaseID],
@@ -225,7 +289,10 @@ insert into sma_TRN_caseStaff
 		GETDATE()						   as [cssdDtCreated],
 		null							   as [cssnModifyUserID],
 		null							   as [cssdDtModified],
-		0								   as cssnLevelNo
+		0								   as cssnLevelNo,
+		c.staff_3						   as [source_id],
+		'needles'						   as [source_db],
+		'cases_indexed.staff_3'			   as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	join [sma_TRN_cases] CAS
 		on CAS.cassCaseNumber = C.casenum
@@ -242,7 +309,7 @@ insert into sma_TRN_caseStaff
 --------------------
 insert into sma_TRN_caseStaff
 	(
-	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo]
+	[cssnCaseID], [cssnStaffID], [cssnRoleID], [csssComments], [cssdFromDate], [cssdToDate], [cssnRecUserID], [cssdDtCreated], [cssnModifyUserID], [cssdDtModified], [cssnLevelNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		CAS.casnCaseID					   as [cssnCaseID],
@@ -263,7 +330,10 @@ insert into sma_TRN_caseStaff
 		GETDATE()						   as [cssdDtCreated],
 		null							   as [cssnModifyUserID],
 		null							   as [cssdDtModified],
-		0								   as cssnLevelNo
+		0								   as cssnLevelNo,
+		c.staff_4						   as [source_id],
+		'needles'						   as [source_db],
+		'cases_indexed.staff_4'			   as [source_ref]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] C
 	inner join [sma_TRN_cases] CAS
 		on CAS.cassCaseNumber = C.casenum

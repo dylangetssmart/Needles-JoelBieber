@@ -27,7 +27,7 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_PlaintiffAttorney]
 	(
-	[planPlaintffID], [planCaseID], [planPlCtgID], [planPlContactID], [planLawfrmAddID], [planLawfrmContactID], [planAtorneyAddID], [planAtorneyContactID], [planAtnTypeID], [plasFileNo], [planRecUserID], [pladDtCreated], [planModifyUserID], [pladDtModified], [planLevelNo], [planRefOutID], [plasComments]
+	[planPlaintffID], [planCaseID], [planPlCtgID], [planPlContactID], [planLawfrmAddID], [planLawfrmContactID], [planAtorneyAddID], [planAtorneyContactID], [planAtnTypeID], [plasFileNo], [planRecUserID], [pladDtCreated], [planModifyUserID], [pladDtModified], [planLevelNo], [planRefOutID], [plasComments], [saga], [source_id], [source_db], [source_ref]
 	)
 	select distinct
 		t.plnnPlaintiffID as [planplaintffid],
@@ -69,7 +69,11 @@ insert into [sma_TRN_PlaintiffAttorney]
 		null			  as [planrefoutid],
 		ISNULL('comments : ' + NULLIF(CONVERT(VARCHAR(MAX), c.comments), '') + CHAR(13), '') +
 		ISNULL('Attorney for party : ' + NULLIF(CONVERT(VARCHAR(MAX), iocp.name), '') + CHAR(13), '') +
-		''				  as [plascomments]
+		''				  as [plascomments],
+		c.TableIndex	  as [saga],
+		null			  as [source_id],
+		'needles'		  as [source_db],
+		'counsel_indexed' as [source_ref]
 	--select *
 	from JoelBieberNeedles..[counsel_Indexed] c
 	left join JoelBieberNeedles.[dbo].[user_counsel_data] ud

@@ -25,21 +25,7 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_LawFirms]
 	(
-	[lwfnLawFirmContactID],
-	[lwfnLawFirmAddressID],
-	[lwfnAttorneyContactID],
-	[lwfnAttorneyAddressID],
-	[lwfnAttorneyTypeID],
-	[lwfsFileNumber],
-	[lwfnRoleType],
-	[lwfnContactID],
-	[lwfnRecUserID],
-	[lwfdDtCreated],
-	[lwfnModifyUserID],
-	[lwfdDtModified],
-	[lwfnLevelNo],
-	[lwfnAdjusterID],
-	[lwfsComments]
+	[lwfnLawFirmContactID], [lwfnLawFirmAddressID], [lwfnAttorneyContactID], [lwfnAttorneyAddressID], [lwfnAttorneyTypeID], [lwfsFileNumber], [lwfnRoleType], [lwfnContactID], [lwfnRecUserID], [lwfdDtCreated], [lwfnModifyUserID], [lwfdDtModified], [lwfnLevelNo], [lwfnAdjusterID], [lwfsComments], [saga], [source_id], [source_db], [source_ref]
 	)
 	select distinct
 		case
@@ -79,7 +65,11 @@ insert into [sma_TRN_LawFirms]
 		null			  as [lwfnadjusterid],
 		ISNULL('comments : ' + NULLIF(CONVERT(VARCHAR(MAX), c.comments), '') + CHAR(13), '') +
 		ISNULL('Attorney for party : ' + NULLIF(CONVERT(VARCHAR(MAX), iocd.name), '') + CHAR(13), '') +
-		''				  as [lwfscomments]
+		''				  as [lwfscomments],
+		c.TableIndex	  as [saga],
+		null			  as [source_id],
+		'needles'		  as [source_db],
+		'counsel_Indexed' as [source_ref]
 	from JoelBieberNeedles.[dbo].[counsel_Indexed] c
 	left join JoelBieberNeedles.[dbo].[user_counsel_data] ud
 		on ud.counsel_id = c.counsel_id
@@ -103,10 +93,7 @@ go
 -------------------------------------------------------------------------------
 insert into sma_TRN_LawFirmAttorneys
 	(
-	SourceTableRowID,
-	UniqueContactID,
-	IsDefendant,
-	IsPrimary
+	SourceTableRowID, UniqueContactID, IsDefendant, IsPrimary
 	)
 	select
 		a.lawfirmid			as sourcetablerowid,
@@ -119,8 +106,8 @@ insert into sma_TRN_LawFirmAttorneys
 		end					as isprimary
 	from (
 		select
-			f.lwfnLawFirmID as lawfirmid,
-			ac.UniqueContactId as attorneycontactid,
+			f.lwfnLawFirmID																 as lawfirmid,
+			ac.UniqueContactId															 as attorneycontactid,
 			ROW_NUMBER() over (partition by f.lwfnModifyUserID order by f.lwfnLawFirmID) as sequencenumber
 		from [sma_TRN_LawFirms] f
 		left join sma_MST_AllContactInfo ac

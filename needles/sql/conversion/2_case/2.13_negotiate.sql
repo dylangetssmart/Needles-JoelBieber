@@ -13,19 +13,65 @@ replace:
 use [JoelBieberSA_Needles]
 go
 
-/*
+---------------------------------------------------
+-- schema
+---------------------------------------------------
 
-delete [sma_TRN_Negotiations]
-DBCC CHECKIDENT ('[sma_TRN_Negotiations]', RESEED, 1);
-alter table [sma_TRN_Negotiations] enable trigger all
+-- saga
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'saga'
+			and Object_ID = OBJECT_ID(N'sma_TRN_Negotiations')
+	)
+begin
+	alter table [sma_TRN_Negotiations] add [saga] INT null;
+end
+go
 
-alter table [sma_TRN_Settlements] disable trigger all
-delete [sma_TRN_Settlements]
-DBCC CHECKIDENT ('[sma_TRN_Settlements]', RESEED, 1);
+-- source_id
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_id'
+			and Object_ID = OBJECT_ID(N'sma_TRN_Negotiations')
+	)
+begin
+	alter table [sma_TRN_Negotiations] add [source_id] VARCHAR(MAX) null;
+end
+go
 
-*/
+-- source_db
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_db'
+			and Object_ID = OBJECT_ID(N'sma_TRN_Negotiations')
+	)
+begin
+	alter table [sma_TRN_Negotiations] add [source_db] VARCHAR(MAX) null;
+end
+go
 
---(0)--
+-- source_ref
+if not exists (
+		select
+			*
+		from sys.columns
+		where Name = N'source_ref'
+			and Object_ID = OBJECT_ID(N'sma_TRN_Negotiations')
+	)
+begin
+	alter table [sma_TRN_Negotiations] add [source_ref] VARCHAR(MAX) null;
+end
+go
+
+---------------------------------------------------
+-- insert negotiations
+---------------------------------------------------
 
 alter table [sma_TRN_Negotiations] disable trigger all
 
@@ -45,7 +91,7 @@ go
 --(1)--
 insert into [sma_TRN_Negotiations]
 	(
-	[negnCaseID], [negsUniquePartyID], [negdDate], [negnStaffID], [negnPlaintiffID], [negbPartiallySettled], [negnClientAuthAmt], [negbOralConsent], [negdOralDtSent], [negdOralDtRcvd], [negnDemand], [negnOffer], [negbConsentType], [negnRecUserID], [negdDtCreated], [negnModifyUserID], [negdDtModified], [negnLevelNo], [negsComments], [SettlementAmount]
+	[negnCaseID], [negsUniquePartyID], [negdDate], [negnStaffID], [negnPlaintiffID], [negbPartiallySettled], [negnClientAuthAmt], [negbOralConsent], [negdOralDtSent], [negdOralDtRcvd], [negnDemand], [negnOffer], [negbConsentType], [negnRecUserID], [negdDtCreated], [negnModifyUserID], [negdDtModified], [negnLevelNo], [negsComments], [SettlementAmount], [saga], [source_id], [source_db], [source_ref]
 	)
 	select
 		CAS.casnCaseID					   as [negnCaseID],
@@ -108,7 +154,11 @@ insert into [sma_TRN_Negotiations]
 			when NEG.kind = 'Settled'
 				then NEG.amount
 			else null
-		end								   as [SettlementAmount]
+		end								   as [SettlementAmount],
+		neg.neg_id							   as [saga],
+		neg.kind						   as [source_id],
+		'needles'						   as [source_db],
+		'negotiation'					   as [source_ref]
 	from JoelBieberNeedles.[dbo].[negotiation] NEG
 	left join JoelBieberNeedles.[dbo].[insurance_Indexed] INS
 		on INS.insurance_id = NEG.insurance_id

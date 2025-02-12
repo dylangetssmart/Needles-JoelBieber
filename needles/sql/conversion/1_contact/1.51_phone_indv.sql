@@ -21,21 +21,7 @@ alter table [sma_MST_ContactNumbers] disable trigger all
 -- Home Phone
 insert into [sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			as cnnncontactctgid,
@@ -59,7 +45,10 @@ insert into [sma_MST_ContactNumbers]
 		368							as cnnnmodifyuserid,
 		GETDATE()					as cnnddtmodified,
 		null						as cnnnlevelno,
-		null						as caseno
+		null						as caseno,
+		null						as [source_id],
+		'needles'					as [source_db],
+		'names.home_phone'			as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -73,21 +62,7 @@ insert into [sma_MST_ContactNumbers]
 -- Work Phone
 insert into [sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			as cnnncontactctgid,
@@ -110,7 +85,10 @@ insert into [sma_MST_ContactNumbers]
 		368							as cnnnmodifyuserid,
 		GETDATE()					as cnnddtmodified,
 		null						as cnnnlevelno,
-		null						as caseno
+		null						as caseno,
+		null						as [source_id],
+		'needles'					as [source_db],
+		'names.work_phone'			as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -124,21 +102,7 @@ insert into [sma_MST_ContactNumbers]
 -- Cell Phone
 insert into [sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg		   as cnnncontactctgid,
@@ -161,7 +125,10 @@ insert into [sma_MST_ContactNumbers]
 		368						   as cnnnmodifyuserid,
 		GETDATE()				   as cnnddtmodified,
 		null					   as cnnnlevelno,
-		null					   as caseno
+		null					   as caseno,
+		null					   as [source_id],
+		'needles'				   as [source_db],
+		'names.car_phone'		   as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -175,21 +142,7 @@ insert into [sma_MST_ContactNumbers]
 -- Home Primary Fax
 insert into [sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			as cnnncontactctgid,
@@ -212,7 +165,10 @@ insert into [sma_MST_ContactNumbers]
 		368							as cnnnmodifyuserid,
 		GETDATE()					as cnnddtmodified,
 		null						as cnnnlevelno,
-		null						as caseno
+		null						as caseno,
+		null						as [source_id],
+		'needles'					as [source_db],
+		'names.fax_number'			as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -226,21 +182,7 @@ insert into [sma_MST_ContactNumbers]
 -- Home Vacation Phone
 insert into [sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			   as cnnncontactctgid,
@@ -263,7 +205,10 @@ insert into [sma_MST_ContactNumbers]
 		368							   as cnnnmodifyuserid,
 		GETDATE()					   as cnnddtmodified,
 		null						   as cnnnlevelno,
-		null						   as caseno
+		null						   as caseno,
+		null						   as [source_id],
+		'needles'					   as [source_db],
+		'names.beeper_number'		   as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -282,21 +227,7 @@ insert into [sma_MST_ContactNumbers]
 --(1)-- 
 insert into [sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			  as cnnncontactctgid,
@@ -319,7 +250,10 @@ insert into [sma_MST_ContactNumbers]
 		368							  as cnnnmodifyuserid,
 		GETDATE()					  as cnnddtmodified,
 		null,
-		null
+		null						  as caseNo,
+		null						  as [source_id],
+		'needles'					  as [source_db],
+		'names.other_phone1'		  as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -333,21 +267,7 @@ insert into [sma_MST_ContactNumbers]
 --(2)--
 insert into [dbo].[sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			  as cnnncontactctgid,
@@ -370,7 +290,10 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		368							  as cnnnmodifyuserid,
 		GETDATE()					  as cnnddtmodified,
 		null,
-		null
+		null						  as caseno,
+		null						  as [source_id],
+		'needles'					  as [source_db],
+		'names.other_phone2'		  as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -383,21 +306,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 --(3)--
 insert into [dbo].[sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			  as cnnncontactctgid,
@@ -420,7 +329,10 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		368							  as cnnnmodifyuserid,
 		GETDATE()					  as cnnddtmodified,
 		null,
-		null
+		null						  as caseno,
+		null						  as [source_id],
+		'needles'					  as [source_db],
+		'names.other_phone3'		  as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -434,21 +346,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 --(4)--
 insert into [dbo].[sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			  as cnnncontactctgid,
@@ -471,7 +369,10 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		368							  as cnnnmodifyuserid,
 		GETDATE()					  as cnnddtmodified,
 		null,
-		null
+		null						  as caseno,
+		null						  as [source_id],
+		'needles'					  as [source_db],
+		'names.other_phone4'		  as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -485,21 +386,7 @@ insert into [dbo].[sma_MST_ContactNumbers]
 --(5)--
 insert into [dbo].[sma_MST_ContactNumbers]
 	(
-	[cnnnContactCtgID],
-	[cnnnContactID],
-	[cnnnPhoneTypeID],
-	[cnnsContactNumber],
-	[cnnsExtension],
-	[cnnbPrimary],
-	[cnnbVisible],
-	[cnnnAddressID],
-	[cnnsLabelCaption],
-	[cnnnRecUserID],
-	[cnndDtCreated],
-	[cnnnModifyUserID],
-	[cnndDtModified],
-	[cnnnLevelNo],
-	[caseNo]
+	[cnnnContactCtgID], [cnnnContactID], [cnnnPhoneTypeID], [cnnsContactNumber], [cnnsExtension], [cnnbPrimary], [cnnbVisible], [cnnnAddressID], [cnnsLabelCaption], [cnnnRecUserID], [cnndDtCreated], [cnnnModifyUserID], [cnndDtModified], [cnnnLevelNo], [caseNo], [source_id], [source_db], [source_ref]
 	)
 	select
 		c.cinnContactCtg			  as cnnncontactctgid,
@@ -522,7 +409,10 @@ insert into [dbo].[sma_MST_ContactNumbers]
 		368							  as cnnnmodifyuserid,
 		GETDATE()					  as cnnddtmodified,
 		null,
-		null
+		null						  as caseno,
+		null						  as [source_id],
+		'needles'					  as [source_db],
+		'names.other_phone5'		  as [source_ref]
 	from [JoelBieberNeedles].[dbo].[names] n
 	join [sma_MST_IndvContacts] c
 		on c.saga = n.names_id
@@ -539,7 +429,7 @@ set cnnbPrimary = 0
 from (
 	select
 		ROW_NUMBER() over (partition by cnnnContactID order by cnnnContactNumberID) as rownumber,
-		cnnnContactNumberID as contactnumberid
+		cnnnContactNumberID															as contactnumberid
 	from [sma_MST_ContactNumbers]
 	where cnnnContactCtgID = (
 			select

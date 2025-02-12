@@ -79,29 +79,32 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_Defendants]
 	(
-	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga], [saga_party]
+	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga], [saga_party], [source_id], [source_db], [source_ref]
 	)
 	select
-		casnCaseID	  as [defncaseid],
-		acio.CTG	  as [defncontactctgid],
-		acio.CID	  as [defncontactid],
-		acio.AID	  as [defnaddressid],
-		sbrnSubRoleId as [defnsubrole],
-		1			  as [defbisprimary],
-		null,
-		null,
-		null,
-		null,
-		null,
-		null,
-		368			  as [defnrecuserid],
-		GETDATE()	  as [defddtcreated],
-		null		  as [defnmodifyuserid],
-		null		  as [defddtmodified],
-		null		  as [defnlevelno],
-		null,
-		null,
-		p.TableIndex  as [saga_party]
+		casnCaseID		as [defncaseid],
+		acio.CTG		as [defncontactctgid],
+		acio.CID		as [defncontactid],
+		acio.AID		as [defnaddressid],
+		sbrnSubRoleId   as [defnsubrole],
+		1				as [defbisprimary],
+		null			as [defbCounterClaim],
+		null			as [defbThirdParty],
+		null			as [defsThirdPartyRole],
+		null			as [defnPriority],
+		null			as [defdFrmDt],
+		null			as [defdToDt],
+		368				as [defnrecuserid],
+		GETDATE()		as [defddtcreated],
+		null			as [defnmodifyuserid],
+		null			as [defddtmodified],
+		null			as [defnlevelno],
+		null			as [defsMarked],
+		null			as [saga],
+		p.TableIndex	as [saga_party],
+		null			as [source_id],
+		'needles'		as [source_db],
+		'party_indexed' as [source_ref]
 	from JoelBieberNeedles.[dbo].[party_indexed] p
 	join [sma_TRN_Cases] cas
 		on cas.cassCaseNumber = p.case_id
@@ -111,9 +114,9 @@ insert into [sma_TRN_Defendants]
 		on pr.[Needles Roles] = p.[role]
 	join [sma_MST_SubRole] s
 		on cas.casnOrgCaseTypeID = s.sbrnCaseTypeID
-			and s.sbrsDscrptn = [sa roles]
+			and s.sbrsDscrptn = [SA Roles]
 			and s.sbrnRoleID = 5
-	where pr.[sa party] = 'Defendant'
+	where pr.[SA Party] = 'Defendant'
 go
 
 
@@ -123,29 +126,32 @@ go
 -------------------------------------------------------------------------------
 insert into [sma_TRN_Defendants]
 	(
-	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga]
-	--[saga_party]
+	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga], [saga_party], [source_id], [source_db], [source_ref]
 	)
 	select
-		casnCaseID	  as [defncaseid],
-		cio.CTG		  as [defncontactctgid],
-		cio.CID		  as [defncontactid],
-		cio.AID		  as [defnaddressid],
-		sbrnSubRoleId as [defnsubrole],
-		1			  as [defbisprimary],
+		casnCaseID									  as [defncaseid],
+		cio.CTG										  as [defncontactctgid],
+		cio.CID										  as [defncontactid],
+		cio.AID										  as [defnaddressid],
+		sbrnSubRoleId								  as [defnsubrole],
+		1											  as [defbisprimary],
 		null,
 		null,
 		null,
 		null,
 		null,
 		null,
-		368			  as [defnrecuserid],
-		GETDATE()	  as [defddtcreated],
-		null		  as [defnmodifyuserid],
-		null		  as [defddtmodified],
-		null		  as [defnlevelno],
-		null,
-		null		  as [saga]
+		368											  as [defnrecuserid],
+		GETDATE()									  as [defddtcreated],
+		null										  as [defnmodifyuserid],
+		null										  as [defddtmodified],
+		null										  as [defnlevelno],
+		null										  as [defsMarked],
+		null										  as [saga],
+		null										  as [saga_party],
+		conv_ucpd.contact_name						  as [source_id],
+		'needles'									  as [source_db],
+		'cte_user_case_plaintiff_defendant:defendant' as [source_ref]
 	--p.TableIndex  as [saga_party]
 	--select *
 	from JoelBieberNeedles..user_case_data ucd
@@ -228,7 +234,7 @@ from (
 	select distinct
 		d.defnCaseID,
 		ROW_NUMBER() over (partition by d.defnCaseID order by p.record_num) as rownumber,
-		d.defnDefendentID as id
+		d.defnDefendentID													as id
 	from sma_TRN_Defendants d
 	left join JoelBieberNeedles.[dbo].[party_indexed] p
 		on p.TableIndex = d.saga_party
