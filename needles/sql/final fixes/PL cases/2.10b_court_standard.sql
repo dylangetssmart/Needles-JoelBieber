@@ -56,10 +56,11 @@ insert into [sma_TRN_Courts]
 			c.judge_link
 		from [JoelBieberNeedles].[dbo].[cases] c
 		join [sma_TRN_cases] cas
-			on cas.cassCaseNumber = c.casenum
+			on cas.cassCaseNumber = convert(varchar, c.casenum)
 		join IndvOrgContacts_Indexed ioc
 			on ioc.SAGA = c.court_link
 		where ISNULL(court_link, 0) <> 0
+		and cas.source_ref = 'PL'
 
 		union
 
@@ -70,7 +71,7 @@ insert into [sma_TRN_Courts]
 			c.judge_link
 		from [JoelBieberNeedles].[dbo].[cases] c
 		join [sma_TRN_cases] cas
-			on cas.cassCaseNumber = c.casenum
+			on cas.cassCaseNumber = convert(varchar, c.casenum)
 		join IndvOrgContacts_Indexed ioc
 			on ioc.SAGA = -1
 			and ioc.[Name] = 'Unidentified Court'

@@ -208,6 +208,7 @@ insert into [dbo].[sma_TRN_Employment]
 		on unid_employer.Name = 'Unidentified Employer'
 			and employer_org.CTG = 2
 	where v.code = 'lw'
+	and cas.source_ref = 'PL'
 go
 
 -------------------------------------------------------------------------------
@@ -276,7 +277,7 @@ insert into [sma_TRN_LostWages]
 		on e.empnPlaintiffID = p.plnnPlaintiffID
 			and e.empnEmployerID = COALESCE(employer_org.CID, employer_ind.CID) -- Prefer employer_org.CID, fallback to employer_ind.CID
 	where v.code = 'LW'
-
+	and cas.source_ref = 'PL'
 
 --select * from sma_TRN_Employment ste where 
 

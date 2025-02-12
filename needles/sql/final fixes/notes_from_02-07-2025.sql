@@ -34,7 +34,7 @@ insert into [sma_MST_NoteTypes]
 	select distinct
 		topic as nttsdscrptn,
 		topic as nttsnotetext
-	from JoelBieberNeedles.[dbo].[case_notes_Indexed]
+	from JoelBieberNeedlesMissingNotes.[dbo].[case_notes_Indexed]
 	except
 	select
 		nttsDscrptn,
@@ -47,6 +47,10 @@ alter table [sma_TRN_Notes] disable trigger all
 go
 
 ---
+
+SELECT *
+FROM JoelBieberNeedlesMissingNotes..case_notes_Indexed cni
+where cni.note_date = '2025-02-07'
 
 ----(1)----
 insert into [sma_TRN_Notes]
@@ -92,7 +96,7 @@ insert into [sma_TRN_Notes]
 	--select n.note_key, m.SAUserID, u.usrnUserID, COALESCE(m.SAUserID, u.usrnUserID)
 	from JoelBieberNeedlesMissingNotes.[dbo].[case_notes_Indexed] n
 	join [sma_TRN_Cases] c
-		on c.cassCaseNumber = convert(varchar, n.case_num)
+		on c.cassCaseNumber = n.case_num
 	left join [conversion].[imp_user_map] m
 		on m.StaffCode = n.staff_id
 	left join [sma_MST_Users] u
@@ -104,6 +108,7 @@ insert into [sma_TRN_Notes]
 	--where n.case_num = 226555
 	--and n.staff_id IN ('kmarsh', 'kgraham')
 	where ns.notnNoteID is null
+	and n.note_date = '2025-02-07'
 go
 
 

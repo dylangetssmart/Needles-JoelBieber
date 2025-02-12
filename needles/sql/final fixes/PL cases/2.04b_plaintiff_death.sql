@@ -39,6 +39,9 @@ SELECT
 FROM [sma_TRN_Plaintiff]  P
 JOIN [sma_MST_IndVContacts] I
 	on I.cinnContactID = P.plnnContactID
+join sma_TRN_Cases cas
+on cas.casnCaseID = p.plnnCaseID
 WHERE cindDateOfDeath is not null
+and cas.source_ref = 'pl'
 
 alter table [sma_TRN_PlaintiffDeath] enable trigger all

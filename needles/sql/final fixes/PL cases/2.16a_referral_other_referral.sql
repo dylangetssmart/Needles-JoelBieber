@@ -48,7 +48,7 @@ insert into [sma_TRN_OtherReferral]
 		GETDATE()	   as [otrddtcreated]
 	from JoelBieberNeedles.[dbo].[cases_indexed] c
 	join [sma_TRN_cases] cas
-		on cas.cassCaseNumber = c.casenum
+		on cas.cassCaseNumber = convert(varchar, c.casenum)
 	join [IndvOrgContacts_Indexed] ioc
 		on ioc.SAGA = c.referred_link
 			and c.referred_link > 0

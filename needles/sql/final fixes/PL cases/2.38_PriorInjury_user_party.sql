@@ -10,25 +10,7 @@ go
 
 insert into sma_TRN_PriorInjuries
 	(
-	[prlnInjuryID],
-	[prldPrAccidentDt],
-	[prldDiagnosis],
-	[prlsDescription],
-	[prlsComments],
-	[prlnPlaintiffID],
-	[prlnCaseID],
-	[prlnInjuryType],
-	[prlnParentInjuryID],
-	[prlsInjuryDesc],
-	[prlnRecUserID],
-	[prldDtCreated],
-	[prlnModifyUserID],
-	[prldDtModified],
-	[prlnLevelNo],
-	[prlbCaseRelated],
-	[prlbFirmCase],
-	[prlsPrCaseNo],
-	[prlsInjury]
+	[prlnInjuryID], [prldPrAccidentDt], [prldDiagnosis], [prlsDescription], [prlsComments], [prlnPlaintiffID], [prlnCaseID], [prlnInjuryType], [prlnParentInjuryID], [prlsInjuryDesc], [prlnRecUserID], [prldDtCreated], [prlnModifyUserID], [prldDtModified], [prlnLevelNo], [prlbCaseRelated], [prlbFirmCase], [prlsPrCaseNo], [prlsInjury]
 	)
 	select
 		null			  as [prlninjuryid],
@@ -55,12 +37,13 @@ insert into sma_TRN_PriorInjuries
 		''				  as [prlsinjury]
 	from JoelBieberNeedles..user_party_data upd
 	join sma_TRN_Cases cas
-		on cas.cassCaseNumber = convert(varchar,upd.case_id)
+		on cas.cassCaseNumber = CONVERT(VARCHAR, upd.case_id)
 	join sma_TRN_Plaintiff pln
 		on pln.plnnCaseID = cas.casnCaseID
-	where ISNULL(upd.PRIOR_INJURY, '') <> ''
+	where (ISNULL(upd.PRIOR_INJURY, '') <> ''
 		or ISNULL(upd.PRIOR_INJ, '') <> ''
-		or ISNULL(upd.Prior_Injuries, '') <> ''
+		or ISNULL(upd.Prior_Injuries, '') <> '')
+		and cas.source_ref = 'PL'
 
 --FROM JoelBieberNeedles..user_case_data ud
 --JOIN sma_TRN_Cases cas

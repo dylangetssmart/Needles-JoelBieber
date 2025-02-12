@@ -155,7 +155,7 @@ insert into conversion.insurance_contacts_helper
 	--select *
 	from JoelBieberNeedles.[dbo].[insurance_Indexed] ins
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = ins.case_num
+		on cas.cassCaseNumber = convert(varchar, ins.case_num)
 	join IndvOrgContacts_Indexed ioc1
 		on ioc1.saga = ins.insurer_id
 			and ISNULL(ins.insurer_id, 0) <> 0

@@ -197,7 +197,7 @@ INSERT INTO value_tab_Lien_Helper
 	   ,NULL		   AS Paid
 	FROM [JoelBieberNeedles].[dbo].[value_Indexed] V
 	INNER JOIN [JoelBieberSA_Needles].[dbo].[sma_TRN_cases] CAS
-		ON CAS.cassCaseNumber = V.case_id
+		ON CAS.cassCaseNumber = convert(varchar,V.case_id)
 	INNER JOIN [JoelBieberSA_Needles].[dbo].[IndvOrgContacts_Indexed] IOC
 		ON IOC.SAGA = V.provider
 			AND ISNULL(V.provider, 0) <> 0
@@ -375,6 +375,9 @@ INSERT INTO [dbo].[sma_TRN_Lienors]
 	INNER JOIN [JoelBieberSA_Needles].[dbo].[value_tab_Lien_Helper] MAP
 		ON MAP.case_id = V.case_id
 			AND MAP.value_id = V.value_id
+	join sma_TRN_Cases cas
+			on cas.cassCaseNumber = CONVERT(VARCHAR, v.case_id)
+		where cas.source_ref = 'PL'
 
 ---(2)---
 INSERT INTO [dbo].[sma_TRN_LienDetails]
@@ -394,7 +397,10 @@ INSERT INTO [dbo].[sma_TRN_LienDetails]
 	   ,'sma_TRN_Lienors'	 AS lndsRefTable
 	   ,368					 AS lndnRecUserID
 	   ,GETDATE()			 AS lnddDtCreated
-	FROM [JoelBieberSA_Needles].[dbo].[sma_TRN_Lienors]
+	FROM [JoelBieberSA_Needles].[dbo].[sma_TRN_Lienors] l
+	join sma_TRN_Cases cas
+	on cas.casnCaseID = l.lnrnCaseID
+	where cas.source_ref = 'PL'
 
 
 ----

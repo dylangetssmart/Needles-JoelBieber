@@ -75,7 +75,7 @@ insert into [sma_TRN_LawFirms]
 		on ud.counsel_id = c.counsel_id
 			and c.case_num = ud.casenum
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = c.case_num
+		on cas.cassCaseNumber = convert(varchar, c.case_num)
 	join IndvOrgContacts_Indexed ioc
 		on ioc.SAGA = c.counsel_id
 			and ISNULL(c.counsel_id, 0) <> 0
@@ -86,7 +86,7 @@ insert into [sma_TRN_LawFirms]
 		on d.defnContactID = iocd.CID
 			and d.defnContactCtgID = iocd.CTG
 			and d.defnCaseID = cas.casnCaseID
-		where cas.source_ref = 'PL'
+	where cas.source_ref = 'PL'
 go
 
 -------------------------------------------------------------------------------
@@ -114,6 +114,11 @@ insert into sma_TRN_LawFirmAttorneys
 		left join sma_MST_AllContactInfo ac
 			on ac.ContactCtg = 1
 			and ac.ContactId = f.lwfnAttorneyContactID
+		join sma_TRN_Defendants def
+			on def.defnDefendentID = f.[lwfncontactid]
+		join sma_TRN_Cases cas
+			on cas.casnCaseID = def.defnCaseID
+		where cas.source_ref = 'PL'
 	) a
 	where a.attorneycontactid is not null
 go

@@ -105,9 +105,10 @@ insert into [sma_TRN_Defendants]
 		null			as [source_id],
 		'needles'		as [source_db],
 		'party_indexed' as [source_ref]
+	--select *
 	from JoelBieberNeedles.[dbo].[party_indexed] p
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = p.case_id
+		on cas.cassCaseNumber = convert(varchar, p.case_id)
 	join IndvOrgContacts_Indexed acio
 		on acio.SAGA = p.party_id
 	join [PartyRoles] pr
@@ -125,57 +126,69 @@ go
 -- Insert defendants from conversion.user_case_plaintiff_defendant
 -- see: 1.06_contact_indv_user_plaintiff_defendant.sql
 -------------------------------------------------------------------------------
-insert into [sma_TRN_Defendants]
-	(
-	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga], [saga_party], [source_id], [source_db], [source_ref]
-	)
-	select
-		casnCaseID									  as [defncaseid],
-		cio.CTG										  as [defncontactctgid],
-		cio.CID										  as [defncontactid],
-		cio.AID										  as [defnaddressid],
-		sbrnSubRoleId								  as [defnsubrole],
-		1											  as [defbisprimary],
-		null,
-		null,
-		null,
-		null,
-		null,
-		null,
-		368											  as [defnrecuserid],
-		GETDATE()									  as [defddtcreated],
-		null										  as [defnmodifyuserid],
-		null										  as [defddtmodified],
-		null										  as [defnlevelno],
-		null										  as [defsMarked],
-		null										  as [saga],
-		null										  as [saga_party],
-		conv_ucpd.contact_name						  as [source_id],
-		'needles'									  as [source_db],
-		'cte_user_case_plaintiff_defendant:defendant' as [source_ref]
-	--p.TableIndex  as [saga_party]
-	--select *
-	from JoelBieberNeedles..user_case_data ucd
-	-- case
-	join sma_TRN_Cases cas
-		on cas.cassCaseNumber = CONVERT(VARCHAR, ucd.casenum)
-	-- contact: conversion.user_case_plaintiff_defendant > sma_mst_indvcontacts > indvorgcontacts_indexed
-	join conversion.user_case_plaintiff_defendant conv_ucpd
-		on conv_ucpd.contact_name = ucd.DEFENDANT
-			and conv_ucpd.plaintiff_or_defendant = 'D'
-	join sma_mst_indvcontacts indv
-		on indv.source_id = conv_ucpd.contact_name
-			and indv.source_ref = 'cte_user_case_plaintiff_defendant:defendant'
-	join IndvOrgContacts_Indexed cio
-		on cio.CID = indv.cinnContactID
-			and cio.CTG = 1
-	-- role
-	join [sma_MST_SubRole] s
-		on cas.casnOrgCaseTypeID = s.sbrnCaseTypeID
-			and s.sbrsDscrptn = '(D)-DEFENDANT'
-			and s.sbrnRoleID = 5
-	where cas.source_ref = 'PL'
-go
+
+--SELECT ucd.PLAINTIFF, ucd.DEFENDANT
+--FROM JoelBieberNeedles..user_case_data ucd
+--join JoelBieberNeedles..cases_Indexed c
+--on ucd.casenum = c.casenum
+--where c.matcode = 'PL'
+--		and (
+--		c.date_of_incident > '2010-12-31'
+--		or (c.date_of_incident is null
+--		and c.date_opened > '2010-12-31')
+--		)
+
+--insert into [sma_TRN_Defendants]
+--	(
+--	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga], [saga_party], [source_id], [source_db], [source_ref]
+--	)
+--	select
+--		casnCaseID									  as [defncaseid],
+--		cio.CTG										  as [defncontactctgid],
+--		cio.CID										  as [defncontactid],
+--		cio.AID										  as [defnaddressid],
+--		sbrnSubRoleId								  as [defnsubrole],
+--		1											  as [defbisprimary],
+--		null,
+--		null,
+--		null,
+--		null,
+--		null,
+--		null,
+--		368											  as [defnrecuserid],
+--		GETDATE()									  as [defddtcreated],
+--		null										  as [defnmodifyuserid],
+--		null										  as [defddtmodified],
+--		null										  as [defnlevelno],
+--		null										  as [defsMarked],
+--		null										  as [saga],
+--		null										  as [saga_party],
+--		conv_ucpd.contact_name						  as [source_id],
+--		'needles'									  as [source_db],
+--		'cte_user_case_plaintiff_defendant:defendant' as [source_ref]
+--	--p.TableIndex  as [saga_party]
+--	--select *
+--	from JoelBieberNeedles..user_case_data ucd
+--	-- case
+--	join sma_TRN_Cases cas
+--		on cas.cassCaseNumber = CONVERT(VARCHAR, ucd.casenum)
+--	-- contact: conversion.user_case_plaintiff_defendant > sma_mst_indvcontacts > indvorgcontacts_indexed
+--	join conversion.user_case_plaintiff_defendant conv_ucpd
+--		on conv_ucpd.contact_name = ucd.DEFENDANT
+--			and conv_ucpd.plaintiff_or_defendant = 'D'
+--	join sma_mst_indvcontacts indv
+--		on indv.source_id = conv_ucpd.contact_name
+--			and indv.source_ref = 'cte_user_case_plaintiff_defendant:defendant'
+--	join IndvOrgContacts_Indexed cio
+--		on cio.CID = indv.cinnContactID
+--			and cio.CTG = 1
+--	-- role
+--	join [sma_MST_SubRole] s
+--		on cas.casnOrgCaseTypeID = s.sbrnCaseTypeID
+--			and s.sbrsDscrptn = '(D)-DEFENDANT'
+--			and s.sbrnRoleID = 5
+--	where cas.source_ref = 'PL'
+--go
 
 
 -------------------------------------------------------------------------------

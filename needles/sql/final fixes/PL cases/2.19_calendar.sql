@@ -295,7 +295,7 @@ insert into [sma_TRN_CalendarAppointments]
 		'Case-related:' + CONVERT(VARCHAR, cal.calendar_id) as [saga]
 	from JoelBieberNeedles.[dbo].[calendar] cal
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = cal.casenum
+		on cas.cassCaseNumber = convert(varchar, cal.casenum)
 	join CalendarJudgeStaffCourt map
 		on map.calendarid = cal.calendar_id
 	where ISNULL(cal.casenum, 0) <> 0

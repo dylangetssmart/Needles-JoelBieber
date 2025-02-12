@@ -1,6 +1,6 @@
 use JoelBieberSA_Needles
 go
-	
+
 alter table [sma_TRN_PlaintiffInjury] disable trigger all
 go
 
@@ -10,19 +10,7 @@ go
 
 insert into [sma_TRN_PlaintiffInjury]
 	(
-	[plinPlaintiffID],
-	[plinCaseID],
-	[plisInjuriesSummary],
-	[plisPleadingsSummary],
-	[plisConfinementHospital],
-	[plisConfinementBed],
-	[plisConfinementHome],
-	[plisConfinementIncapacitated],
-	[plisComment],
-	[plinRecUserID],
-	[plidDtCreated],
-	[plinModifyUserID],
-	[plidDtModified]
+	[plinPlaintiffID], [plinCaseID], [plisInjuriesSummary], [plisPleadingsSummary], [plisConfinementHospital], [plisConfinementBed], [plisConfinementHome], [plisConfinementIncapacitated], [plisComment], [plinRecUserID], [plidDtCreated], [plinModifyUserID], [plidDtModified]
 	)
 	select
 		pln.plnnPlaintiffID as [plinplaintiffid],
@@ -47,9 +35,10 @@ insert into [sma_TRN_PlaintiffInjury]
 		on cas.cassCaseNumber = CONVERT(VARCHAR, upd.case_id)
 	join [sma_TRN_Plaintiff] pln
 		on pln.plnnCaseID = cas.casnCaseID
-	where ISNULL(upd.Injuries, '') <> ''
+	where (ISNULL(upd.Injuries, '') <> ''
 		or ISNULL(upd.Current_Injuries, '') <> ''
-		or ISNULL(upd.CURRENT_INJ, '') <> ''
+		or ISNULL(upd.CURRENT_INJ, '') <> '')
+		and cas.source_ref = 'PL'
 go
 
 alter table [sma_TRN_PlaintiffInjury] enable trigger all

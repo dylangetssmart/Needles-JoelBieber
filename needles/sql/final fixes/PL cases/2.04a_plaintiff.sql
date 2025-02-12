@@ -114,10 +114,10 @@ insert into [sma_TRN_Plaintiff]
 		null			as [source_id],
 		'needles'		as [source_db],
 		'party_indexed' as [source_ref]
-	SELECT  * -- cas.casncaseid, p.role, p.party_ID, pr.[needles roles], pr.[sa roles], pr.[sa party], s.*
+	--SELECT  * -- cas.casncaseid, p.role, p.party_ID, pr.[needles roles], pr.[sa roles], pr.[sa party], s.*
 	from JoelBieberNeedles.[dbo].[party_Indexed] p
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = p.case_id
+		on cas.cassCaseNumber = convert(varchar, p.case_id)
 	join IndvOrgContacts_Indexed cio
 		on cio.SAGA = p.party_id
 	join [PartyRoles] pr
@@ -133,73 +133,84 @@ insert into [sma_TRN_Plaintiff]
 go
 
 
+--SELECT ucd.PLAINTIFF, ucd.DEFENDANT
+--FROM JoelBieberNeedles..user_case_data ucd
+--join JoelBieberNeedles..cases_Indexed c
+--on ucd.casenum = c.casenum
+--where c.matcode = 'PL'
+--		and (
+--		c.date_of_incident > '2010-12-31'
+--		or (c.date_of_incident is null
+--		and c.date_opened > '2010-12-31')
+--		)
+
 -------------------------------------------------------------------------------
 -- Insert plaintiffs from conversion.user_case_plaintiff_defendant
 -- see: 1.06_contact_indv_user_plaintiff_defendant.sql
 -------------------------------------------------------------------------------
-insert into [sma_TRN_Plaintiff]
-	(
-	[plnnCaseID], [plnnContactCtg], [plnnContactID], [plnnAddressID], [plnnRole], [plnbIsPrimary], [plnbWCOut], [plnnPartiallySettled], [plnbSettled], [plnbOut], [plnbSubOut], [plnnSeatBeltUsed], [plnnCaseValueID], [plnnCaseValueFrom], [plnnCaseValueTo], [plnnPriority], [plnnDisbursmentWt], [plnbDocAttached], [plndFromDt], [plndToDt], [plnnRecUserID], [plndDtCreated], [plnnModifyUserID], [plndDtModified], [plnnLevelNo], [plnsMarked], [saga], [plnnNoInj], [plnnMissing], [plnnLIPBatchNo], [plnnPlaintiffRole], [plnnPlaintiffGroup], [plnnPrimaryContact], [saga_party], [source_id], [source_db], [source_ref]
-	)
-	select
-		cas.casnCaseID								  as [plnncaseid],
-		cio.CTG										  as [plnncontactctg],
-		cio.CID										  as [plnncontactid],
-		cio.AID										  as [plnnaddressid],
-		s.sbrnSubRoleId								  as [plnnrole],
-		1											  as [plnbisprimary],
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		null,
-		null,
-		null,
-		null,
-		null,
-		null,
-		GETDATE(),
-		null,
-		368											  as [plnnrecuserid],
-		GETDATE()									  as [plnddtcreated],
-		null,
-		null,
-		null										  as [plnnlevelno],
-		null,
-		'',
-		null,
-		null,
-		null,
-		null,
-		null,
-		1											  as [plnnprimarycontact],
-		null										  as [saga_party],
-		conv_ucpd.contact_name						  as [source_id],
-		'needles'									  as [source_db],
-		'cte_user_case_plaintiff_defendant:plaintiff' as [source_ref]
-	--SELECT  * cas.casnOrgCaseTypeID -- cas.casncaseid, p.role, p.party_ID, pr.[needles roles], pr.[sa roles], pr.[sa party], s.*
-	from JoelBieberNeedles..user_case_data ucd
-	-- case
-	join sma_TRN_Cases cas
-		on cas.cassCaseNumber = CONVERT(VARCHAR, ucd.casenum)
-	-- contact: conversion.user_case_plaintiff_defendant > sma_mst_indvcontacts > indvorgcontacts_indexed
-	join conversion.user_case_plaintiff_defendant conv_ucpd
-		on conv_ucpd.contact_name = ucd.PLAINTIFF
-			and conv_ucpd.plaintiff_or_defendant = 'P'
-	join sma_mst_indvcontacts indv
-		on indv.source_id = conv_ucpd.contact_name
-			and indv.source_ref = 'cte_user_case_plaintiff_defendant:plaintiff'
-	join IndvOrgContacts_Indexed cio
-		on cio.cid = indv.cinncontactid
-			and cio.ctg = 1
-	-- role
-	join [sma_MST_SubRole] s
-		on cas.casnOrgCaseTypeID = s.sbrnCaseTypeID
-			and s.sbrsDscrptn = '(P)-Plaintiff'
-			and s.sbrnRoleID = 4
-	where cas.source_ref = 'PL'
+--insert into [sma_TRN_Plaintiff]
+--	(
+--	[plnnCaseID], [plnnContactCtg], [plnnContactID], [plnnAddressID], [plnnRole], [plnbIsPrimary], [plnbWCOut], [plnnPartiallySettled], [plnbSettled], [plnbOut], [plnbSubOut], [plnnSeatBeltUsed], [plnnCaseValueID], [plnnCaseValueFrom], [plnnCaseValueTo], [plnnPriority], [plnnDisbursmentWt], [plnbDocAttached], [plndFromDt], [plndToDt], [plnnRecUserID], [plndDtCreated], [plnnModifyUserID], [plndDtModified], [plnnLevelNo], [plnsMarked], [saga], [plnnNoInj], [plnnMissing], [plnnLIPBatchNo], [plnnPlaintiffRole], [plnnPlaintiffGroup], [plnnPrimaryContact], [saga_party], [source_id], [source_db], [source_ref]
+--	)
+--	select
+--		cas.casnCaseID								  as [plnncaseid],
+--		cio.CTG										  as [plnncontactctg],
+--		cio.CID										  as [plnncontactid],
+--		cio.AID										  as [plnnaddressid],
+--		s.sbrnSubRoleId								  as [plnnrole],
+--		1											  as [plnbisprimary],
+--		0,
+--		0,
+--		0,
+--		0,
+--		0,
+--		0,
+--		null,
+--		null,
+--		null,
+--		null,
+--		null,
+--		null,
+--		GETDATE(),
+--		null,
+--		368											  as [plnnrecuserid],
+--		GETDATE()									  as [plnddtcreated],
+--		null,
+--		null,
+--		null										  as [plnnlevelno],
+--		null,
+--		'',
+--		null,
+--		null,
+--		null,
+--		null,
+--		null,
+--		1											  as [plnnprimarycontact],
+--		null										  as [saga_party],
+--		conv_ucpd.contact_name						  as [source_id],
+--		'needles'									  as [source_db],
+--		'cte_user_case_plaintiff_defendant:plaintiff' as [source_ref]
+--	--SELECT  * cas.casnOrgCaseTypeID -- cas.casncaseid, p.role, p.party_ID, pr.[needles roles], pr.[sa roles], pr.[sa party], s.*
+--	from JoelBieberNeedles..user_case_data ucd
+--	-- case
+--	join sma_TRN_Cases cas
+--		on cas.cassCaseNumber = CONVERT(VARCHAR, ucd.casenum)
+--	-- contact: conversion.user_case_plaintiff_defendant > sma_mst_indvcontacts > indvorgcontacts_indexed
+--	join conversion.user_case_plaintiff_defendant conv_ucpd
+--		on conv_ucpd.contact_name = ucd.PLAINTIFF
+--			and conv_ucpd.plaintiff_or_defendant = 'P'
+--	join sma_mst_indvcontacts indv
+--		on indv.source_id = conv_ucpd.contact_name
+--			and indv.source_ref = 'cte_user_case_plaintiff_defendant:plaintiff'
+--	join IndvOrgContacts_Indexed cio
+--		on cio.cid = indv.cinncontactid
+--			and cio.ctg = 1
+--	-- role
+--	join [sma_MST_SubRole] s
+--		on cas.casnOrgCaseTypeID = s.sbrnCaseTypeID
+--			and s.sbrsDscrptn = '(P)-Plaintiff'
+--			and s.sbrnRoleID = 4
+--	where cas.source_ref = 'PL'
 
 /*
 subrole records added by implementation

@@ -75,6 +75,9 @@ insert into conversion.officer_helper
 		on a.addnContactID = i.cinnContactID
 			and a.addnContactCtgID = i.cinnContactCtg
 			and a.addbPrimary = 1
+		join sma_TRN_Cases cas
+		on cas.cassCaseNumber = convert(varchar, p.case_num)
+	where cas.source_ref = 'pl'
 
 go
 
@@ -139,9 +142,10 @@ insert into conversion.police_helper
 		)			   as officeraid
 	from JoelBieberNeedles.[dbo].[police] p
 	join [sma_TRN_cases] cas
-		on cas.cassCaseNumber = p.case_num
+		on cas.cassCaseNumber = convert(varchar, p.case_num)
 	join [IndvOrgContacts_Indexed] ioc
 		on ioc.SAGA = p.police_id
+	where cas.source_ref = 'pl'
 go
 
 dbcc dbreindex ('conversion.Police_Helper', ' ', 90) with no_infomsgs

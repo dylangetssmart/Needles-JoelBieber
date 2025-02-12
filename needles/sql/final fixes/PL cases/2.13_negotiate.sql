@@ -73,6 +73,18 @@ go
 -- insert negotiations
 ---------------------------------------------------
 
+
+	--SELECT * FROM JoelBieberNeedles..negotiation neg
+	--join JoelBieberNeedles..cases_Indexed c
+	--on neg.case_id = c.casenum
+	--where c.matcode = 'PL'
+	--	and (
+	--	c.date_of_incident > '2010-12-31'
+	--	or (c.date_of_incident is null
+	--	and c.date_opened > '2010-12-31')
+	--	)
+
+
 alter table [sma_TRN_Negotiations] disable trigger all
 
 if not exists (

@@ -368,8 +368,8 @@ insert into [sma_TRN_Disbursement]
 		end								   as disddtcreated,
 		case
 			when v.code = 'DTF'
-				then 0
-			else 1
+				then 1
+			else 0
 		end								   as disnrecoverable,
 		v.value_id						   as saga,
 		null							   as source_id,

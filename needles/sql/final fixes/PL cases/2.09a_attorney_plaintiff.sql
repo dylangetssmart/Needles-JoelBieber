@@ -117,9 +117,12 @@ insert into sma_TRN_LawFirmAttorneys
 			ac.UniqueContactID												   as attorneycontactid,
 			ROW_NUMBER() over (partition by f.planCaseID order by f.planAtnID) as sequencenumber
 		from [sma_TRN_PlaintiffAttorney] f
+		join sma_TRN_Cases cas
+		on cas.casnCaseID = f.planCaseID
 		left join sma_MST_AllContactInfo ac
 			on ac.ContactCtg = 1
 			and ac.ContactId = f.planAtorneyContactID
+		where cas.source_ref = 'PL'
 	) a
 	where a.attorneycontactid is not null
 go

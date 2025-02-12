@@ -131,7 +131,7 @@ insert into [sma_TRN_SOLs]
 		'D'				  as [solstype]
 	from JoelBieberNeedles.[dbo].[cases_Indexed] c
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = c.casenum
+		on cas.cassCaseNumber = convert(varchar, c.casenum)
 	join [sma_TRN_Defendants] d
 		on d.defnCaseID = cas.casnCaseID
 	where c.lim_date is not null
@@ -144,7 +144,7 @@ go
 
 -----
 
-
+--SELECT * FROM sma_MST_SOLDetails sms
 ----(Appendix)----
 update sma_MST_SOLDetails
 set sldnFromIncident = 0

@@ -284,7 +284,7 @@ go
 
 insert into [sma_TRN_Disbursement]
 	(
-	disnCaseID, disdCheckDt, disnPayeeContactCtgID, disnPayeeContactID, disnAmount, disnPlaintiffID, dissDisbursementType, UniquePayeeID, dissDescription, dissComments, disnCheckRequestStatus, disdBillDate, disdDueDate, disnRecUserID, disdDtCreated, disnRecoverable, saga, source_id_1, source_id_2, source_id_3
+	disnCaseID, disdCheckDt, disnPayeeContactCtgID, disnPayeeContactID, disnAmount, disnPlaintiffID, dissDisbursementType, UniquePayeeID, dissDescription, dissComments, disnCheckRequestStatus, disdBillDate, disdDueDate, disnRecUserID, disdDtCreated, disnRecoverable, saga, source_id, source_db, source_ref
 	)
 	select
 		map.casnCaseID					   as disncaseid,
@@ -368,8 +368,8 @@ insert into [sma_TRN_Disbursement]
 		end								   as disddtcreated,
 		case
 			when v.code = 'DTF'
-				then 0
-			else 1
+				then 1
+			else 0
 		end								   as disnrecoverable,
 		v.value_id						   as saga,
 		null							   as source_id,
@@ -383,6 +383,9 @@ insert into [sma_TRN_Disbursement]
 		on m.StaffCode = v.staff_created
 	left join [sma_MST_Users] u
 		on u.source_id = v.staff_created
+	join sma_TRN_Cases cas
+			on cas.cassCaseNumber = CONVERT(VARCHAR, v.case_id)
+		where cas.source_ref = 'PL'
 --join JoelBieberNeedles..user_tab2_data u
 --	on u.case_id = v.case_id
 go

@@ -72,7 +72,7 @@ insert into [sma_TRN_ReferredOut]
 		0			   as rfonislawfirmupdatetosend
 	from JoelBieberNeedles.[dbo].[cases_indexed] c
 	join [sma_TRN_cases] cas
-		on cas.cassCaseNumber = c.casenum
+		on cas.cassCaseNumber = convert(varchar, c.casenum)
 	join [IndvOrgContacts_Indexed] ioc
 		on ioc.SAGA = c.referred_to_id
 			and c.referred_to_id > 0
@@ -91,7 +91,10 @@ where cinnContactID in (
 	select
 		rfonAttContactID
 	from sma_TRN_ReferredOut
+	join sma_TRN_Cases cas
+	on cas.casnCaseID = sma_TRN_ReferredOut.rfonCaseID
 	where ISNULL(rfonAttContactID, '') <> ''
+	and cas.source_ref = 'PL'
 )
 
 
