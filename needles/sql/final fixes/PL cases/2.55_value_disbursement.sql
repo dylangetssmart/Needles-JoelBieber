@@ -183,7 +183,7 @@ insert into value_tab_Disbursement_Helper
 		null		   as plaintiffid
 	from [JoelBieberNeedles].[dbo].[value_Indexed] v
 	join [sma_TRN_cases] cas
-		on cas.cassCaseNumber = v.case_id
+		on cas.cassCaseNumber = convert(varchar, v.case_id)
 	join IndvOrgContacts_Indexed ioc
 		on ioc.SAGA = v.provider
 			and ISNULL(v.provider, 0) <> 0

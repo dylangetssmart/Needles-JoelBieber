@@ -1,4 +1,4 @@
-use JoelBieberSA_Needles
+use sa
 go
 
 
@@ -375,6 +375,7 @@ insert into [sma_TRN_Disbursement]
 		on m.StaffCode = v.staff_created
 	left join [sma_MST_Users] u
 		on u.source_id = v.staff_created
+	where v.code = 'INT'
 --join JoelBieberNeedles..user_tab2_data u
 --	on u.case_id = v.case_id
 go

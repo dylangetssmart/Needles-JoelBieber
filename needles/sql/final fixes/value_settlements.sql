@@ -1,4 +1,4 @@
-use JoelBieberSA_Needles
+use sa
 go
 
 
@@ -306,7 +306,7 @@ go
 insert into [sma_TRN_Settlements]
 	(
 	stlnCaseID, stlnSetAmt, stlnNet, stlnNetToClientAmt, stlnPlaintiffID, stlnStaffID, stlnLessDisbursement, stlnGrossAttorneyFee, stlnForwarder,  --referrer
-	stlnOther, InterestOnDisbursement, stlsComments, stlTypeID, stldSettlementDate, saga
+	stlnOther, InterestOnDisbursement, stlsComments, stlTypeID, stldSettlementDate, saga, source_id, source_db, source_ref
 	)
 	select
 		map.casnCaseID  as stlncaseid,
