@@ -2,15 +2,10 @@
 
 */
 
-use [JoelBieberSA_Needles]
+use [SA]
 go
 
-/*
-alter table [sma_TRN_Notes] disable trigger all
-delete from [sma_TRN_Notes] 
-DBCC CHECKIDENT ('[sma_TRN_Notes]', RESEED, 0);
-alter table [sma_TRN_Notes] enable trigger all
-*/
+
 if not exists (
 		select
 			*
@@ -48,9 +43,9 @@ go
 
 ---
 
-SELECT *
-FROM JoelBieberNeedlesMissingNotes..case_notes_Indexed cni
-where cni.note_date = '2025-02-07'
+--SELECT *
+--FROM JoelBieberNeedlesMissingNotes..case_notes_Indexed cni
+--where cni.note_date = '2025-02-07'
 
 ----(1)----
 insert into [sma_TRN_Notes]
@@ -92,29 +87,22 @@ insert into [sma_TRN_Notes]
 		note_key						   as saga,
 		null							   as [source_id],
 		'needles'						   as [source_db],
-		'case_notes_Indexed'			   as [source_ref]
+		'case_notes_Indexed_02-07-2025'	   as [source_ref]
 	--select n.note_key, m.SAUserID, u.usrnUserID, COALESCE(m.SAUserID, u.usrnUserID)
 	from JoelBieberNeedlesMissingNotes.[dbo].[case_notes_Indexed] n
 	join [sma_TRN_Cases] c
-		on c.cassCaseNumber = n.case_num
+		on c.cassCaseNumber = CONVERT(VARCHAR, n.case_num)
 	left join [conversion].[imp_user_map] m
 		on m.StaffCode = n.staff_id
 	left join [sma_MST_Users] u
 		on u.source_id = n.staff_id
-	--left join [sma_MST_Users] u
-	--	on u.source_id = n.staff_id
 	left join [sma_TRN_Notes] ns
 		on ns.saga = note_key
 	--where n.case_num = 226555
 	--and n.staff_id IN ('kmarsh', 'kgraham')
 	where ns.notnNoteID is null
-	and n.note_date = '2025-02-07'
+		and n.note_date = '2025-02-07'
 go
-
-
---alter table sma_trn_notes disable trigger all
---update  sma_trn_notes set notmPlainText=replace(notmPlainText,char(10),'<br>') where  notmPlainText like '%'+char(10)+'%'
---alter table sma_trn_notes enable trigger all
 
 ---
 alter table [sma_TRN_Notes] enable trigger all

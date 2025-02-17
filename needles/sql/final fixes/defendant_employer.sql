@@ -1,136 +1,78 @@
-SELECT * FROM PartyRoles pr
---EMPLOYER	(D)-EMPLOYER	DEFENDANT
+/*
+
+	- create defendants with role = (D)-Employer
+	- remove plaintiffs with role (P)-Employer
+*	- ensure they are not primary plaintiffs
+ 
+
+*/
+
+
+--'Workplace Injury - General'
+SELECT * FROM sma_MST_CaseType ct
+where ct.cstsType = 'Workplace Injury - General'
+--cstnCaseTypeID = 1775
 
 
 
-SELECT * FROM sma_MST_SubRole smsr
--- 4 = pln
--- 5 = def
-
-
-SELECT * FROM sma_MST_SubRole smsr where smsr.sbrsDscrptn like '%employer%'
---33008
---33046
---33089
---33094
---33138
---33167
---33189
---33198
---33209
---33236
---33286
-
-SELECT * FROM sma_MST_SubRoleCode
-SELECT * FROM sma_MST_SubRole smsr
-
-
-SELECT *
-FROM sma_TRN_Plaintiff pln
-where pln.plnnRole in (
-'33008',
-'33046',
-'33089',
-'33094',
-'33138',
-'33167',
-'33189',
-'33198',
-'33209',
-'33236',
-'33286'
-)
+-- how many are there?
+select
+	*
+from JoelBieberNeedles..party_Indexed p
+join sma_TRN_Cases cas
+	on cas.cassCaseNumber = CONVERT(VARCHAR, p.case_id)
+where role = 'employer'
+-- 194
 
 
 select
-				sbrnSubRoleId
-			from sma_MST_SubRole s
-			inner join sma_MST_SubRoleCode c
-				on c.srcnCodeId = s.sbrnTypeCode
-				and c.srcsDscrptn = '(P)-Default Role'
-			where s.sbrnCaseTypeID = cas.casnOrgCaseTypeID
+	cas.casnCaseID	   as CaseId,
+	cas.cassCaseNumber as CaseNumber,
+	cas.cassCaseName   as CaseName,
+	ioci.Name		   as PlaintiffName,
+	ct.cstsType		   as CaseType,
+	grp.cgpsDscrptn	   as CaseGroup
+--pln.plnnPlaintiffID, pln.plnnCaseID, pln.plnnContactCtg, pln.plnnContactID, pln.plnbIsPrimary, sr.sbrsDscrptn, ct.cstsType
+from sma_TRN_Plaintiff pln
+join sma_MST_SubRole sr
+	on pln.plnnRole = sr.sbrnSubRoleId
+join sma_TRN_Cases cas
+	on cas.casnCaseID = pln.plnnCaseID
+join sma_MST_CaseType ct
+	on ct.cstnCaseTypeID = cas.casnOrgCaseTypeID
+join sma_MST_CaseGroup grp
+	on grp.cgpnCaseGroupID = ct.cstnGroupID
+join IndvOrgContacts_Indexed ioci
+	on ioci.CID = pln.plnnContactID
+		and ioci.CTG = pln.plnnContactCtg
+where sr.sbrsDscrptn = '(P)-Employer'
+	and pln.plnbIsPrimary = 0
 
 
-/* --------------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample Case = 230740
-id = 24637
-*/
 
-SELECT * FROM sma_TRN_Plaintiff
+-- Sample Case = 230740
+-- id = 24637
+
+select
+	*
+from sma_TRN_Plaintiff
 where plnnCaseID = 24637
 
-SELECT * FROM sma_TRN_Cases cas
-where  cas.casnCaseID = 24637
+select
+	*
+from sma_TRN_Cases cas
+where cas.casnCaseID = 24637
 -- casnOrgCaseTypeID
 -- 1775
 -- Workplace Injury - General
 
 
 /* --------------------------------------------------------------------------------------------------------------------------------------------------------------
-Create Employer Defendant Subrole
+Create Defendants
 
 */
 
---case > casetype > subrole
-
-SELECT * FROM PartyRoles pr
-SELECT * FROM CaseTypeMixture ctm
-
-SELECT *, grp.cgpsCode, grp.cgpsDscrptn FROM sma_MST_CaseType smct --where smct.cstnCaseTypeID = 1775
-join sma_MST_CaseGroup grp
-on smct.cstnGroupID = grp.cgpnCaseGroupID
-where smct.cstnCaseTypeID in(
-1781,
-1701,
-383,
-1601,
-1590,
-1780,
-1685,
-1787,
-1775,
-1782,
-1690)
-
-SELECT * FROM sma_MST_SubRole smsr
-SELECT * FROM sma_MST_SubRole smsr where smsr.sbrsDscrptn like '%employer%'
-
-SELECT * FROM sma_MST_SubRoleCode
-
-
--- insert (D)-Employer subrole for each applicable case type
-insert into [sma_MST_SubRole]
-	(
-	[sbrsCode],
-	[sbrnRoleID],
-	[sbrsDscrptn],
-	[sbrnCaseTypeID],
-	[sbrnRecUserID],
-	[sbrdDtCreated]
-	)
-	select
-		null		   as [sbrscode],
-		5	   as [sbrnroleid],
-		'(D)-Employer'	   as [sbrsdscrptn],
-		cst.cstnCaseTypeID as [sbrncasetypeid],
-		368	   as [sbrnrecuserid],
-		GETDATE()	   as [sbrddtcreated]
-	from sma_MST_CaseType cst
-	where cst.cstnCaseTypeID = 1775
-
-	--left join sma_mst_subrole s
-	--	on cst.cstnCaseTypeID = s.sbrncasetypeid
-	--		or s.sbrncasetypeid = 1
-	--join [CaseTypeMixture] mix
-	--	on mix.matcode = cst.cstsCode
-	--where VenderCaseType = (
-	--		select
-	--			VenderCaseType
-	--		from conversion.office
-	--	)
-	--	and ISNULL(mix.[SmartAdvocate Case Type], '') = ''
-
-
+-- Create (D)-Employer subrole code 
 insert into [sma_MST_SubRoleCode]
 	(
 	srcsDscrptn, srcnRoleID
@@ -144,15 +86,31 @@ insert into [sma_MST_SubRoleCode]
 		srcnRoleID
 	from [sma_MST_SubRoleCode]
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
--- add defendants
+
+-- Create (D)-Employer subrole
+insert into [sma_MST_SubRole]
+	(
+	[sbrsCode], [sbrnRoleID], [sbrsDscrptn], [sbrnCaseTypeID], [sbrnRecUserID], [sbrdDtCreated], [sbrnTypeCode]
+	)
+	select
+		null			   as [sbrscode],
+		5				   as [sbrnroleid],
+		'(D)-Employer'	   as [sbrsdscrptn],
+		cst.cstnCaseTypeID as [sbrncasetypeid],
+		368				   as [sbrnrecuserid],
+		GETDATE()		   as [sbrddtcreated],
+		(
+			select
+				code.srcnCodeId
+			from sma_mst_SubRoleCode code
+			where code.srcsDscrptn = '(D)-Employer'
+				and code.srcnRoleID = 5
+		)				   as [sbrnTypeCode]
+	from sma_MST_CaseType cst
+	where cst.cstnCaseTypeID = 1775
 
 
-SELECT distinct role FROM JoelBieberNeedles..party_Indexed p order by role
-
-
-
-
+-- Insert Defendants
 insert into [sma_TRN_Defendants]
 	(
 	[defnCaseID], [defnContactCtgID], [defnContactID], [defnAddressID], [defnSubRole], [defbIsPrimary], [defbCounterClaim], [defbThirdParty], [defsThirdPartyRole], [defnPriority], [defdFrmDt], [defdToDt], [defnRecUserID], [defdDtCreated], [defnModifyUserID], [defdDtModified], [defnLevelNo], [defsMarked], [saga], [saga_party], [source_id], [source_db], [source_ref]
@@ -184,7 +142,7 @@ insert into [sma_TRN_Defendants]
 	--select *
 	from JoelBieberNeedles.[dbo].[party_indexed] p
 	join [sma_TRN_Cases] cas
-		on cas.cassCaseNumber = convert(varchar, p.case_id)
+		on cas.cassCaseNumber = CONVERT(VARCHAR, p.case_id)
 	join IndvOrgContacts_Indexed acio
 		on acio.SAGA = p.party_id
 	join [PartyRoles] pr
@@ -198,13 +156,227 @@ insert into [sma_TRN_Defendants]
 		and cas.casnCaseID = 24637
 
 
-SELECT * FROM JoelBieberNeedles..party_Indexed p where role = 'employer' and case_id = 230740
-SELECT * FROM PartyRoles pr
-select * from [sma_MST_SubRole] where sbrnSubRoleId = 33473
-SELECT *, grp.cgpsCode, grp.cgpsDscrptn FROM sma_MST_CaseType smct 
 
 
-UPDATE subrole 
+/* --------------------------------------------------------------------------------------------------------------------------------------------------------------
+Are any plaintiffs with role (P)-Employer primary?
+*/
+
+SELECT pln.plnnPlaintiffID, pln.plnnCaseID, pln.plnnContactCtg, pln.plnnContactID, pln.plnbIsPrimary, sr.sbrsDscrptn
+FROM sma_TRN_Plaintiff pln
+join sma_MST_SubRole sr
+on pln.plnnRole = sr.sbrnSubRoleId
+where sr.sbrsDscrptn = '(P)-Employer'
+and pln.plnbIsPrimary = 1
+-- only 1
+
+-- plnnPlaintiffID = 2722	
+-- plnnCaseID = 5012	
+-- plnnContactCtg = 2
+-- plnnContactID = 11718	
+
+
+
+
+/* --------------------------------------------------------------------------------------------------------------------------------------------------------------
+*/
+
+-- check PartyRoles
+select
+	*
+from PartyRoles pr where pr.[Needles Roles] = 'employer'
+
+
+
+
+
+select
+	*
+from [sma_MST_SubRole]
+where sbrnSubRoleId = 33473
+select
+	*,
+	grp.cgpsCode,
+	grp.cgpsDscrptn
+from sma_MST_CaseType smct
+
+
+update subrole
 set sbrnTypeCode = 389
 from [sma_MST_SubRole] subrole
 where sbrnSubRoleId = 33473
+
+
+select
+	*
+from PartyRoles pr
+--EMPLOYER	(D)-EMPLOYER	DEFENDANT
+
+
+
+select
+	*
+from sma_MST_SubRole smsr
+-- 4 = pln
+-- 5 = def
+
+
+select
+	*
+from sma_MST_SubRole smsr
+where smsr.sbrsDscrptn like '%employer%'
+--33008
+--33046
+--33089
+--33094
+--33138
+--33167
+--33189
+--33198
+--33209
+--33236
+--33286
+
+select
+	*
+from sma_MST_SubRoleCode
+select
+	*
+from sma_MST_SubRole smsr
+
+
+select
+	*
+from sma_TRN_Plaintiff pln
+where pln.plnnRole in (
+	'33008',
+	'33046',
+	'33089',
+	'33094',
+	'33138',
+	'33167',
+	'33189',
+	'33198',
+	'33209',
+	'33236',
+	'33286'
+	)
+
+
+select
+	sbrnSubRoleId
+from sma_MST_SubRole s
+inner join sma_MST_SubRoleCode c
+	on c.srcnCodeId = s.sbrnTypeCode
+		and c.srcsDscrptn = '(P)-Default Role'
+where s.sbrnCaseTypeID = cas.casnOrgCaseTypeID
+
+
+
+
+
+/* --------------------------------------------------------------------------------------------------------------------------------------------------------------
+Create Employer Defendant Subrole
+
+*/
+
+--case > casetype > subrole
+
+select
+	*
+from PartyRoles pr
+select
+	*
+from CaseTypeMixture ctm
+
+select
+	*,
+	grp.cgpsCode,
+	grp.cgpsDscrptn
+from sma_MST_CaseType smct --where smct.cstnCaseTypeID = 1775
+join sma_MST_CaseGroup grp
+	on smct.cstnGroupID = grp.cgpnCaseGroupID
+where smct.cstnCaseTypeID in (
+	1781,
+	1701,
+	383,
+	1601,
+	1590,
+	1780,
+	1685,
+	1787,
+	1775,
+	1782,
+	1690)
+
+select
+	*
+from sma_MST_SubRole smsr
+select
+	*
+from sma_MST_SubRole smsr
+where smsr.sbrsDscrptn like '%employer%'
+
+select
+	*
+from sma_MST_SubRoleCode
+
+
+/* --------------------------------------------------------------------------------------------------------------------------------------------------------------
+SubRole and SubRoleCode
+
+*/
+
+insert into [sma_MST_SubRoleCode]
+	(
+	srcsDscrptn, srcnRoleID
+	)
+	select
+		'(D)-Employer',
+		5
+	except
+	select
+		srcsDscrptn,
+		srcnRoleID
+	from [sma_MST_SubRoleCode]
+
+-- insert (D)-Employer subrole for each applicable case type
+insert into [sma_MST_SubRole]
+	(
+	[sbrsCode], [sbrnRoleID], [sbrsDscrptn], [sbrnCaseTypeID], [sbrnRecUserID], [sbrdDtCreated], [sbrnTypeCode]
+	)
+	select
+		null			   as [sbrscode],
+		5				   as [sbrnroleid],
+		'(D)-Employer'	   as [sbrsdscrptn],
+		cst.cstnCaseTypeID as [sbrncasetypeid],
+		368				   as [sbrnrecuserid],
+		GETDATE()		   as [sbrddtcreated],
+		(
+			select
+				code.srcnCodeId
+			from sma_mst_SubRoleCode code
+			where code.srcsDscrptn = '(D)-Employer'
+				and code.srcnRoleID = 5
+		)				   as [sbrnTypeCode]
+	from sma_MST_CaseType cst
+	where cst.cstnCaseTypeID = 1775
+
+--left join sma_mst_subrole s
+--	on cst.cstnCaseTypeID = s.sbrncasetypeid
+--		or s.sbrncasetypeid = 1
+--join [CaseTypeMixture] mix
+--	on mix.matcode = cst.cstsCode
+--where VenderCaseType = (
+--		select
+--			VenderCaseType
+--		from conversion.office
+--	)
+--	and ISNULL(mix.[SmartAdvocate Case Type], '') = ''
+
+
+
+
+
+
+

@@ -85,14 +85,15 @@ insert into [sma_TRN_Notes]
 		null		  as [source_id],
 		'needles'	  as [source_db],
 		'value_notes' as [source_ref]
-	from JoelBieberNeedles.[dbo].[value_notes] n
-	join JoelBieberNeedles.[dbo].[value_Indexed] v
+	--select * 
+	from JoelBieberNeedlesMissingNotes.[dbo].[value_notes] n
+	join JoelBieberNeedlesMissingNotes.[dbo].[value_Indexed] v
 		on v.value_id = n.value_num
 	join [sma_TRN_Cases] c
 		on c.cassCaseNumber = v.case_id
 	join [sma_MST_Users] u
 		on u.source_id = n.staff_id
-		where c.source_ref = 'PL'
+	and n.note_date = '2025-02-07'
 go
 
 ---
@@ -102,26 +103,26 @@ go
 -----------------------------------------
 --INSERT RELATED TO FIELD FOR NOTES
 -----------------------------------------
-insert into sma_TRN_NoteContacts
-	(
-	NoteID, UniqueContactID
-	)
-	select distinct
-		note.notnNoteID,
-		ioc.UNQCID
-	--select v.provider, ioc.*, n.note, note.*
-	from JoelBieberNeedles..[value_notes] n
-	join JoelBieberNeedles..value_Indexed v
-		on v.value_id = n.value_num
-	join sma_trn_Cases cas
-		on cas.cassCaseNumber = v.case_id
-	join IndvOrgContacts_Indexed ioc
-		on ioc.saga = v.[provider]
-	join [sma_TRN_Notes] note
-		on note.saga = n.note_key
-			and note.[notnNoteTypeID] = (
-				select top 1
-					nttnNoteTypeID
-				from [sma_MST_NoteTypes]
-				where nttsDscrptn = n.topic
-			)
+--insert into sma_TRN_NoteContacts
+--	(
+--	NoteID, UniqueContactID
+--	)
+--	select distinct
+--		note.notnNoteID,
+--		ioc.UNQCID
+--	--select v.provider, ioc.*, n.note, note.*
+--	from JoelBieberNeedles..[value_notes] n
+--	join JoelBieberNeedles..value_Indexed v
+--		on v.value_id = n.value_num
+--	join sma_trn_Cases cas
+--		on cas.cassCaseNumber = v.case_id
+--	join IndvOrgContacts_Indexed ioc
+--		on ioc.saga = v.[provider]
+--	join [sma_TRN_Notes] note
+--		on note.saga = n.note_key
+--			and note.[notnNoteTypeID] = (
+--				select top 1
+--					nttnNoteTypeID
+--				from [sma_MST_NoteTypes]
+--				where nttsDscrptn = n.topic
+--			)
