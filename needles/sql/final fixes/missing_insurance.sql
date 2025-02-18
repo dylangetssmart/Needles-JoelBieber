@@ -349,6 +349,9 @@ where caseid = 23242
 Check: Insert missing plaintiff insurance
 */
 
+alter table [sma_TRN_InsuranceCoverage] disable trigger all
+go
+
 insert into [sma_TRN_InsuranceCoverage]
 	(
 	[incnCaseID], [incnInsContactID], [incnInsAddressID], [incbCarrierHasLienYN], [incnInsType], [incnAdjContactId], [incnAdjAddressID], [incsPolicyNo], [incsClaimNo], [incnStackedTimes], [incsComments], [incnInsured], [incnCovgAmt], [incnDeductible], [incnUnInsPolicyLimit], [incnUnderPolicyLimit], [incbPolicyTerm], [incbTotCovg], [incsPlaintiffOrDef], [incnPlaintiffIDOrDefendantID], [incnTPAdminOrgID], [incnTPAdminAddID], [incnTPAdjContactID], [incnTPAdjAddID], [incsTPAClaimNo], [incnRecUserID], [incdDtCreated], [incnModifyUserID], [incdDtModified], [incnLevelNo], [incnUnInsPolicyLimitAcc], [incnUnderPolicyLimitAcc], [incb100Per], [incnMVLeased], [incnPriority], [incbDelete], [incnauthtodefcoun], [incnauthtodefcounDt], [incbPrimary], [saga], source_id, source_db, source_ref
@@ -490,6 +493,9 @@ insert into [sma_TRN_InsuranceCoverage]
 		on ic.saga = ins.insurance_id
 	where ic.incnInsCovgID is null
 
+
+alter table [sma_TRN_InsuranceCoverage] enable trigger all
+go
 
 /* --------------------------------------------------------------------------------------------------------------------------------------------------------------
 why are the record counts different?

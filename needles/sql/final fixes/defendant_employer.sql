@@ -9,7 +9,9 @@
 
 
 --'Workplace Injury - General'
-SELECT * FROM sma_MST_CaseType ct
+select
+	*
+from sma_MST_CaseType ct
 where ct.cstsType = 'Workplace Injury - General'
 --cstnCaseTypeID = 1775
 
@@ -159,21 +161,40 @@ insert into [sma_TRN_Defendants]
 
 
 /* --------------------------------------------------------------------------------------------------------------------------------------------------------------
-Are any plaintiffs with role (P)-Employer primary?
+Delete plaintiffs
 */
 
-SELECT pln.plnnPlaintiffID, pln.plnnCaseID, pln.plnnContactCtg, pln.plnnContactID, pln.plnbIsPrimary, sr.sbrsDscrptn
-FROM sma_TRN_Plaintiff pln
+
+-- Are any plaintiffs with role (P)-Employer primary?
+select
+	pln.plnnPlaintiffID,
+	pln.plnnCaseID,
+	pln.plnnContactCtg,
+	pln.plnnContactID,
+	pln.plnbIsPrimary,
+	sr.sbrsDscrptn
+from sma_TRN_Plaintiff pln
 join sma_MST_SubRole sr
-on pln.plnnRole = sr.sbrnSubRoleId
+	on pln.plnnRole = sr.sbrnSubRoleId
 where sr.sbrsDscrptn = '(P)-Employer'
-and pln.plnbIsPrimary = 1
+	and pln.plnbIsPrimary = 1
 -- only 1
 
 -- plnnPlaintiffID = 2722	
 -- plnnCaseID = 5012	
 -- plnnContactCtg = 2
 -- plnnContactID = 11718	
+
+
+delete from sma_TRN_Plaintiff
+where plnnRole in (
+		select
+			sbrnSubRoleId
+		from sma_MST_SubRole
+		where sbrsDscrptn = '(P)-Employer'
+	)
+	and plnbIsPrimary = 0;
+
 
 
 
@@ -184,7 +205,8 @@ and pln.plnbIsPrimary = 1
 -- check PartyRoles
 select
 	*
-from PartyRoles pr where pr.[Needles Roles] = 'employer'
+from PartyRoles pr
+where pr.[Needles Roles] = 'employer'
 
 
 
