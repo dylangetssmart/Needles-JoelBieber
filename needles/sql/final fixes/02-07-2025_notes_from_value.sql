@@ -42,6 +42,22 @@ insert into [sma_MST_NoteTypes]
 alter table [sma_TRN_Notes] disable trigger all
 go
 
+
+SELECT *
+FROM JoelBieberNeedlesMissingNotes..[value_notes] cni
+where cni.note_date = '2025-02-07'
+
+
+SELECT *
+FROM JoelBieberNeedlesMissingNotes..[value_notes] n
+join JoelBieberNeedlesMissingNotes.[dbo].[value_Indexed] v
+		on v.value_id = n.value_num
+	join [sma_TRN_Cases] c
+		on c.cassCaseNumber = convert(varchar,v.case_id)
+where n.note_date = '2025-02-07'
+-- 60
+
+
 ---
 --SELECT nttsDscrptn, count(*)
 --FROM [sma_MST_NoteTypes]
@@ -68,7 +84,8 @@ insert into [sma_TRN_Notes]
 		null		  as [notncontactid],
 		null		  as [notspriority],
 		null		  as [notnformid],
-		u.usrnUserID  as [notnrecuserid],
+		--u.usrnUserID  as [notnrecuserid],
+		COALESCE(m.SAUserID, u.usrnUserID) as [notnrecuserid], -- Use SAUserID if available, otherwise fallback to usrnUserID
 		case
 			when n.note_date between '1900-01-01' and '2079-06-06' and
 				CONVERT(TIME, ISNULL(n.note_time, '00:00:00')) <> CONVERT(TIME, '00:00:00')
@@ -91,8 +108,14 @@ insert into [sma_TRN_Notes]
 		on v.value_id = n.value_num
 	join [sma_TRN_Cases] c
 		on c.cassCaseNumber = v.case_id
-	join [sma_MST_Users] u
+	left join [conversion].[imp_user_map] m
+		on m.StaffCode = n.staff_id
+	left join [sma_MST_Users] u
 		on u.source_id = n.staff_id
+	left join [sma_TRN_Notes] ns
+		on ns.saga = note_key
+	--where n.note_date = '2025-02-07'
+	where ns.notnNoteID is null
 	and n.note_date = '2025-02-07'
 go
 

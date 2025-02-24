@@ -15,6 +15,8 @@ go
 
 ---
 
+SELECT * FROM JoelBieberNeedles..party p where p.date_of_majority is not null
+
 ----(1)----
 insert into sma_TRN_Notes
 	(
