@@ -1,11 +1,76 @@
+/*
+- due to [sma_trn_Notes].[notnNoteTypeID] = null
+1. create note type
+2. assign it where missing
+3. NoteContacts? - n/a as per rahul
+*/
+
+
 SELECT * FROM sma_TRN_NoteContacts stnc where stnc.UniqueContactID = 185183
-where stnc.UniqueContactID like '%85183%'
+--where stnc.UniqueContactID like '%85183%'
 where stnc.NoteID in (127645,
 127644,
 56163,
 56162)
 
- select * from sma_trn_Notes where notnContactCtgID = 1 and notnContactId = 85183
+UPDATE sma_trn_notes
+set notnCaseID = 0
+where notnContactCtgID = 1 and notnContactId = 85183
+
+select * from sma_TRN_Notes stn where stn.source_ref in ('party', 'provider_notes') and stn.notnNoteTypeID is null
+
+
+select * from sma_trn_Notes where notnContactCtgID = 1 and notnContactId = 85183
+SELECT * FROM ShinerSA..sma_TRN_Notes stn where stn.notnNoteID = 61449
+SELECT * FROM ShinerSA..sma_TRN_NoteContacts stnc
+SELECT * FROM ShinerSA..sma_MST_NoteTypes
+SELECT * FROM sa..sma_MST_NoteTypes
+SELECT * FROM sma_MST_NoteTypes where nttsNoteText like '%contact%'
+
+select count(*) from sma_TRN_Notes stn where stn.source_ref in ('party', 'provider_notes') and stn.notnNoteTypeID is null
+-- 152758
+
+insert into sma_MST_NoteTypes
+	(
+		nttsCode,
+		nttsDscrptn,
+		nttsNoteText,
+		nttnRecUserID,
+		nttdDtCreated
+	)
+	values
+	('CONTACT', 'Contact Note', 'Note related to contacts', 368, GETDATE())
+
+
+update sma_TRN_Notes
+set notnNoteTypeID = (
+	select
+		smnt.nttnNoteTypeID
+	from sma_MST_NoteTypes smnt
+	where smnt.nttsDscrptn = 'Contact Note'
+)
+where source_ref in ('party', 'provider_notes')
+and notnNoteTypeID is null
+
+
+/*
+insert records into sma_TRN_NoteContacts
+sma_TRN_NoteContacts.NoteId = sma_TRN_Notes.notnNoteID
+
+*/
+
+
+SELECT top 1000 * FROM sma_TRN_Notes stn
+where stn.notnContactId = 85183 and stn.notnContactCtgID = 1
+
+SELECT * FROM sma_TRN_NoteContacts stnc
+
+insert into sma_TRN_NoteContacts
+(NoteID, UniqueContactID)
+select
+	null as NoteID,
+	null as UniqueContactID
+from sma_TRN_Notes
 
 
  -----------------------------------------
@@ -63,7 +128,8 @@ insert into sma_TRN_NoteContacts
 	join IndvOrgContacts_Indexed ioci
 		on ioci.CID = n.notnContactId
 			and ioci.CTG = n.notnContactCtgID
-	where n.notnContactId is not null
+	where n.notnContactId = 85183
+	--where n.notnContactId is not null
 	--and n.notnContactId = 85183
 
 	except
