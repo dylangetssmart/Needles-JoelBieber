@@ -1,6 +1,28 @@
 use JoelBieberSA_Needles
 go
 
+SELECT * FROM JoelBieberNeedles..matter m
+
+
+SELECT * FROM JoelBieberNeedles..cases c where c.matcode = 'SAS'
+SELECT cas.casnCaseID, cas.cassCaseNumber, cas.casnOrgCaseTypeID FROM sma_TRN_Cases cas where cas.cassCaseNumber in (226176,
+226177,
+226199,
+226200,
+226223)
+SELECT * FROM sma_MST_CaseType smct where smct.cstnCaseTypeID = 1590
+
+
+join caseTypeMixture mix
+		on mix.matcode = 'SAS'
+
+
+
+
+
+
+
+
 SELECT distinct cststype, cstnCaseTypeID, ct.*
 FROM sma_mst_casetype ct
 JOIN sma_trn_Cases cas on cas.casnOrgCaseTypeID = ct.cstnCaseTypeID
